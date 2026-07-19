@@ -1,0 +1,1 @@
+export { AiEffectIcon } from './AiEffectIcon';

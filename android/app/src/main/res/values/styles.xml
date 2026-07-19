@@ -1,0 +1,31 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="android:editTextBackground">@drawable/rn_edit_text_material</item>
+        <!-- Force readable RN Alert.alert dialogs (avoid white-on-white with DayNight). -->
+        <item name="alertDialogTheme">@style/AppAlertDialogTheme</item>
+        <item name="android:alertDialogTheme">@style/AppAlertDialogTheme</item>
+    </style>
+
+    <style name="AppAlertDialogTheme" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:background">#FFFFFF</item>
+        <item name="android:windowBackground">#FFFFFF</item>
+        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="android:textColorPrimary">#1A1A2E</item>
+        <item name="android:textColor">#1A1A2E</item>
+        <item name="android:textColorSecondary">#6B7280</item>
+        <item name="android:textColorAlertDialogListItem">#1A1A2E</item>
+        <item name="colorAccent">#4F46E5</item>
+        <item name="colorPrimary">#4F46E5</item>
+        <item name="buttonBarPositiveButtonStyle">@style/AppAlertDialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/AppAlertDialogButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/AppAlertDialogButton</item>
+    </style>
+
+    <style name="AppAlertDialogButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">#4F46E5</item>
+    </style>
+
+</resources>

@@ -1,0 +1,23 @@
+declare module '@env' {
+  export const APP_ENV: string;
+  export const DEBUG_MODE: string;
+  export const MAX_UPLOAD_SIZE_MB: string;
+  export const SUPPORTED_AUDIO_FORMATS: string;
+  export const PROCESSING_THREADS: string;
+  export const ENABLE_AUDIO_PREVIEW: string;
+  export const ENABLE_SOURCE_DENOISE: string;
+  export const SOURCE_DENOISE_STRENGTH: string;
+  export const APP_DISPLAY_NAME: string;
+  export const WAVESPEED_API_KEY: string;
+  export const ENABLE_WAVESPEED_STS: string;
+  export const CREDITS_PER_STARTED_MINUTE: string;
+  export const STARTING_CREDITS: string;
+  export const PREMIUM_PRICE_USD: string;
+  export const APP_USD_PER_STARTED_MINUTE: string;
+  export const PREMIUM_CREDITS: string;
+  export const PREMIUM_GRATIS_CREDITS: string;
+  export const MAX_AUDIO_DURATION_FREE_SEC: string;
+  export const MAX_AUDIO_DURATION_PREMIUM_SEC: string;
+  export const CREDITS_API_BASE_URL: string;
+  export const CREDITS_API_TOKEN: string;
+}

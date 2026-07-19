@@ -1,0 +1,60 @@
+import type { AdvancedEffect } from '@/types/voiceStudio';
+
+export const ADVANCED_EFFECTS: AdvancedEffect[] = [
+  {
+    id: 'commander',
+    labelKey: 'voiceStudio.advancedEffectItems.commander',
+    descriptionKey: 'voiceStudio.advancedEffectItems.commanderDescription',
+    accentColor: '#B91C1C',
+    iconKey: 'commander',
+    avatarImageKey: 'commander',
+  },
+  {
+    id: 'hall',
+    labelKey: 'voiceStudio.advancedEffectItems.hall',
+    descriptionKey: 'voiceStudio.advancedEffectItems.hallDescription',
+    accentColor: '#6D28D9',
+    iconKey: 'hall',
+    avatarImageKey: 'hall',
+  },
+  {
+    id: 'warrior',
+    labelKey: 'voiceStudio.advancedEffectItems.warrior',
+    descriptionKey: 'voiceStudio.advancedEffectItems.warriorDescription',
+    accentColor: '#991B1B',
+    iconKey: 'warrior',
+    avatarImageKey: 'warrior',
+  },
+  {
+    id: 'femaleVoice',
+    labelKey: 'voiceStudio.advancedEffectItems.femaleVoice',
+    descriptionKey: 'voiceStudio.advancedEffectItems.femaleVoiceDescription',
+    accentColor: '#F59E0B',
+    iconKey: 'femaleVoice',
+    avatarImageKey: 'femaleVoice',
+  },
+  {
+    id: 'maleVoice',
+    labelKey: 'voiceStudio.advancedEffectItems.maleVoice',
+    descriptionKey: 'voiceStudio.advancedEffectItems.maleVoiceDescription',
+    accentColor: '#0EA5E9',
+    iconKey: 'maleVoice',
+    avatarImageKey: 'maleVoice',
+  },
+  {
+    id: 'android',
+    labelKey: 'voiceStudio.advancedEffectItems.android',
+    descriptionKey: 'voiceStudio.advancedEffectItems.androidDescription',
+    accentColor: '#10B981',
+    iconKey: 'android',
+    avatarImageKey: 'android',
+  },
+  {
+    id: 'chipmunk',
+    labelKey: 'voiceStudio.advancedEffectItems.chipmunk',
+    descriptionKey: 'voiceStudio.advancedEffectItems.chipmunkDescription',
+    accentColor: '#F59E0B',
+    iconKey: 'chipmunk',
+    avatarImageKey: 'chipmunk',
+  },
+];
