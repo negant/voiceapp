@@ -46,18 +46,13 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] **Fix AI po trimie** — `prepareAiSourceForSts` (trim w pamięci → base64 do STS); osobna ścieżka `processAiTierAudio`
 
 ## W toku
-- [ ] Spend sync AI → `POST /v1/credits/spend` (kolejka offline)
 - [ ] Keychain/Keystore dla trwałego `device_id` (anty-reinstall)
-
-## Następne
 - [ ] Podpięcie `GET /v1/setup` w `fetchAppUpdateStatus`
-- [ ] Clean rebuild Android/iOS po usunięciu ONNX + ElevenLabs + po dodaniu NetInfo
-- [ ] Eksport do MP3/AAC (encoder)
 
 ## Zrobione (niedawno)
-- [x] **Backend kredytów** — monorepo `server/` (Docker Postgres + Fastify), schema devices/setup/plan events
-- [x] Device ID w ustawieniach + bootstrap API w `CreditsProvider`
-- [x] Copy: free 3 mies. / Premium renew miesięczny
+- [x] Sync plan/saldo z API (start, plan, spend AI)
+- [x] **Backend kredytów** — monorepo `server/` (Docker Postgres + Fastify)
+- [x] Device ID w ustawieniach + bootstrap API
 
 ## Uwagi
 - AI wymaga `WAVESPEED_API_KEY` + `ENABLE_WAVESPEED_STS` — audio opuszcza urządzenie.

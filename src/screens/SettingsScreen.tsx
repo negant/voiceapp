@@ -2,15 +2,11 @@ import { Switch, Text, View } from 'react-native';
 
 import { AppVersionInfo, Screen } from '@/components';
 import { SettingsRow } from '@/components/molecules/SettingsRow';
-import {
-  DEFAULT_STARTING_CREDITS,
-  resolvePremiumIncludedStartedMinutes,
-} from '@/config/credits';
-import { env } from '@/config/env';
 import { useScreenTitle } from '@/hooks/useScreenTitle';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { RootStackScreenProps } from '@/navigation/types';
 import { useCredits } from '@/providers/CreditsProvider';
+import { env } from '@/config/env';
 
 type DeveloperSwitchRowProps = {
   title: string;
@@ -48,28 +44,14 @@ export function SettingsScreen({
   navigation,
 }: RootStackScreenProps<'Settings'>) {
   const { t } = useTranslation();
-  const { isPremium, balance, setAccountPlan, setBalance } = useCredits();
+  const { isPremium, setAccountPlan } = useCredits();
   useScreenTitle('nav.settings');
 
   const showDeveloperSection = env.debugMode || __DEV__;
 
   const handlePremiumToggle = (enabled: boolean) => {
-    const premiumMinutes = resolvePremiumIncludedStartedMinutes(
-      env.premiumCredits,
-      env.premiumGratisCredits,
-    );
-
-    if (enabled) {
-      // Keep leftover free-plan credits and add the Premium pack on top.
-      setAccountPlan('premium')
-        .then(() => setBalance(balance + premiumMinutes))
-        .catch(() => undefined);
-      return;
-    }
-
-    setAccountPlan('free')
-      .then(() => setBalance(env.startingCredits || DEFAULT_STARTING_CREDITS))
-      .catch(() => undefined);
+    // Provider syncs plan + balance to API when CREDITS_API_BASE_URL is set.
+    setAccountPlan(enabled ? 'premium' : 'free').catch(() => undefined);
   };
 
   return (

@@ -11,15 +11,15 @@ import {
 
 describe('creditsBootstrap', () => {
   it('detects exhausted install pool', () => {
-    expect(isFreeTestPoolExhausted(29_999)).toBe(false);
-    expect(isFreeTestPoolExhausted(30_000)).toBe(true);
-    expect(isFreeTestPoolExhausted(31_000)).toBe(true);
+    expect(isFreeTestPoolExhausted(29)).toBe(false);
+    expect(isFreeTestPoolExhausted(30)).toBe(true);
+    expect(isFreeTestPoolExhausted(31)).toBe(true);
   });
 
   it('computes remaining pool slots', () => {
     expect(buildRemainingPoolSlots(0)).toBe(FREE_INSTALLS_WITH_TEST_CREDITS);
-    expect(buildRemainingPoolSlots(100)).toBe(
-      FREE_INSTALLS_WITH_TEST_CREDITS - 100,
+    expect(buildRemainingPoolSlots(10)).toBe(
+      FREE_INSTALLS_WITH_TEST_CREDITS - 10,
     );
     expect(buildRemainingPoolSlots(FREE_INSTALLS_WITH_TEST_CREDITS)).toBe(0);
   });
@@ -32,15 +32,15 @@ describe('creditsBootstrap', () => {
       accountPlan: 'free',
       creditsPerAi10Sec: 114,
       pool: {
-        installCap: 30_000,
+        installCap: 30,
         installsGranted: 1,
-        remainingSlots: 29_999,
+        remainingSlots: 29,
       },
     });
 
     expect(result.status).toBe('granted');
     expect(result.balance).toBe(env.startingCredits);
-    expect(result.pool?.remainingSlots).toBe(29_999);
+    expect(result.pool?.remainingSlots).toBe(29);
   });
 
   it('local fallback seeds welcome credits', () => {

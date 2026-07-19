@@ -70,16 +70,24 @@ CREATE TABLE IF NOT EXISTS voiceapp_credit_ledger (
 CREATE INDEX IF NOT EXISTS idx_voiceapp_credit_ledger_device
   ON voiceapp_credit_ledger (device_id, created_at DESC);
 
--- Pool counter for welcome free credits (first N installs)
+-- Singleton stats row (exactly one row, id = 1)
+CREATE TABLE IF NOT EXISTS voiceapp_stats (
+  id SMALLINT PRIMARY KEY DEFAULT 1 CHECK (id = 1),
+  install_count INTEGER NOT NULL DEFAULT 0 CHECK (install_count >= 0),
+  free_credits_grants INTEGER NOT NULL DEFAULT 0 CHECK (free_credits_grants >= 0),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+INSERT INTO voiceapp_stats (id, install_count, free_credits_grants)
+VALUES (1, 0, 0)
+ON CONFLICT (id) DO NOTHING;
+
+-- Legacy meta (kept for older DBs; new code uses voiceapp_stats)
 CREATE TABLE IF NOT EXISTS voiceapp_meta (
   key TEXT PRIMARY KEY,
   value TEXT NOT NULL,
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-INSERT INTO voiceapp_meta (key, value)
-VALUES ('free_installs_granted', '0')
-ON CONFLICT (key) DO NOTHING;
 
 INSERT INTO voiceapp_setup (key, value) VALUES
   ('min_app_version', '0.0.1'),
@@ -88,5 +96,7 @@ INSERT INTO voiceapp_setup (key, value) VALUES
   ('message_en', ''),
   ('message_pl', ''),
   ('store_url_ios', ''),
-  ('store_url_android', '')
+  ('store_url_android', ''),
+  -- First N unique device installs may receive welcome free credits
+  ('free_credits_install_cap', '30')
 ON CONFLICT (key) DO NOTHING;

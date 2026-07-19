@@ -121,8 +121,10 @@ Na etapie boilerplate flow kończy się na **Voice Studio** (UI + stub serwisów
 - Obecnie stub zwraca `{ state: 'current' }`; przyszła integracja ze sklepem bez zmiany kontraktu UI.
 
 ## Kredyty i bootstrap instalacji (stub → API)
-- Stałe puli: `src/config/credits.ts` (`FREE_INSTALLS_WITH_TEST_CREDITS` = 30 000).
+- Stałe puli: `src/config/credits.ts` (`FREE_INSTALLS_WITH_TEST_CREDITS` = **30**, zgodne z `voiceapp_setup.free_credits_install_cap`).
 - API: `src/services/credits/creditsBootstrap.ts` — `fetchCreditsBootstrap()` → `POST /v1/devices/register`; bez `CREDITS_API_BASE_URL` → `local_fallback`. Backend: monorepo `server/` (patrz `credits-backend.md`).
+- Sync: `creditsApi.ts` — start: register + `POST /v1/credits/sync`; zmiana planu → `POST /v1/credits/plan`; zużycie AI → `POST /v1/credits/spend` (`spendCredits` w `CreditsProvider`).
+- **URL API na urządzeniu:** fizyczny telefon = IP LAN Maca (nie `localhost`); emulator Android = `10.0.2.2`. Logi syncu: `credits_register` / `credits_sync` / `credits_plan` / `credits_spend` w `server/logs/`.
 - Device: `src/services/device/` — `ensureDeviceId()`; UI w `AppVersionInfo`.
 - Docelowo: `CreditsProvider` przy pierwszym starcie woła API; status w SQLite (`credits_bootstrap_status`, `installation_id`).
 - Kontrakt REST i zachowanie przy `pool_exhausted`: `.aiassistant/rules/credits-backend.md`.

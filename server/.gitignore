@@ -1,5 +1,7 @@
 node_modules/
 dist/
 .env
+logs/*
+!logs/.gitkeep
 *.log
 .DS_Store

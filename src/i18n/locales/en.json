@@ -389,7 +389,7 @@
     "planNameFree": "Free",
     "planNamePremium": "Premium",
     "planFeatureWelcome": "Welcome credits after install (valid 3 months)",
-    "planFeatureFreeCreditsExpiry": "Free credits expire 3 months after grant",
+    "planFeatureFreeCreditsExpiry": "Free credits expire 3 months after install; with Premium they stay permanently",
     "planFeatureMaxFile": "Max file/recording length: {{maxDuration}}",
     "planFeatureCustomBasicEffects": "Custom basic effects",
     "planFeatureOneCredit": "1 AI credit = 1 started minute",

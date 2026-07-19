@@ -8,7 +8,10 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 ## [Unreleased]
 
 ### Added
+- **`voiceapp_stats`:** singleton (`install_count`, `free_credits_grants`); limit free w `voiceapp_setup.free_credits_install_cap` = **30**; reinstall → `credits_restore` (plan+kredyty bez nowych free).
 - **API kredytów (`server/`):** Fastify + Postgres (Docker); tabele `voiceapp_devices`, `voiceapp_device_plan_events`, `voiceapp_setup`, ledger; auth Bearer; register/sync/spend/plan/setup; lokalny start w `server/README.md`.
+- **API logi plikowe:** `server/logs/api-YYYY-MM-DD.log` **tylko w development** (`NODE_ENV`); gitignore zawartości; skrypty `logs:tail`, `db:psql` / `db:tables` / `db:devices`; zdarzenia sync: `credits_register` / `credits_sync` / `credits_plan` / `credits_spend`.
+- **Fix URL API na urządzeniu:** fizyczny Android nie może używać `localhost` — `CREDITS_API_BASE_URL` = IP LAN (np. `http://192.168.x.x:8787`).
 - **Device ID:** UUID w SQLite + wyświetlenie w Ustawieniach (support); bootstrap API przy `CREDITS_API_BASE_URL`.
 - **Copy planów:** free credits ważne **3 miesiące**; Premium — kredyty **odnawiane co miesiąc**.
 
@@ -26,7 +29,8 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 - **Łączenie efektów (Premium):** gate na „Połącz efekty”; blokada łańcucha **2× AI** (podwójne zużycie kredytów).
 
 ### Changed
-- **Ekonomia Premium:** cena **$4.99** (`PREMIUM_PRICE_USD`), stawka app **$0.05/min** (`APP_USD_PER_STARTED_MINUTE`) vs API WaveSpeed **$0.02/min**; pakiet **`PREMIUM_CREDITS=100` + `PREMIUM_GRATIS_CREDITS=25` = 125 min**.
+- **Free credits expiry:** 3 miesiące od **`installed_at`**; przy **Premium** free credits zostają na stałe (`free_credits_expires_at=NULL`); po downgrade przywracana data z instalacji (+ ewentualne wyzerowanie przy sync).
+- **Sync kredytów z API:** start appki = register + sync; włączenie/wyłączenie Premium i zakup = `POST /v1/credits/plan`; zużycie AI = `POST /v1/credits/spend` (`spendCredits`); lokalne SQLite jako cache.
 - **Ekran konta (Premium):** tytuł **Twoje Konto**; wspólny styl nagłówków saldo/plan; Premium w jednej karcie z planem; rozliczanie bez kosztów API; bez sekcji „efekty lokalne”.
 - **Voice Studio — limity w „Twoje audio”:** opis AI Effects bez limitu długości; na Free mały CTA „Rozszerz do 10 min · Kup Premium” pod hintem formatów.
 - **Saldo startowe Free:** migracja legacy salda `0` → **250** kredytów powitalnych (jednorazowo, `credits_seed_version`).

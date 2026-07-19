@@ -37,8 +37,9 @@ export const PREMIUM_CREDITS_RENEWAL_MONTHS = 1;
 
 /**
  * Promotional pool: first N unique installs may receive the free welcome grant (backend).
+ * Server source of truth: voiceapp_setup.free_credits_install_cap (default 30).
  */
-export const FREE_INSTALLS_WITH_TEST_CREDITS = 30_000;
+export const FREE_INSTALLS_WITH_TEST_CREDITS = 30;
 
 /** Upper bound on credits reserved for the install pool. */
 export const FREE_TEST_CREDITS_POOL_TOTAL =

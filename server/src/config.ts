@@ -67,7 +67,7 @@ export const config = {
   freeCreditsValidityMonths: intEnv('FREE_CREDITS_VALIDITY_MONTHS', 3),
   premiumCredits: intEnv('PREMIUM_CREDITS', 100),
   premiumGratisCredits: intEnv('PREMIUM_GRATIS_CREDITS', 25),
-  freeInstallsWithTestCredits: intEnv('FREE_INSTALLS_WITH_TEST_CREDITS', 30_000),
+  freeInstallsWithTestCredits: intEnv('FREE_INSTALLS_WITH_TEST_CREDITS', 30),
   creditsPerStartedMinute: intEnv('CREDITS_PER_STARTED_MINUTE', 1),
 } as const;
 

@@ -15,7 +15,7 @@ apply: always
 - **@soundtouchjs/core** — pitch shift WSOLA dla Advanced Effects (zamiast wycofanego `react-native-ffmpeg`).
 - Podgląd i eksport przetworzonego pliku.
 - Brak domyślnej zależności od backendu dla Basic/Advanced — prywatność jako założenie. AI (WaveSpeed) jest opcjonalne i wymaga klucza API.
-- **Kredyty AI:** plany **free** (10 kredytów, ważne **3 mies.**) i **premium** (**$4.99** / **100 + 25 gratis = 125 min**, **odnawiane co miesiąc**; stawka app **$0.05**/min, API **$0.02**/min); env `PREMIUM_CREDITS` / `PREMIUM_GRATIS_CREDITS`; **1 kredyt = 1 rozpoczęta minuta**; bez doładowań. Backend: monorepo **`server/`** (Postgres Docker + Fastify), `CREDITS_API_BASE_URL` / `CREDITS_API_TOKEN`.
+- **Kredyty AI:** plany **free** (10 kredytów, ważne **3 mies. od instalacji**) i **premium** (**$4.99** / **100 + 25 gratis = 125 min**, **odnawiane co miesiąc**; free credits przy Premium **bezterminowe**; stawka app **$0.05**/min, API **$0.02**/min); env `PREMIUM_CREDITS` / `PREMIUM_GRATIS_CREDITS`; **1 kredyt = 1 rozpoczęta minuta**; bez doładowań. Backend: monorepo **`server/`** (Postgres Docker + Fastify), `CREDITS_API_BASE_URL` / `CREDITS_API_TOKEN`.
 
 ## Stack techniczny
 - React Native `0.86`, React `19`, TypeScript.
@@ -54,7 +54,7 @@ src/
 └── types/
 ```
 
-Monorepo API: **`server/`** — Fastify + Postgres (Docker); docs `credits-backend.md`.
+Monorepo API: **`server/`** — Fastify + Postgres (Docker); docs `credits-backend.md`. Logi do `server/logs/` tylko przy `NODE_ENV=development`.
 
 Szczegóły komponentów: `.aiassistant/rules/components.md`.
 

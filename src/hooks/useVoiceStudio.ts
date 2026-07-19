@@ -148,7 +148,7 @@ export function useVoiceStudio() {
     isPremium,
     balance,
     creditsPerStartedMinute,
-    setBalance,
+    spendCredits,
   } = useCredits();
   const aiMaxDurationSec = useMemo(
     () => resolveAiMaxDurationSec(accountPlan),
@@ -1741,7 +1741,7 @@ export function useVoiceStudio() {
       await refreshProcessedHistory();
 
       if (usesAi && aiCreditCost > 0) {
-        await setBalance(Math.max(0, balance - aiCreditCost));
+        await spendCredits(aiCreditCost, 'spend_ai');
       }
 
       if (env.enableAudioPreview) {
@@ -1773,7 +1773,7 @@ export function useVoiceStudio() {
     loadPlaybackWaveform,
     refreshProcessedHistory,
     selection,
-    setBalance,
+    spendCredits,
     showAiOfflineAlert,
     showErrorAlert,
     showWarningAlert,

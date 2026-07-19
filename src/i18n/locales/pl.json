@@ -389,7 +389,7 @@
     "planNameFree": "Free",
     "planNamePremium": "Premium",
     "planFeatureWelcome": "Kredyty powitalne po instalacji (ważne 3 miesiące)",
-    "planFeatureFreeCreditsExpiry": "Darmowe kredyty wygasają po 3 miesiącach od przyznania",
+    "planFeatureFreeCreditsExpiry": "Darmowe kredyty wygasają 3 miesiące od instalacji; przy Premium zostają na stałe",
     "planFeatureMaxFile": "Limit czasu na plik/nagranie: max {{maxDuration}}",
     "planFeatureCustomBasicEffects": "Własne efekty podstawowe",
     "planFeatureOneCredit": "1 kredyt AI = 1 rozpoczęta minuta",

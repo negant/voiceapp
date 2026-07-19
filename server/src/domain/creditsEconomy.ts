@@ -46,13 +46,72 @@ export function totalBalance(credits: number, freeCredits: number): number {
   return Math.max(0, credits) + Math.max(0, freeCredits);
 }
 
+export function toDate(
+  value: Date | string | null | undefined,
+): Date | null {
+  if (!value) {
+    return null;
+  }
+  const date = typeof value === 'string' ? new Date(value) : value;
+  return Number.isFinite(date.getTime()) ? date : null;
+}
+
+/**
+ * Free-credit deadline = installed_at + N months.
+ * Used at register and when restoring expiry after Premium downgrade.
+ */
+export function resolveFreeCreditsExpiresAt(
+  installedAt: Date | string,
+  validityMonths: number = FREE_CREDITS_VALIDITY_MONTHS,
+): Date {
+  const installed = toDate(installedAt) ?? new Date();
+  return addMonthsUtc(installed, validityMonths);
+}
+
 export function isFreeCreditsExpired(
   expiresAt: Date | string | null | undefined,
   now: Date = new Date(),
 ): boolean {
-  if (!expiresAt) {
+  const expiry = toDate(expiresAt ?? null);
+  if (!expiry) {
     return false;
   }
-  const expiry = typeof expiresAt === 'string' ? new Date(expiresAt) : expiresAt;
-  return Number.isFinite(expiry.getTime()) && expiry.getTime() <= now.getTime();
+  return expiry.getTime() <= now.getTime();
+}
+
+/**
+ * Free credits expire 3 months after install — but never while plan is premium
+ * (Premium keeps remaining free credits permanently).
+ */
+export function shouldExpireFreeCredits(params: {
+  plan: AccountPlan;
+  freeCredits: number;
+  freeCreditsExpiresAt: Date | string | null | undefined;
+  installedAt?: Date | string | null;
+  validityMonths?: number;
+  now?: Date;
+}): boolean {
+  if (params.plan === 'premium') {
+    return false;
+  }
+  if (params.freeCredits <= 0) {
+    return false;
+  }
+
+  const now = params.now ?? new Date();
+  const explicit = toDate(params.freeCreditsExpiresAt ?? null);
+  if (explicit) {
+    return isFreeCreditsExpired(explicit, now);
+  }
+
+  // Fallback: derive from installed_at when expires_at was cleared
+  if (params.installedAt) {
+    const derived = resolveFreeCreditsExpiresAt(
+      params.installedAt,
+      params.validityMonths ?? FREE_CREDITS_VALIDITY_MONTHS,
+    );
+    return isFreeCreditsExpired(derived, now);
+  }
+
+  return false;
 }

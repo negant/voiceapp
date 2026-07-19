@@ -3,7 +3,7 @@ import type { PoolClient } from 'pg';
 import { config } from '../config.js';
 import {
   addMonthsUtc,
-  isFreeCreditsExpired,
+  resolveFreeCreditsExpiresAt,
   resolvePremiumPackTotal,
   type AccountPlan,
   type PlanEventType,
@@ -12,6 +12,12 @@ import {
 import type { DbClient } from '../db/pool.js';
 import { pool } from '../db/pool.js';
 import { mapDeviceRow, type DeviceRow, type DeviceSnapshot } from '../types.js';
+import { applyFreeCreditsExpiryInTx } from './freeCreditsExpiry.js';
+import {
+  bumpStatsForNewInstall,
+  getFreeCreditsInstallCap,
+  lockStatsRow,
+} from './statsService.js';
 
 export { applyFreeCreditsExpiry } from './freeCreditsExpiry.js';
 
@@ -80,32 +86,16 @@ export async function getDeviceById(
   return result.rows[0] ?? null;
 }
 
-async function getFreeInstallsGranted(client: PoolClient): Promise<number> {
-  const result = await client.query<{ value: string }>(
-    `SELECT value FROM voiceapp_meta WHERE key = 'free_installs_granted' FOR UPDATE`,
-  );
-  return Number.parseInt(result.rows[0]?.value ?? '0', 10) || 0;
-}
-
-async function setFreeInstallsGranted(
-  client: PoolClient,
-  value: number,
-): Promise<void> {
-  await client.query(
-    `INSERT INTO voiceapp_meta (key, value, updated_at)
-     VALUES ('free_installs_granted', $1, NOW())
-     ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = NOW()`,
-    [String(value)],
-  );
-}
-
 export type RegisterResult = {
   status: 'granted' | 'already_registered' | 'pool_exhausted';
+  /** True when an existing device returned with saved plan/credits (reinstall). */
+  restored: boolean;
   grantedFreeCredits: number;
   device: DeviceSnapshot;
   pool: {
     installCap: number;
     installsGranted: number;
+    installCount: number;
     remainingSlots: number;
   };
 };
@@ -124,9 +114,9 @@ export async function registerDevice(params: {
       [params.deviceId],
     );
 
-    const installsGranted = await getFreeInstallsGranted(client);
-    const installCap = config.freeInstallsWithTestCredits;
-    const remainingSlots = Math.max(0, installCap - installsGranted);
+    const stats = await lockStatsRow(client);
+    const installCap = await getFreeCreditsInstallCap(client);
+    const remainingSlots = Math.max(0, installCap - stats.free_credits_grants);
 
     if (existing.rows[0]) {
       let row = existing.rows[0];
@@ -147,50 +137,31 @@ export async function registerDevice(params: {
         );
       }
 
-      // Apply expiry inside the same transaction via direct update
-      if (
-        row.free_credits > 0 &&
-        isFreeCreditsExpired(row.free_credits_expires_at)
-      ) {
-        const expired = await client.query<DeviceRow>(
-          `UPDATE voiceapp_devices
-           SET free_credits = 0, free_credits_expires_at = NULL, updated_at = NOW()
-           WHERE device_id = $1
-           RETURNING *`,
-          [params.deviceId],
-        );
-        if (expired.rows[0]) {
-          await insertLedger(client, {
-            deviceId: params.deviceId,
-            reason: 'expire_free',
-            deltaCredits: 0,
-            deltaFreeCredits: -row.free_credits,
-            balanceCredits: expired.rows[0].credits,
-            balanceFreeCredits: 0,
-          });
-          row = expired.rows[0];
-        }
-      }
+      // Reinstall / return: restore plan + credits, never grant new free credits
+      row = await applyFreeCreditsExpiryInTx(client, row);
 
       await client.query('COMMIT');
       return {
         status: 'already_registered',
+        restored: true,
         grantedFreeCredits: 0,
         device: mapDeviceRow(row),
         pool: {
           installCap,
-          installsGranted,
+          installsGranted: stats.free_credits_grants,
+          installCount: stats.install_count,
           remainingSlots,
         },
       };
     }
 
     const canGrant =
-      installsGranted < installCap && config.startingFreeCredits > 0;
+      stats.free_credits_grants < installCap && config.startingFreeCredits > 0;
     const grantedFreeCredits = canGrant ? config.startingFreeCredits : 0;
     const now = new Date();
+    // Deadline counted from installation time (= now on first register)
     const freeExpires = canGrant
-      ? addMonthsUtc(now, config.freeCreditsValidityMonths)
+      ? resolveFreeCreditsExpiresAt(now, config.freeCreditsValidityMonths)
       : null;
 
     const inserted = await client.query<DeviceRow>(
@@ -237,24 +208,31 @@ export async function registerDevice(params: {
         balanceCredits: 0,
         balanceFreeCredits: grantedFreeCredits,
       });
-      await setFreeInstallsGranted(client, installsGranted + 1);
     }
+
+    const nextStats = await bumpStatsForNewInstall(client, {
+      grantedFreeCredits: grantedFreeCredits > 0,
+    });
 
     await client.query('COMMIT');
 
-    const nextGranted = grantedFreeCredits > 0 ? installsGranted + 1 : installsGranted;
     return {
       status: canGrant
         ? 'granted'
         : config.startingFreeCredits > 0
           ? 'pool_exhausted'
           : 'granted',
+      restored: false,
       grantedFreeCredits,
       device: mapDeviceRow(row),
       pool: {
         installCap,
-        installsGranted: nextGranted,
-        remainingSlots: Math.max(0, installCap - nextGranted),
+        installsGranted: nextStats.free_credits_grants,
+        installCount: nextStats.install_count,
+        remainingSlots: Math.max(
+          0,
+          installCap - nextStats.free_credits_grants,
+        ),
       },
     };
   } catch (error) {
@@ -282,29 +260,7 @@ export async function syncDevice(params: {
     }
 
     let row = existing.rows[0];
-    if (
-      row.free_credits > 0 &&
-      isFreeCreditsExpired(row.free_credits_expires_at)
-    ) {
-      const expired = await client.query<DeviceRow>(
-        `UPDATE voiceapp_devices
-         SET free_credits = 0, free_credits_expires_at = NULL, updated_at = NOW()
-         WHERE device_id = $1
-         RETURNING *`,
-        [params.deviceId],
-      );
-      if (expired.rows[0]) {
-        await insertLedger(client, {
-          deviceId: params.deviceId,
-          reason: 'expire_free',
-          deltaCredits: 0,
-          deltaFreeCredits: -row.free_credits,
-          balanceCredits: expired.rows[0].credits,
-          balanceFreeCredits: 0,
-        });
-        row = expired.rows[0];
-      }
-    }
+    row = await applyFreeCreditsExpiryInTx(client, row);
 
     // Monthly Premium renewal: refill pack when renew_at is due
     if (
@@ -404,19 +360,7 @@ export async function spendCredits(params: {
     }
 
     let row = existing.rows[0];
-    if (
-      row.free_credits > 0 &&
-      isFreeCreditsExpired(row.free_credits_expires_at)
-    ) {
-      const expired = await client.query<DeviceRow>(
-        `UPDATE voiceapp_devices
-         SET free_credits = 0, free_credits_expires_at = NULL, updated_at = NOW()
-         WHERE device_id = $1
-         RETURNING *`,
-        [params.deviceId],
-      );
-      row = expired.rows[0] ?? { ...row, free_credits: 0 };
-    }
+    row = await applyFreeCreditsExpiryInTx(client, row);
 
     const total = row.credits + row.free_credits;
     if (total < amount) {
@@ -510,11 +454,13 @@ export async function setDevicePlan(params: {
         config.premiumGratisCredits,
       );
       const renewAt = addMonthsUtc(now, 1);
+      // Premium keeps remaining free credits permanently (clear expiry)
       const updated = await client.query<DeviceRow>(
         `UPDATE voiceapp_devices
          SET plan = 'premium',
              credits = credits + $2,
              premium_credits_renew_at = $3,
+             free_credits_expires_at = NULL,
              plan_enabled_at = $4,
              plan_disabled_at = NULL,
              last_sync_at = NOW(),
@@ -529,7 +475,7 @@ export async function setDevicePlan(params: {
         eventType: 'plan_enabled',
         plan: 'premium',
         previousPlan: row.plan,
-        meta: { pack },
+        meta: { pack, freeCreditsKeptPermanently: next.free_credits },
       });
       await insertLedger(client, {
         deviceId: params.deviceId,
@@ -541,24 +487,36 @@ export async function setDevicePlan(params: {
         clientRequestId: params.clientRequestId ?? null,
       });
     } else {
+      // Downgrade: restore free-credit deadline from original install time
+      const freeExpires =
+        row.free_credits > 0
+          ? resolveFreeCreditsExpiresAt(
+              row.installed_at,
+              config.freeCreditsValidityMonths,
+            )
+          : null;
       const updated = await client.query<DeviceRow>(
         `UPDATE voiceapp_devices
          SET plan = 'free',
              premium_credits_renew_at = NULL,
+             free_credits_expires_at = $3,
              plan_enabled_at = $2,
              plan_disabled_at = $2,
              last_sync_at = NOW(),
              updated_at = NOW()
          WHERE device_id = $1
          RETURNING *`,
-        [params.deviceId, now],
+        [params.deviceId, now, freeExpires],
       );
-      next = updated.rows[0];
+      next = await applyFreeCreditsExpiryInTx(client, updated.rows[0], now);
       await insertPlanEvent(client, {
         deviceId: params.deviceId,
         eventType: 'plan_disabled',
         plan: 'free',
         previousPlan: row.plan,
+        meta: {
+          freeCreditsExpiresAt: freeExpires?.toISOString() ?? null,
+        },
       });
     }
 

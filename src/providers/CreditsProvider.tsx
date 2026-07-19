@@ -11,7 +11,10 @@ import {
 import { Platform } from 'react-native';
 
 import { appVersion } from '@/config/app';
-import { AI_STARTED_MINUTE_SEC } from '@/config/credits';
+import {
+  AI_STARTED_MINUTE_SEC,
+  resolvePremiumIncludedStartedMinutes,
+} from '@/config/credits';
 import { env } from '@/config/env';
 import { useDatabase } from '@/hooks/useDatabase';
 import {
@@ -27,8 +30,15 @@ import {
   ensureInitialCreditsBalance,
   setCreditsBalance as persistCreditsBalance,
 } from '@/services/database/creditsRepository';
+import {
+  isCreditsApiConfigured,
+  setPlanWithApi,
+  spendCreditsWithApi,
+  syncCreditsWithApi,
+} from '@/services/credits/creditsApi';
+import type { CreditsDeviceSnapshot } from '@/services/credits/creditsApi.types';
 import { fetchCreditsBootstrap } from '@/services/credits/creditsBootstrap';
-import { ensureDeviceId } from '@/services/device';
+import { createDeviceId, ensureDeviceId } from '@/services/device';
 import type { AccountPlanId } from '@/types/account';
 
 type CreditsContextValue = {
@@ -45,6 +55,8 @@ type CreditsContextValue = {
   deviceId: string | null;
   refreshBalance: () => Promise<number>;
   setBalance: (balance: number) => Promise<void>;
+  /** Prefer this for AI usage — syncs spend to API when configured. */
+  spendCredits: (amount: number, reason?: string) => Promise<number>;
   refreshAccount: () => Promise<AccountPlanId>;
   setAccountPlan: (plan: AccountPlanId) => Promise<void>;
   setCreditsPerAi10Sec: (rate: number) => Promise<void>;
@@ -59,7 +71,24 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
   const [accountPlan, setAccountPlanState] = useState<AccountPlanId>('free');
   const [isHydrated, setIsHydrated] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
-  const apiBootstrapAttempted = useRef(false);
+  const apiStartSyncAttempted = useRef(false);
+  const balanceRef = useRef(0);
+  const planRef = useRef<AccountPlanId>('free');
+
+  balanceRef.current = balance;
+  planRef.current = accountPlan;
+
+  const applyDeviceSnapshot = useCallback(
+    async (device: CreditsDeviceSnapshot) => {
+      await persistCreditsBalance(device.balance);
+      await persistAccountPlan(device.plan);
+      setBalanceState(device.balance);
+      setAccountPlanState(device.plan);
+      setIsHydrated(true);
+      return device.balance;
+    },
+    [],
+  );
 
   const refreshAccount = useCallback(async () => {
     if (!isReady) {
@@ -72,6 +101,18 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     return nextPlan;
   }, [isReady]);
 
+  const ensureRegisteredOnApi = useCallback(
+    async (id: string) => {
+      const platform = Platform.OS === 'ios' ? 'ios' : 'android';
+      await fetchCreditsBootstrap({
+        deviceId: id,
+        platform,
+        appVersion,
+      });
+    },
+    [],
+  );
+
   const refreshBalance = useCallback(async () => {
     if (!isReady) {
       setBalanceState(0);
@@ -82,8 +123,8 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     const id = await ensureDeviceId();
     setDeviceId(id);
 
-    if (env.creditsApiBaseUrl && !apiBootstrapAttempted.current) {
-      apiBootstrapAttempted.current = true;
+    if (isCreditsApiConfigured() && !apiStartSyncAttempted.current) {
+      apiStartSyncAttempted.current = true;
       const platform = Platform.OS === 'ios' ? 'ios' : 'android';
       const bootstrap = await fetchCreditsBootstrap({
         deviceId: id,
@@ -97,8 +138,26 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         setBalanceState(bootstrap.balance);
         setAccountPlanState(bootstrap.accountPlan);
         setCreditsPerAi10SecState(bootstrap.creditsPerAi10Sec);
+
+        // Sync applies free expiry + monthly premium renew after register
+        const synced = await syncCreditsWithApi({
+          deviceId: id,
+          appVersion,
+        });
+        if (synced) {
+          return applyDeviceSnapshot(synced);
+        }
+
         setIsHydrated(true);
         return bootstrap.balance;
+      }
+    } else if (isCreditsApiConfigured() && apiStartSyncAttempted.current) {
+      const synced = await syncCreditsWithApi({
+        deviceId: id,
+        appVersion,
+      });
+      if (synced) {
+        return applyDeviceSnapshot(synced);
       }
     }
 
@@ -111,7 +170,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     setCreditsPerAi10SecState(economy.creditsPerAi10Sec);
     setIsHydrated(true);
     return nextBalance;
-  }, [isReady, refreshAccount]);
+  }, [applyDeviceSnapshot, isReady, refreshAccount]);
 
   const setBalance = useCallback(
     async (nextBalance: number) => {
@@ -126,17 +185,86 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     [isReady],
   );
 
+  const spendCredits = useCallback(
+    async (amount: number, reason = 'spend_ai') => {
+      if (!isReady) {
+        return balanceRef.current;
+      }
+
+      const spendAmount = Math.floor(amount);
+      if (!Number.isFinite(spendAmount) || spendAmount <= 0) {
+        return balanceRef.current;
+      }
+
+      const id = deviceId ?? (await ensureDeviceId());
+      setDeviceId(id);
+
+      if (isCreditsApiConfigured()) {
+        await ensureRegisteredOnApi(id);
+        const device = await spendCreditsWithApi({
+          deviceId: id,
+          amount: spendAmount,
+          clientRequestId: createDeviceId(),
+          reason,
+        });
+        if (device) {
+          return applyDeviceSnapshot(device);
+        }
+      }
+
+      const next = Math.max(0, balanceRef.current - spendAmount);
+      await persistCreditsBalance(next);
+      setBalanceState(next);
+      setIsHydrated(true);
+      return next;
+    },
+    [applyDeviceSnapshot, deviceId, ensureRegisteredOnApi, isReady],
+  );
+
   const setAccountPlan = useCallback(
     async (plan: AccountPlanId) => {
       if (!isReady) {
         return;
       }
 
+      const id = deviceId ?? (await ensureDeviceId());
+      setDeviceId(id);
+
+      if (isCreditsApiConfigured()) {
+        await ensureRegisteredOnApi(id);
+        const device = await setPlanWithApi({
+          deviceId: id,
+          plan,
+          clientRequestId: createDeviceId(),
+        });
+        if (device) {
+          await applyDeviceSnapshot(device);
+          return;
+        }
+      }
+
+      // Local fallback (no API / offline): mirror server pack rules
+      const previous = planRef.current;
       await persistAccountPlan(plan);
       setAccountPlanState(plan);
+
+      if (plan === 'premium' && previous !== 'premium') {
+        const pack = resolvePremiumIncludedStartedMinutes(
+          env.premiumCredits,
+          env.premiumGratisCredits,
+        );
+        const next = balanceRef.current + pack;
+        await persistCreditsBalance(next);
+        setBalanceState(next);
+      } else if (plan === 'free' && previous === 'premium') {
+        const next = env.startingCredits;
+        await persistCreditsBalance(next);
+        setBalanceState(next);
+      }
+
       setIsHydrated(true);
     },
-    [isReady],
+    [applyDeviceSnapshot, deviceId, ensureRegisteredOnApi, isReady],
   );
 
   const setCreditsPerAi10Sec = useCallback(
@@ -171,6 +299,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       deviceId,
       refreshBalance,
       setBalance,
+      spendCredits,
       refreshAccount,
       setAccountPlan,
       setCreditsPerAi10Sec,
@@ -184,6 +313,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       deviceId,
       refreshBalance,
       setBalance,
+      spendCredits,
       refreshAccount,
       setAccountPlan,
       setCreditsPerAi10Sec,

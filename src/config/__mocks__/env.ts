@@ -18,6 +18,8 @@ export const env = {
   premiumGratisCredits: 25,
   maxAudioDurationFreeSec: 60,
   maxAudioDurationPremiumSec: 600,
+  creditsApiBaseUrl: null as string | null,
+  creditsApiToken: null as string | null,
 } as const;
 
 export function isWaveSpeedStsConfigured(): boolean {

@@ -52,7 +52,6 @@ export function CreditsInfoScreen(_props: RootStackScreenProps<'CreditsInfo'>) {
     balance,
     creditsPerStartedMinute,
     isPremium,
-    setBalance,
     setAccountPlan,
     refreshBalance,
   } = useCredits();
@@ -163,8 +162,8 @@ export function CreditsInfoScreen(_props: RootStackScreenProps<'CreditsInfo'>) {
   );
 
   const handleBuyPremium = async () => {
+    // Provider applies Premium pack via API (or local fallback) — do not add credits twice.
     await setAccountPlan('premium');
-    await setBalance(balance + premiumIncludedMinutes);
   };
 
   return (

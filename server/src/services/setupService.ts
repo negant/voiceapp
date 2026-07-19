@@ -1,4 +1,5 @@
 import { pool } from '../db/pool.js';
+import { config } from '../config.js';
 
 export type SetupSnapshot = {
   minAppVersion: string;
@@ -8,6 +9,8 @@ export type SetupSnapshot = {
   messagePl: string;
   storeUrlIos: string;
   storeUrlAndroid: string;
+  /** First N unique installs may receive welcome free credits. */
+  freeCreditsInstallCap: number;
 };
 
 const KEYS = [
@@ -18,6 +21,7 @@ const KEYS = [
   'message_pl',
   'store_url_ios',
   'store_url_android',
+  'free_credits_install_cap',
 ] as const;
 
 export async function getSetupSnapshot(): Promise<SetupSnapshot> {
@@ -27,6 +31,10 @@ export async function getSetupSnapshot(): Promise<SetupSnapshot> {
   );
 
   const map = new Map(result.rows.map(row => [row.key, row.value]));
+  const capParsed = Number.parseInt(
+    map.get('free_credits_install_cap') ?? '',
+    10,
+  );
 
   return {
     minAppVersion: map.get('min_app_version') ?? '0.0.1',
@@ -36,6 +44,10 @@ export async function getSetupSnapshot(): Promise<SetupSnapshot> {
     messagePl: map.get('message_pl') ?? '',
     storeUrlIos: map.get('store_url_ios') ?? '',
     storeUrlAndroid: map.get('store_url_android') ?? '',
+    freeCreditsInstallCap:
+      Number.isFinite(capParsed) && capParsed >= 0
+        ? capParsed
+        : config.freeInstallsWithTestCredits,
   };
 }
 

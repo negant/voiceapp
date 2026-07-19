@@ -6,7 +6,6 @@ import { SettingsScreen } from '@/screens/SettingsScreen';
 
 const mockNavigate = jest.fn();
 const mockSetAccountPlan = jest.fn().mockResolvedValue(undefined);
-const mockSetBalance = jest.fn().mockResolvedValue(undefined);
 
 jest.mock('@/hooks/useTranslation', () => ({
   useTranslation: () => ({
@@ -26,20 +25,13 @@ jest.mock('@react-navigation/native', () => ({
 jest.mock('@/providers/CreditsProvider', () => ({
   useCredits: () => ({
     isPremium: false,
-    balance: 10,
     setAccountPlan: mockSetAccountPlan,
-    setBalance: mockSetBalance,
   }),
 }));
 
 jest.mock('@/config/env', () => ({
   env: {
     debugMode: true,
-    startingCredits: 10,
-    premiumPriceUsd: 4.99,
-    appUsdPerStartedMinute: 0.05,
-    premiumCredits: 100,
-    premiumGratisCredits: 25,
   },
 }));
 
@@ -73,7 +65,7 @@ describe('SettingsScreen', () => {
     expect(tree!.root.findAllByType(Switch)).toHaveLength(1);
   });
 
-  it('enabling premium adds pack on top of remaining free credits', async () => {
+  it('enabling premium delegates to setAccountPlan (API/local pack)', async () => {
     let tree: ReactTestRenderer.ReactTestRenderer;
 
     await ReactTestRenderer.act(async () => {
@@ -89,10 +81,9 @@ describe('SettingsScreen', () => {
     });
 
     expect(mockSetAccountPlan).toHaveBeenCalledWith('premium');
-    expect(mockSetBalance).toHaveBeenCalledWith(135);
   });
 
-  it('disabling premium restores free welcome credits', async () => {
+  it('disabling premium sets free plan via setAccountPlan', async () => {
     let tree: ReactTestRenderer.ReactTestRenderer;
 
     await ReactTestRenderer.act(async () => {
@@ -108,6 +99,5 @@ describe('SettingsScreen', () => {
     });
 
     expect(mockSetAccountPlan).toHaveBeenCalledWith('free');
-    expect(mockSetBalance).toHaveBeenCalledWith(10);
   });
 });

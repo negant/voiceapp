@@ -21,4 +21,5 @@ module.exports = {
     '!src/**/*.d.ts',
     '!src/**/__mocks__/**',
   ],
+  testPathIgnorePatterns: ['/node_modules/', '/server/', '/android/', '/ios/'],
 };
