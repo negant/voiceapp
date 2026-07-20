@@ -7,8 +7,13 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 
 ## [Unreleased]
 
-### Added
-- **`voiceapp_stats`:** singleton (`install_count`, `free_credits_grants`); limit free w `voiceapp_setup.free_credits_install_cap` = **30**; reinstall → `credits_restore` (plan+kredyty bez nowych free).
+### Fixed
+- **Server build:** `src/types.ts` import `./domain/creditsEconomy.js` (było błędne `../domain/`).
+- **Prod migrate:** `schema.sql` kopiowany do `dist/db/` przy `npm run build`; fallback w `migrate.ts` na `src/db/schema.sql`.
+- **`.env.example` (app + server):** spójne komentarze prod/dev, mapowanie `API_TOKEN` ↔ `CREDITS_API_TOKEN`, `DATABASE_URL` = `POSTGRES_*`.
+
+- **Prod API URL:** `CREDITS_API_BASE_URL=https://api.ukrywane.pl` (DNS A → `91.228.196.27`); `.env.example` i `server/README.md` — dev LAN jako komentarz.
+
 - **API kredytów (`server/`):** Fastify + Postgres (Docker); tabele `voiceapp_devices`, `voiceapp_device_plan_events`, `voiceapp_setup`, ledger; auth Bearer; register/sync/spend/plan/setup; lokalny start w `server/README.md`.
 - **API logi plikowe:** `server/logs/api-YYYY-MM-DD.log` **tylko w development** (`NODE_ENV`); gitignore zawartości; skrypty `logs:tail`, `db:psql` / `db:tables` / `db:devices`; zdarzenia sync: `credits_register` / `credits_sync` / `credits_plan` / `credits_spend`.
 - **Fix URL API na urządzeniu:** fizyczny Android nie może używać `localhost` — `CREDITS_API_BASE_URL` = IP LAN (np. `http://192.168.x.x:8787`).

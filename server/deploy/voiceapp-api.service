@@ -1,0 +1,19 @@
+# Copy to VPS: /etc/systemd/system/voiceapp-api.service
+# systemctl daemon-reload && systemctl enable --now voiceapp-api
+
+[Unit]
+Description=Voice App API
+After=docker.service network-online.target
+Requires=docker.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/voice-app/server
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/node dist/index.js
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

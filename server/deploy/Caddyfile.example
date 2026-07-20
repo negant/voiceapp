@@ -1,0 +1,6 @@
+# Copy to VPS: /etc/caddy/Caddyfile (merge with existing file if any)
+# Requires: api.ukrywane.pl A record → VPS IP, ports 80/443 open
+
+api.ukrywane.pl {
+	reverse_proxy 127.0.0.1:8787
+}

@@ -4,6 +4,8 @@ Backend kredytów / urządzeń / setup w monorepo (`server/`).
 
 Wspólna wiedza domenowa: [`.aiassistant/rules/credits-backend.md`](../.aiassistant/rules/credits-backend.md) oraz [`.aiassistant/rules/domain-knowledge.md`](../.aiassistant/rules/domain-knowledge.md).
 
+**Deploy VPS (Debian):** [`DEPLOY.md`](./DEPLOY.md) — prod `https://api.ukrywane.pl`.
+
 ## Wymagania
 
 - Node.js >= 22.11
@@ -122,14 +124,17 @@ Authorization: Bearer <API_TOKEN>
 ## App `.env`
 
 ```
-# Fizyczny telefon (LAN) — podmień IP swojego Maca
-CREDITS_API_BASE_URL=http://192.168.0.30:8787
-# Emulator Android:
-# CREDITS_API_BASE_URL=http://10.0.2.2:8787
-# iOS Simulator:
-# CREDITS_API_BASE_URL=http://localhost:8787
-CREDITS_API_TOKEN=dev-voiceapp-api-token-change-me
+# Production (VPS + Caddy HTTPS)
+CREDITS_API_BASE_URL=https://api.ukrywane.pl
+CREDITS_API_TOKEN=<ten sam co API_TOKEN na serwerze>
+
+# Local dev — fizyczny telefon (LAN), podmień IP Maca:
+# CREDITS_API_BASE_URL=http://192.168.0.30:8787
+# Emulator Android: http://10.0.2.2:8787
+# iOS Simulator: http://localhost:8787
 ```
+
+DNS: `api.ukrywane.pl` → A → `91.228.196.27`. Caddy na VPS: `reverse_proxy 127.0.0.1:8787`.
 
 **Ważne:** na fizycznym Androidzie `localhost` = telefon, nie Mac — stąd brak wpisów w `server/logs` i brak zmian w Postgres. Po zmianie `.env` zrestartuj Metro (`npm start -- --reset-cache`).
 

@@ -60,6 +60,8 @@ Authorization: Bearer <CREDITS_API_TOKEN>
 
 App: `CREDITS_API_BASE_URL` + `CREDITS_API_TOKEN` w `.env`.
 
+**Production:** `CREDITS_API_BASE_URL=https://api.ukrywane.pl` (VPS `91.228.196.27`, Caddy HTTPS).
+
 **Dev na fizycznym telefonie:** `localhost` nie działa — użyj IP Maca w LAN (np. `http://192.168.x.x:8787`). Emulator Android: `http://10.0.2.2:8787`. Po zmianie `.env` zrestartuj Metro.
 
 Logi syncu (dev): `credits_register`, `credits_sync`, `credits_plan`, `credits_spend` w `server/logs/api-*.log`.

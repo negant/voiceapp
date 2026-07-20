@@ -1,4 +1,4 @@
-import type { AccountPlan, PlanEventType, Platform } from '../domain/creditsEconomy.js';
+import type { AccountPlan, PlanEventType, Platform } from './domain/creditsEconomy.js';
 
 export type DeviceRow = {
   device_id: string;

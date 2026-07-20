@@ -1,6 +1,6 @@
 # Postęp prac — Voice App
 
-Ostatnia aktualizacja: **2026-07-19**
+Ostatnia aktualizacja: **2026-07-20**
 
 ## Status ogólny
 Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
@@ -46,10 +46,12 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] **Fix AI po trimie** — `prepareAiSourceForSts` (trim w pamięci → base64 do STS); osobna ścieżka `processAiTierAudio`
 
 ## W toku
+- [ ] **Deploy API na VPS** — Debian, `api.ukrywane.pl` → `91.228.196.27`; Caddy HTTPS, systemd, Postgres Docker
 - [ ] Keychain/Keystore dla trwałego `device_id` (anty-reinstall)
 - [ ] Podpięcie `GET /v1/setup` w `fetchAppUpdateStatus`
 
 ## Zrobione (niedawno)
+- [x] DNS prod API: `api.ukrywane.pl`; `.env` → `https://api.ukrywane.pl`
 - [x] Sync plan/saldo z API (start, plan, spend AI)
 - [x] **Backend kredytów** — monorepo `server/` (Docker Postgres + Fastify)
 - [x] Device ID w ustawieniach + bootstrap API
