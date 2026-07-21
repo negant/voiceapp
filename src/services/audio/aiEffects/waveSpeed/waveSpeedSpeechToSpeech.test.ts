@@ -19,13 +19,16 @@ jest.mock('@/config/env', () => ({
 
 jest.mock('react-native-blob-util', () => {
   const fetchMock = jest.fn();
+  const wrapMock = jest.fn((path: string) => `wrap:${path}`);
   return {
     __esModule: true,
     default: {
       config: jest.fn(() => ({
         fetch: fetchMock,
       })),
+      wrap: wrapMock,
       fs: {
+        dirs: { CacheDir: '/tmp/cache' },
         exists: jest.fn(async () => true),
         readFile: jest.fn(async () =>
           globalThis.btoa('source-audio-bytes-long-enough'),
@@ -34,6 +37,7 @@ jest.mock('react-native-blob-util', () => {
         unlink: jest.fn(async () => undefined),
       },
       __fetchMock: fetchMock,
+      __wrapMock: wrapMock,
     },
   };
 });
@@ -46,6 +50,7 @@ jest.mock('@/services/audio/audioStorage', () => ({
 
 type BlobUtilMock = typeof ReactNativeBlobUtil & {
   __fetchMock: jest.Mock;
+  __wrapMock: jest.Mock;
 };
 
 const blobUtil = ReactNativeBlobUtil as BlobUtilMock;
@@ -63,6 +68,7 @@ function mockBlobResponse(status: number, jsonBody: unknown, base64 = '') {
 describe('convertSpeechToSpeechWithWaveSpeed', () => {
   beforeEach(() => {
     blobUtil.__fetchMock.mockReset();
+    blobUtil.__wrapMock.mockImplementation((path: string) => `wrap:${path}`);
     (blobUtil.fs.writeFile as jest.Mock).mockClear();
   });
 
@@ -117,7 +123,12 @@ describe('convertSpeechToSpeechWithWaveSpeed', () => {
       expect.objectContaining({
         Authorization: 'Bearer wsk_test_key',
       }),
-      expect.any(Array),
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: 'file',
+          data: 'wrap:/tmp/source.mp3',
+        }),
+      ]),
     );
     expect(blobUtil.__fetchMock).toHaveBeenNthCalledWith(
       2,

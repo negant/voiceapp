@@ -10,7 +10,7 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 ### Fixed
 - **Server build:** `src/types.ts` import `./domain/creditsEconomy.js` (było błędne `../domain/`).
 - **Prod migrate:** `schema.sql` kopiowany do `dist/db/` przy `npm run build`; fallback w `migrate.ts` na `src/db/schema.sql`.
-- **`.env.example` (app + server):** spójne komentarze prod/dev, mapowanie `API_TOKEN` ↔ `CREDITS_API_TOKEN`, `DATABASE_URL` = `POSTGRES_*`.
+- **Release Android AI (WaveSpeed):** upload źródła przez `wrap(path)`; referencje MP3 — `assets.srcDir` z repo (bez taska Copy), odczyt `bundle-assets://` z mapowaniem lowercase URI → camelCase (`resolveBundledAssetFile.ts`).
 
 - **Prod API URL:** `CREDITS_API_BASE_URL=https://api.ukrywane.pl` (DNS A → `91.228.196.27`); `.env.example` i `server/README.md` — dev LAN jako komentarz.
 

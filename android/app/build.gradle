@@ -72,6 +72,10 @@ def enableProguardInReleaseBuilds = false
  */
 def jscFlavor = 'io.github.react-native-community:jsc-android:2026004.+'
 
+// WaveSpeed reference MP3s: Metro packs require() into res/raw (assets_references_*),
+// unreadable via BlobUtil. Ship the same files as APK assets/ for bundle-assets:// reads.
+def waveSpeedReferenceAssetsDir = file("${projectDir}/../../assets/references")
+
 android {
     ndkVersion rootProject.ext.ndkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
@@ -105,6 +109,12 @@ android {
             signingConfig signingConfigs.debug
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+        }
+    }
+
+    sourceSets {
+        getByName("main") {
+            assets.srcDir(waveSpeedReferenceAssetsDir)
         }
     }
 

@@ -1,7 +1,10 @@
 import ReactNativeBlobUtil from 'react-native-blob-util';
-import { Image } from 'react-native';
 
 import { env } from '@/config/env';
+import {
+  resolveBundledAssetFilePath,
+  BundledAssetReadError,
+} from '@/services/audio/aiEffects/waveSpeed/resolveBundledAssetFile';
 import {
   WAVESPEED_MEDIA_UPLOAD_ENDPOINT,
   WAVESPEED_POLL_INTERVAL_MS,
@@ -132,45 +135,82 @@ function firstOutputUrl(outputs: unknown): string | null {
   return null;
 }
 
+type UploadPayload =
+  | { mode: 'file'; path: string }
+  | { mode: 'base64'; data: string };
+
 async function resolveSourceAudio(
   input: WaveSpeedSpeechToSpeechInput,
-): Promise<{ audioBase64: string; extension: string; mime: string }> {
-  let audioBase64 = input.audioBase64;
+): Promise<{ payload: UploadPayload; extension: string; mime: string }> {
   let extension = input.sourceExtension ?? 'wav';
   let mime = input.sourceMime ?? guessMimeType(`source.${extension}`);
 
-  if (!audioBase64) {
-    if (!input.sourceUri) {
-      throw new WaveSpeedStsError('STS requires sourceUri or audioBase64');
+  if (input.audioBase64) {
+    if (input.audioBase64.length < 32) {
+      throw new WaveSpeedStsError('Source audio file is empty or unreadable');
     }
-
-    const sourcePath = normalizePathForBlobUtil(input.sourceUri);
-    const exists = await ReactNativeBlobUtil.fs.exists(sourcePath);
-    if (!exists) {
-      throw new WaveSpeedStsError('Source audio file not found');
-    }
-
-    extension = guessExtension(sourcePath);
-    mime = guessMimeType(sourcePath);
-    audioBase64 = await ReactNativeBlobUtil.fs.readFile(sourcePath, 'base64');
+    return {
+      payload: { mode: 'base64', data: input.audioBase64 },
+      extension,
+      mime,
+    };
   }
 
-  if (!audioBase64 || audioBase64.length < 32) {
-    throw new WaveSpeedStsError('Source audio file is empty or unreadable');
+  if (!input.sourceUri) {
+    throw new WaveSpeedStsError('STS requires sourceUri or audioBase64');
   }
 
-  return { audioBase64, extension, mime };
+  const sourcePath = normalizePathForBlobUtil(input.sourceUri);
+  const exists = await ReactNativeBlobUtil.fs.exists(sourcePath);
+  if (!exists) {
+    throw new WaveSpeedStsError('Source audio file not found');
+  }
+
+  extension = guessExtension(sourcePath);
+  mime = guessMimeType(sourcePath);
+
+  // Stream from disk in release — base64 multipart bodies hang on Android release builds.
+  return {
+    payload: { mode: 'file', path: sourcePath },
+    extension,
+    mime,
+  };
 }
 
 async function uploadAudioBinary(
   apiKey: string,
-  audioBase64: string,
+  payload: UploadPayload,
   extension: string,
   mime: string,
   signal?: AbortSignal,
   filenamePrefix = 'source',
 ): Promise<string> {
   throwIfAborted(signal);
+
+  const startedAt = Date.now();
+  const multipartPart =
+    payload.mode === 'file'
+      ? {
+          name: 'file',
+          filename: `${filenamePrefix}.${extension}`,
+          type: mime,
+          data: ReactNativeBlobUtil.wrap(payload.path),
+        }
+      : {
+          name: 'file',
+          filename: `${filenamePrefix}.${extension}`,
+          type: mime,
+          data: payload.data,
+        };
+
+  logger.info(LOG_SCOPE, 'upload request', {
+    filenamePrefix,
+    mode: payload.mode,
+    mime,
+    ...(payload.mode === 'file'
+      ? { filePath: payload.path }
+      : { audioBase64Chars: payload.data.length }),
+  });
 
   const task = ReactNativeBlobUtil.config({
     timeout: WAVESPEED_REQUEST_TIMEOUT_MS,
@@ -181,14 +221,7 @@ async function uploadAudioBinary(
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'multipart/form-data',
     },
-    [
-      {
-        name: 'file',
-        filename: `${filenamePrefix}.${extension}`,
-        type: mime,
-        data: audioBase64,
-      },
-    ],
+    [multipartPart],
   ) as CancellableFetch;
 
   const onAbort = () => {
@@ -224,6 +257,11 @@ async function uploadAudioBinary(
     if (!downloadUrl) {
       throw new WaveSpeedStsError('WaveSpeed upload returned no download_url');
     }
+    logger.info(LOG_SCOPE, 'upload done', {
+      filenamePrefix,
+      status,
+      uploadMs: Date.now() - startedAt,
+    });
     return downloadUrl;
   } finally {
     signal?.removeEventListener('abort', onAbort);
@@ -441,52 +479,38 @@ async function resolveReferenceAudioUrl(
 
   throwIfAborted(input.signal);
 
-  const resolved = Image.resolveAssetSource(input.referenceAudioAsset);
-  if (!resolved?.uri) {
-    throw new WaveSpeedStsError('Could not resolve bundled reference audio asset');
+  logger.info(LOG_SCOPE, 'reference resolve start');
+  let referenceFile: { path: string; cleanup: () => Promise<void> };
+  try {
+    referenceFile = await resolveBundledAssetFilePath(
+      input.referenceAudioAsset,
+      'mp3',
+    );
+  } catch (error) {
+    const detail =
+      error instanceof BundledAssetReadError || error instanceof Error
+        ? error.message
+        : String(error);
+    logger.error(LOG_SCOPE, 'reference resolve failed', { detail });
+    throw new WaveSpeedStsError(`Bundled reference audio: ${detail}`);
   }
+  logger.info(LOG_SCOPE, 'reference resolve done', { filePath: referenceFile.path });
 
-  const assetUri = resolved.uri;
-  let audioBase64: string;
-
-  // Metro serves bundled assets over HTTP in dev; release builds use file URIs.
-  if (assetUri.startsWith('http://') || assetUri.startsWith('https://')) {
-    const response = (await ReactNativeBlobUtil.config({
-      timeout: WAVESPEED_REQUEST_TIMEOUT_MS,
-    }).fetch('GET', assetUri)) as BlobResponse;
-    const status = response.info().status;
-    if (status < 200 || status >= 300) {
-      throw new WaveSpeedStsError(
-        `Failed to load bundled reference audio (${status})`,
-        status,
-      );
-    }
-    audioBase64 = response.base64();
-  } else {
-    const sourcePath = normalizePathForBlobUtil(assetUri);
-    const exists = await ReactNativeBlobUtil.fs.exists(sourcePath);
-    if (!exists) {
-      throw new WaveSpeedStsError('Bundled reference audio file not found');
-    }
-    audioBase64 = await ReactNativeBlobUtil.fs.readFile(sourcePath, 'base64');
+  try {
+    logger.info(LOG_SCOPE, 'reference upload start', {
+      filePath: referenceFile.path,
+    });
+    return await uploadAudioBinary(
+      apiKey,
+      { mode: 'file', path: referenceFile.path },
+      'mp3',
+      'audio/mpeg',
+      input.signal,
+      'reference',
+    );
+  } finally {
+    await referenceFile.cleanup();
   }
-
-  if (!audioBase64 || audioBase64.length < 32) {
-    throw new WaveSpeedStsError('Bundled reference audio is empty or unreadable');
-  }
-
-  logger.info(LOG_SCOPE, 'reference upload start', {
-    audioBase64Chars: audioBase64.length,
-  });
-
-  return uploadAudioBinary(
-    apiKey,
-    audioBase64,
-    'mp3',
-    'audio/mpeg',
-    input.signal,
-    'reference',
-  );
 }
 
 /**
@@ -502,17 +526,20 @@ export async function convertSpeechToSpeechWithWaveSpeed(
   }
 
   throwIfAborted(input.signal);
-  const { audioBase64, extension, mime } = await resolveSourceAudio(input);
+  const { payload, extension, mime } = await resolveSourceAudio(input);
   throwIfAborted(input.signal);
 
   logger.info(LOG_SCOPE, 'upload start', {
     mime,
-    audioBase64Chars: audioBase64.length,
+    mode: payload.mode,
+    ...(payload.mode === 'base64'
+      ? { audioBase64Chars: payload.data.length }
+      : { filePath: payload.path }),
   });
 
   const audioUrl = await uploadAudioBinary(
     apiKey,
-    audioBase64,
+    payload,
     extension,
     mime,
     input.signal,

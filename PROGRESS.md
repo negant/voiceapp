@@ -51,6 +51,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [ ] Podpięcie `GET /v1/setup` w `fetchAppUpdateStatus`
 
 ## Zrobione (niedawno)
+- [x] **Release Android WaveSpeed** — referencje MP3: Gradle `copyWaveSpeedReferenceAssets` + `resolveBundledAssetFile` (`bundle-assets://` + mapowanie lowercase URI)
 - [x] DNS prod API: `api.ukrywane.pl`; `.env` → `https://api.ukrywane.pl`
 - [x] Sync plan/saldo z API (start, plan, spend AI)
 - [x] **Backend kredytów** — monorepo `server/` (Docker Postgres + Fastify)
