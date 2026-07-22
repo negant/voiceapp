@@ -520,7 +520,7 @@ async function resolveReferenceAudioUrl(
 export async function convertSpeechToSpeechWithWaveSpeed(
   input: WaveSpeedSpeechToSpeechInput,
 ): Promise<WaveSpeedSpeechToSpeechResult> {
-  const apiKey = env.waveSpeedApiKey;
+  const apiKey = env.aiEffectsApiKey;
   if (!apiKey) {
     throw new WaveSpeedStsError('WaveSpeed API key is not configured');
   }

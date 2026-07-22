@@ -55,6 +55,7 @@ describe('FaqSection', () => {
     expect(values).not.toContain('faq.q2Answer');
     expect(values).toContain('faq.q8Title');
     expect(values).toContain('faq.q9Title');
+    expect(values).toContain('faq.q10Title');
   });
 
   it('expands a question when its header is pressed', async () => {

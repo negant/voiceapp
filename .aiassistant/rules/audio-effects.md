@@ -95,7 +95,7 @@ aiEffects/
     waveSpeedConfig.ts
 ```
 
-Requires `WAVESPEED_API_KEY` + `ENABLE_WAVESPEED_STS`. References: `assets/references/` (`narratorFemale.mp3`, `narratorMale.mp3`, `legionary.mp3`) via `waveSpeedReferences.ts`. Extra avatar PNGs under `assets/presets/` (romantyczna, pirat, ogr, …) are kept for later use.
+Requires `AI_EFFECTS_API_KEY` + `ENABLE_AI_EFFECTS` + `AI_EFFECTS_API_BASE_URL` (default WaveSpeed v3). References: `assets/references/` (`narratorFemale.mp3`, `narratorMale.mp3`, `legionary.mp3`) via `waveSpeedReferences.ts`. Extra avatar PNGs under `assets/presets/` (romantyczna, pirat, ogr, …) are kept for later use.
 
 ### AI — checklist
 

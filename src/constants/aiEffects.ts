@@ -1,7 +1,7 @@
-import { isWaveSpeedStsConfigured } from '@/config/env';
+import { isAiEffectsConfigured } from '@/config/env';
 import type { AiEffect, AiEffectId } from '@/types/voiceStudio';
 
-/** All AI effects require WaveSpeed Chatterbox STS. */
+/** All AI effects require a configured cloud AI provider. */
 export const CLOUD_AI_EFFECT_IDS: ReadonlySet<AiEffectId> = new Set([
   'narrator',
   'narratorka',
@@ -36,11 +36,11 @@ const AI_EFFECT_CATALOG: AiEffect[] = [
 ];
 
 export function isAiEffectProviderConfigured(effectId: AiEffectId): boolean {
-  return CLOUD_AI_EFFECT_IDS.has(effectId) && isWaveSpeedStsConfigured();
+  return CLOUD_AI_EFFECT_IDS.has(effectId) && isAiEffectsConfigured();
 }
 
-/** AI effects shown when WaveSpeed STS is configured. */
-export const AI_EFFECTS: AiEffect[] = isWaveSpeedStsConfigured()
+/** AI effects shown when cloud AI is configured. */
+export const AI_EFFECTS: AiEffect[] = isAiEffectsConfigured()
   ? AI_EFFECT_CATALOG
   : [];
 

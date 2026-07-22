@@ -1,6 +1,6 @@
 # Postęp prac — Voice App
 
-Ostatnia aktualizacja: **2026-07-20**
+Ostatnia aktualizacja: **2026-07-22**
 
 ## Status ogólny
 Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
@@ -44,6 +44,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] **AI ↔ kredyty w UI** — limit nagrania/konwersji AI z salda; hinty kosztu (rozpoczęte minuty); `resolveEffectiveAiMaxDurationSec`
 - [x] **Pula testowa 30k instalacji** — dokumentacja API (`credits-backend.md`), stałe, stub bootstrap, copy PL/EN
 - [x] **Fix AI po trimie** — `prepareAiSourceForSts` (trim w pamięci → base64 do STS); osobna ścieżka `processAiTierAudio`
+- [x] **Kredyty AI na starcie** — `chargeAiCreditsBeforeProcessing` przed WaveSpeed (nie po sukcesie)
 
 ## W toku
 - [ ] **Deploy API na VPS** — Debian, `api.ukrywane.pl` → `91.228.196.27`; Caddy HTTPS, systemd, Postgres Docker
@@ -51,6 +52,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [ ] Podpięcie `GET /v1/setup` w `fetchAppUpdateStatus`
 
 ## Zrobione (niedawno)
+- [x] **Kredyty AI na starcie konwersji** — spend przed WaveSpeed
 - [x] **Release Android WaveSpeed** — referencje MP3: Gradle `copyWaveSpeedReferenceAssets` + `resolveBundledAssetFile` (`bundle-assets://` + mapowanie lowercase URI)
 - [x] DNS prod API: `api.ukrywane.pl`; `.env` → `https://api.ukrywane.pl`
 - [x] Sync plan/saldo z API (start, plan, spend AI)
@@ -58,6 +60,8 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] Device ID w ustawieniach + bootstrap API
 
 ## Uwagi
-- AI wymaga `WAVESPEED_API_KEY` + `ENABLE_WAVESPEED_STS` — audio opuszcza urządzenie.
+- AI wymaga `AI_EFFECTS_API_KEY` + `ENABLE_AI_EFFECTS` — audio opuszcza urządzenie.
+- Backend: `BACKEND_API_BASE_URL` + `BACKEND_API_TOKEN`.
 - Awatary PNG byłych efektów AI (romantyczna, pirat, ogr, …) zostawione w `assets/presets/` na później.
 - Przetwarzanie DSP: `react-native-audio-api`; wynik WAV.
+- Kredyty AI odejmowane **na starcie** konwersji (przed WaveSpeed); brak refundu przy cancel/fail po spend.

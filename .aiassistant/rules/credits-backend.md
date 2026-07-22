@@ -9,9 +9,8 @@ Wspólna wiedza domenowa dla **aplikacji** i **API** w monorepo. Implementacja A
 ## Model produktu
 | Parametr | Wartość | Źródło |
 |----------|---------|--------|
-| Koszt API WaveSpeed | **$0.02 / rozpoczęta minuta** | `WAVESPEED_USD_PER_STARTED_MINUTE` |
-| Stawka w aplikacji | **$0.05 / min** (łatwa zmiana) | env `APP_USD_PER_STARTED_MINUTE` |
-| Jednostka | **1 kredyt = 1 rozpoczęta minuta** | `CREDITS_PER_STARTED_MINUTE` |
+| Koszt API AI (provider) | **$0.02 / rozpoczęta minuta** | `AI_EFFECTS_USD_PER_STARTED_MINUTE` |
+| Jednostka w app | **1 kredyt = 1 rozpoczęta minuta** | `CREDITS_PER_STARTED_MINUTE` |
 | Free (start) | **10** `free_credits` | `STARTING_CREDITS` / `STARTING_FREE_CREDITS` |
 | Free ważność | **3 miesiące od `installed_at`** | `FREE_CREDITS_VALIDITY_MONTHS` |
 | Free + Premium | free credits **bezterminowe** (nie wygasają) | `plan=premium` → `free_credits_expires_at=NULL` |
@@ -49,18 +48,18 @@ Rozliczanie: `ceil(durationSec / 60)` × stawka.
 |--------|----------|
 | Start aplikacji | `POST /v1/devices/register` + `POST /v1/credits/sync` |
 | Włączenie / wyłączenie Premium (IAP / switch) | `POST /v1/credits/plan` |
-| Zużycie AI | `POST /v1/credits/spend` |
+| Zużycie AI | `POST /v1/credits/spend` **na starcie** konwersji (przed WaveSpeed) |
 | Brak API / offline | lokalne SQLite (fallback) |
 
 Saldo z odpowiedzi API nadpisuje lokalny cache.
 
 ```
-Authorization: Bearer <CREDITS_API_TOKEN>
+Authorization: Bearer <BACKEND_API_TOKEN>
 ```
 
-App: `CREDITS_API_BASE_URL` + `CREDITS_API_TOKEN` w `.env`.
+App: `BACKEND_API_BASE_URL` + `BACKEND_API_TOKEN` w `.env`.
 
-**Production:** `CREDITS_API_BASE_URL=https://api.ukrywane.pl` (VPS `91.228.196.27`, Caddy HTTPS).
+**Production:** `BACKEND_API_BASE_URL=https://api.ukrywane.pl` (VPS `91.228.196.27`, Caddy HTTPS).
 
 **Dev na fizycznym telefonie:** `localhost` nie działa — użyj IP Maca w LAN (np. `http://192.168.x.x:8787`). Emulator Android: `http://10.0.2.2:8787`. Po zmianie `.env` zrestartuj Metro.
 
@@ -100,5 +99,5 @@ npm install && npm run docker:up && npm run migrate && npm run dev
 - Premium: pakiet minut + **odnawianie co miesiąc**
 
 ## Bezpieczeństwo
-- Nie logować `CREDITS_API_TOKEN` / kluczy WaveSpeed.
+- Nie logować `BACKEND_API_TOKEN` / kluczy WaveSpeed.
 - Saldo autorytatywne po stronie API przy online; lokalne SQLite = cache / offline fallback.

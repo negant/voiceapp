@@ -348,7 +348,9 @@
     "q8Title": "faq.q8Title",
     "q8Answer": "faq.q8Answer",
     "q9Title": "faq.q9Title",
-    "q9Answer": "faq.q9Answer"
+    "q9Answer": "faq.q9Answer",
+    "q10Title": "faq.q10Title",
+    "q10Answer": "faq.q10Answer"
   },
   "languages": {
     "pl": "languages.pl",
@@ -385,6 +387,8 @@
     "billingBody": "credits.billingBody",
     "insufficientTitle": "credits.insufficientTitle",
     "insufficientMessage": "credits.insufficientMessage",
+    "spendFailedTitle": "credits.spendFailedTitle",
+    "spendFailedMessage": "credits.spendFailedMessage",
     "accountPlanTitle": "credits.accountPlanTitle",
     "planNameFree": "credits.planNameFree",
     "planNamePremium": "credits.planNamePremium",

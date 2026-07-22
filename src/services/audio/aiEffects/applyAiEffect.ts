@@ -4,7 +4,7 @@ import {
 } from '@/services/audio/aiEffects/waveSpeed/applyWaveSpeedAiEffect';
 import { AI_EFFECT_DEFINITIONS } from '@/services/audio/aiEffects/registry';
 import type { ApplyAiEffectOptions } from '@/services/audio/aiEffects/types';
-import { isWaveSpeedStsConfigured } from '@/config/env';
+import { isAiEffectsConfigured } from '@/config/env';
 import type { AiEffectId } from '@/types/voiceStudio';
 
 export type AiEffectResult = WaveSpeedAiEffectResult;
@@ -19,7 +19,7 @@ export async function applyAiEffect(
     throw new Error(`Unknown AI effect: ${effectId}`);
   }
 
-  if (!isWaveSpeedStsConfigured()) {
+  if (!isAiEffectsConfigured()) {
     throw new Error(
       'WaveSpeed Speech-to-Speech is not configured (missing API key)',
     );

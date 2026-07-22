@@ -7,13 +7,13 @@ import type {
 import type { AccountPlanId } from '@/types/account';
 
 function resolveAuth(overrides?: Partial<CreditsApiAuth>): CreditsApiAuth | null {
-  const apiBaseUrl = (overrides?.apiBaseUrl ?? env.creditsApiBaseUrl)?.trim();
+  const apiBaseUrl = (overrides?.apiBaseUrl ?? env.backendApiBaseUrl)?.trim();
   if (!apiBaseUrl) {
     return null;
   }
   return {
     apiBaseUrl: apiBaseUrl.replace(/\/$/, ''),
-    apiToken: overrides?.apiToken ?? env.creditsApiToken,
+    apiToken: overrides?.apiToken ?? env.backendApiToken,
   };
 }
 
@@ -68,7 +68,7 @@ async function postJson<T>(
     logCreditsApi('info', 'ok', { path });
     return json;
   } catch (error) {
-    logCreditsApi('warn', 'network/fetch failed — check CREDITS_API_BASE_URL (device cannot use localhost)', {
+    logCreditsApi('warn', 'network/fetch failed — check BACKEND_API_BASE_URL (device cannot use localhost)', {
       path,
       url,
       error: error instanceof Error ? error.message : String(error),
@@ -156,6 +156,11 @@ export async function spendCreditsWithApi(params: {
   return payload?.device ?? null;
 }
 
+export function isBackendApiConfigured(): boolean {
+  return Boolean(env.backendApiBaseUrl?.trim());
+}
+
+/** @deprecated Use isBackendApiConfigured */
 export function isCreditsApiConfigured(): boolean {
-  return Boolean(env.creditsApiBaseUrl?.trim());
+  return isBackendApiConfigured();
 }

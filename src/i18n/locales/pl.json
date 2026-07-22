@@ -348,7 +348,9 @@
     "q8Title": "Kiedy mogę legalnie używać efektów głosu?",
     "q8Answer": "Korzystaj z Voice App tylko z audio, którego jesteś właścicielem lub masz wyraźne pozwolenie na edycję — np. własne nagrania, licencjonowany materiał, który możesz przekształcać, lub praca głosowa za zgodą wszystkich uczestników.\n\nDozwolone zastosowania to m.in. projekty kreatywne, dubbing, parodia, gdy masz do tego prawa, oraz anonimizacja własnego głosu.\n\nNie używaj efektów do podszywania się pod realne osoby bez zgody, oszustw, nękania ani naruszania praw autorskich, prywatności lub regulaminów platform. Konwersja głosu AI nie daje prawa do cudzego głosu ani treści.\n\nZa publikację i udostępnianie wyeksportowanych plików odpowiadasz Ty.",
     "q9Title": "Od czego zależy końcowy efekt?",
-    "q9Answer": "Wynik zależy od kilku czynników:\n\n• Nagranie źródłowe — szum tła, pogłos w pomieszczeniu i odległość od mikrofonu. Czyste nagranie z bliska zwykle brzmi lepiej.\n• Twój głos — naturalna wysokość i barwa; ten sam preset może brzmieć inaczej na niskim i wysokim głosie.\n• Wybrany efekt — preset lub tier (Basic / Advanced / AI) oraz regulacja suwaków (pitch, tempo, echo, reverb, bass), gdy są dostępne.\n• Połączone efekty — w „Połącz efekty” kolejność ma znaczenie: pierwszy przetwarza klip, drugi nakłada się na ten wynik.\n• Efekty AI — konwersja głosu w chmurze; jakość zależy od wybranego głosu, nagrania źródłowego i łącza.\n• Urządzenie / sieć — Basic i Advanced działają lokalnie (CPU); AI wymaga stabilnego połączenia do wysyłki i pobrania wyniku."
+    "q9Answer": "Wynik zależy od kilku czynników:\n\n• Nagranie źródłowe — szum tła, pogłos w pomieszczeniu i odległość od mikrofonu. Czyste nagranie z bliska zwykle brzmi lepiej.\n• Twój głos — naturalna wysokość i barwa; ten sam preset może brzmieć inaczej na niskim i wysokim głosie.\n• Wybrany efekt — preset lub tier (Basic / Advanced / AI) oraz regulacja suwaków (pitch, tempo, echo, reverb, bass), gdy są dostępne.\n• Połączone efekty — w „Połącz efekty” kolejność ma znaczenie: pierwszy przetwarza klip, drugi nakłada się na ten wynik.\n• Efekty AI — konwersja głosu w chmurze; jakość zależy od wybranego głosu, nagrania źródłowego i łącza.\n• Urządzenie / sieć — Basic i Advanced działają lokalnie (CPU); AI wymaga stabilnego połączenia do wysyłki i pobrania wyniku.",
+    "q10Title": "Za co odejmowane są kredyty?",
+    "q10Answer": "Kredyty dotyczą wyłącznie efektów AI (konwersja głosu w chmurze) — Basic i Advanced na urządzeniu ich nie zużywają.\n\nPrzy konwersji AI kredyty są odejmowane na starcie przetwarzania (przed wysłaniem audio do chmury), według rozpoczętych minut: 1 kredyt = 1 rozpoczęta minuta.\n\nNie mamy wpływu na zwrot, jeśli przerwiesz konwersję, zamkniesz aplikację, zablokujesz ekran albo rozłączy się internet po starcie — usługa chmurowa może już rozliczyć zadanie. Dbaj o stabilne połączenie i nie zamykaj aplikacji do końca konwersji AI."
   },
   "languages": {
     "pl": "Polski",
@@ -385,6 +387,8 @@
     "billingBody": "1 kredyt = 1 rozpoczęta minuta AI. Każda rozpoczęta minuta jest rozliczana osobno (1–60 s = 1 kredyt, 61–120 s = 2 kredyty itd.).",
     "insufficientTitle": "Za mało kredytów",
     "insufficientMessage": "Ta konwersja AI wymaga {{cost}} kredytów, a masz {{balance}}.",
+    "spendFailedTitle": "Nie udało się użyć kredytów",
+    "spendFailedMessage": "Nie udało się pobrać kredytów za tę konwersję AI. Sprawdź połączenie i spróbuj ponownie.",
     "accountPlanTitle": "Twój plan",
     "planNameFree": "Free",
     "planNamePremium": "Premium",

@@ -84,10 +84,10 @@ jest.mock('@/config/env', () => ({
     appDisplayName: 'Voice App',
     supportedAudioFormats: ['mp3'],
     maxUploadSizeMb: 50,
-    enableWaveSpeedSts: true,
-    waveSpeedApiKey: 'wsk_test_key',
+    enableAiEffects: true,
+    aiEffectsApiKey: 'wsk_test_key',
   },
-  isWaveSpeedStsConfigured: () => true,
+  isAiEffectsConfigured: () => true,
   isCloudAiConfigured: () => true,
 }));
 

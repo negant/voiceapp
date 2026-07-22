@@ -35,7 +35,7 @@ export function mapCreditsBootstrapResponse(
 
 /**
  * Offline / pre-API fallback — seeds welcome credits locally (development and v0).
- * Replace with API result once CREDITS_API_BASE_URL is configured.
+ * Replace with API result once BACKEND_API_BASE_URL is configured.
  */
 export function resolveLocalBootstrapFallback(): CreditsBootstrapResult {
   return {
@@ -88,13 +88,13 @@ function resolveDeviceId(params: FetchCreditsBootstrapParams): string {
 
 /**
  * Request welcome credits from backend.
- * Without CREDITS_API_BASE_URL → local_fallback.
+ * Without BACKEND_API_BASE_URL → local_fallback.
  */
 export async function fetchCreditsBootstrap(
   params: FetchCreditsBootstrapParams,
 ): Promise<CreditsBootstrapResult> {
-  const apiBaseUrl = params.apiBaseUrl ?? env.creditsApiBaseUrl;
-  const apiToken = params.apiToken ?? env.creditsApiToken;
+  const apiBaseUrl = params.apiBaseUrl ?? env.backendApiBaseUrl;
+  const apiToken = params.apiToken ?? env.backendApiToken;
   const deviceId = resolveDeviceId(params);
   const { platform, appVersion } = params;
 

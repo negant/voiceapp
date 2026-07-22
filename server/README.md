@@ -125,11 +125,11 @@ Authorization: Bearer <API_TOKEN>
 
 ```
 # Production (VPS + Caddy HTTPS)
-CREDITS_API_BASE_URL=https://api.ukrywane.pl
-CREDITS_API_TOKEN=<ten sam co API_TOKEN na serwerze>
+BACKEND_API_BASE_URL=https://api.ukrywane.pl
+BACKEND_API_TOKEN=<ten sam co API_TOKEN na serwerze>
 
 # Local dev — fizyczny telefon (LAN), podmień IP Maca:
-# CREDITS_API_BASE_URL=http://192.168.0.30:8787
+# BACKEND_API_BASE_URL=http://192.168.0.30:8787
 # Emulator Android: http://10.0.2.2:8787
 # iOS Simulator: http://localhost:8787
 ```

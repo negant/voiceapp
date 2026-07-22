@@ -1,12 +1,11 @@
 /**
- * WaveSpeed Chatterbox bills **$0.02 per started minute** of source audio (API cost).
- * App retail rate is separate (`APP_USD_PER_STARTED_MINUTE`, default $0.05) so margin
- * stays easy to tune in `.env` without changing the WaveSpeed constant.
+ * Cloud AI provider bills ~**$0.02 per started minute** of source audio (API cost).
+ * Retail pricing is `PREMIUM_PRICE_USD` + pack size — not a per-minute env rate.
  */
-export const WAVESPEED_USD_PER_STARTED_MINUTE = 0.02;
+export const AI_EFFECTS_USD_PER_STARTED_MINUTE = 0.02;
 
-/** App retail USD charged per started minute of AI (env `APP_USD_PER_STARTED_MINUTE`). */
-export const DEFAULT_APP_USD_PER_STARTED_MINUTE = 0.05;
+/** @deprecated Use AI_EFFECTS_USD_PER_STARTED_MINUTE */
+export const WAVESPEED_USD_PER_STARTED_MINUTE = AI_EFFECTS_USD_PER_STARTED_MINUTE;
 
 /** Single Premium tier price in USD (env `PREMIUM_PRICE_USD`). */
 export const DEFAULT_PREMIUM_PRICE_USD = 4.99;

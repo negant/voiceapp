@@ -7,7 +7,13 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 
 ## [Unreleased]
 
+### Changed
+- **Env naming (vendor-agnostic):** `WAVESPEED_API_KEY` / `ENABLE_WAVESPEED_STS` → `AI_EFFECTS_API_KEY` / `ENABLE_AI_EFFECTS`; `CREDITS_API_BASE_URL` / `CREDITS_API_TOKEN` → `BACKEND_API_BASE_URL` / `BACKEND_API_TOKEN` (provider/backend mogą się zmienić bez rename w app).
+- **Usunięto `APP_USD_PER_STARTED_MINUTE`:** nieużywane w runtime — cena to `PREMIUM_PRICE_USD` + pakiet kredytów.
+- **`AI_EFFECTS_API_BASE_URL`:** adres API efektów AI w `.env` (domyślnie WaveSpeed `https://api.wavespeed.ai/api/v3`) — da się podmienić bez zmiany kodu.
+
 ### Fixed
+- **Kredyty AI:** odejmowanie przy **starcie** konwersji AI (przed WaveSpeed), nie po sukcesie — unikamy sytuacji, w której API WaveSpeed rozlicza zadanie, a aplikacja nie odejmie kredytów po killu/crashu w trakcie joba.
 - **Server build:** `src/types.ts` import `./domain/creditsEconomy.js` (było błędne `../domain/`).
 - **Prod migrate:** `schema.sql` kopiowany do `dist/db/` przy `npm run build`; fallback w `migrate.ts` na `src/db/schema.sql`.
 - **Release Android AI (WaveSpeed):** upload źródła przez `wrap(path)`; referencje MP3 — `assets.srcDir` z repo (bez taska Copy), odczyt `bundle-assets://` z mapowaniem lowercase URI → camelCase (`resolveBundledAssetFile.ts`).
@@ -26,6 +32,7 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 - **ElevenLabs:** usunięty cały silnik STS (`aiEffects/elevenLabs/`), głosy Romantyczna / Male Deep / Pirat / Ogr oraz env `ELEVEN_LABS_API_KEY` / `ENABLE_ELEVENLABS_STS`. AI = wyłącznie WaveSpeed (Narratorka, Narrator, Legionista). Awatary PNG byłych głosów zostawione w `assets/presets/`.
 
 ### Added
+- **FAQ — kredyty AI:** pytanie o to, za co odejmowane są kredyty (tylko efekty AI), że charge jest na starcie oraz że przerwanie / utrata sieci nie daje zwrotu.
 - **Premium $10:** **150 + 50 free = 200** rozpoczętych minut AI (≈ **3,3 h**); copy na ekranie konta z rozbiciem i godzinami.
 - **AI Effects — WaveSpeed Chatterbox STS:** silnik `waveSpeed/`; głosy produktowe **Narratorka** / **Narrator** / **Legionista**; env `WAVESPEED_API_KEY` + `ENABLE_WAVESPEED_STS`.
 - **Limity długości pliku w `.env`:** `MAX_AUDIO_DURATION_FREE_SEC` (domyślnie **60**) i `MAX_AUDIO_DURATION_PREMIUM_SEC` (domyślnie 600) — `env.maxAudioDurationFreeSec` / `env.maxAudioDurationPremiumSec`; używane przez `resolveAiMaxDurationSec` i limity lokalne.

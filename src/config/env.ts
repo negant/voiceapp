@@ -1,10 +1,9 @@
 import {
   APP_DISPLAY_NAME,
   APP_ENV,
-  APP_USD_PER_STARTED_MINUTE,
   DEBUG_MODE,
   ENABLE_AUDIO_PREVIEW,
-  ENABLE_WAVESPEED_STS,
+  ENABLE_AI_EFFECTS,
   ENABLE_SOURCE_DENOISE,
   CREDITS_PER_STARTED_MINUTE,
   PREMIUM_CREDITS,
@@ -17,13 +16,14 @@ import {
   PROCESSING_THREADS,
   SOURCE_DENOISE_STRENGTH,
   SUPPORTED_AUDIO_FORMATS,
-  WAVESPEED_API_KEY,
-  CREDITS_API_BASE_URL,
-  CREDITS_API_TOKEN,
+  AI_EFFECTS_API_KEY,
+  AI_EFFECTS_API_BASE_URL,
+  BACKEND_API_BASE_URL,
+  BACKEND_API_TOKEN,
 } from '@env';
 
+import { resolveAiEffectsApiBaseUrl } from '@/config/aiEffects';
 import {
-  DEFAULT_APP_USD_PER_STARTED_MINUTE,
   DEFAULT_CREDITS_PER_STARTED_MINUTE,
   DEFAULT_PREMIUM_CREDITS,
   DEFAULT_PREMIUM_GRATIS_CREDITS,
@@ -84,7 +84,7 @@ function parseOptionalSecret(value: string | undefined): string | null {
   if (!trimmed) {
     return null;
   }
-  // Strip accidental quotes from .env (WAVESPEED_API_KEY="wsk_...")
+  // Strip accidental quotes from .env (AI_EFFECTS_API_KEY="...")
   if (
     (trimmed.startsWith('"') && trimmed.endsWith('"')) ||
     (trimmed.startsWith("'") && trimmed.endsWith("'"))
@@ -105,9 +105,11 @@ export const env = {
   enableSourceDenoise: parseBoolean(ENABLE_SOURCE_DENOISE, true),
   sourceDenoiseStrength: parseNumber(SOURCE_DENOISE_STRENGTH, 0.58),
   appDisplayName: APP_DISPLAY_NAME || 'Voice App',
-  /** WaveSpeed Chatterbox Speech-to-Speech — never log this value. */
-  waveSpeedApiKey: parseOptionalSecret(WAVESPEED_API_KEY),
-  enableWaveSpeedSts: parseBoolean(ENABLE_WAVESPEED_STS, true),
+  /** Cloud AI effects provider key — never log this value. */
+  aiEffectsApiKey: parseOptionalSecret(AI_EFFECTS_API_KEY),
+  /** Cloud AI effects API root (override when provider host/path changes). */
+  aiEffectsApiBaseUrl: resolveAiEffectsApiBaseUrl(AI_EFFECTS_API_BASE_URL),
+  enableAiEffects: parseBoolean(ENABLE_AI_EFFECTS, true),
   /** Credits charged per started minute of AI (1 credit = 1 min). */
   creditsPerStartedMinute: parsePositiveInt(
     CREDITS_PER_STARTED_MINUTE,
@@ -122,14 +124,6 @@ export const env = {
   premiumPriceUsd: parsePositiveNumber(
     PREMIUM_PRICE_USD,
     DEFAULT_PREMIUM_PRICE_USD,
-  ),
-  /**
-   * App retail USD per started minute of AI (margin vs WaveSpeed $0.02).
-   * Independent of pack size — pack is env PREMIUM_CREDITS + PREMIUM_GRATIS_CREDITS.
-   */
-  appUsdPerStartedMinute: parsePositiveNumber(
-    APP_USD_PER_STARTED_MINUTE,
-    DEFAULT_APP_USD_PER_STARTED_MINUTE,
   ),
   /** Paid credits in the Premium pack. */
   premiumCredits: parsePositiveInt(PREMIUM_CREDITS, DEFAULT_PREMIUM_CREDITS),
@@ -148,19 +142,19 @@ export const env = {
     MAX_AUDIO_DURATION_PREMIUM_SEC,
     DEFAULT_MAX_AUDIO_DURATION_PREMIUM_SEC,
   ),
-  /** Credits / devices API base URL (empty = local-only credits). */
-  creditsApiBaseUrl: parseOptionalSecret(CREDITS_API_BASE_URL),
-  /** Bearer token for credits API (never log). */
-  creditsApiToken: parseOptionalSecret(CREDITS_API_TOKEN),
+  /** App backend base URL (empty = local-only credits / offline fallback). */
+  backendApiBaseUrl: parseOptionalSecret(BACKEND_API_BASE_URL),
+  /** Bearer token for backend API (never log). */
+  backendApiToken: parseOptionalSecret(BACKEND_API_TOKEN),
 } as const;
 
-export function isWaveSpeedStsConfigured(): boolean {
-  return Boolean(env.enableWaveSpeedSts && env.waveSpeedApiKey);
+export function isAiEffectsConfigured(): boolean {
+  return Boolean(env.enableAiEffects && env.aiEffectsApiKey);
 }
 
 /** True when cloud AI STS is ready. */
 export function isCloudAiConfigured(): boolean {
-  return isWaveSpeedStsConfigured();
+  return isAiEffectsConfigured();
 }
 
 export type EnvConfig = typeof env;

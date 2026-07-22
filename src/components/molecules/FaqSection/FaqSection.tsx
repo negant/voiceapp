@@ -25,6 +25,7 @@ const FAQ_KEYS = [
   'faq.q7',
   'faq.q8',
   'faq.q9',
+  'faq.q10',
 ] as const;
 
 export function FaqSection({ className }: FaqSectionProps) {

@@ -1,5 +1,5 @@
 jest.mock('@/config/env', () => ({
-  isWaveSpeedStsConfigured: jest.fn(() => true),
+  isAiEffectsConfigured: jest.fn(() => true),
 }));
 
 import {
@@ -7,11 +7,11 @@ import {
   CLOUD_AI_EFFECT_IDS,
   findAiEffect,
 } from '@/constants/aiEffects';
-import { isWaveSpeedStsConfigured } from '@/config/env';
+import { isAiEffectsConfigured } from '@/config/env';
 
 describe('aiEffects catalog', () => {
-  it('exposes WaveSpeed voices when configured', () => {
-    expect(isWaveSpeedStsConfigured()).toBe(true);
+  it('exposes AI voices when cloud AI is configured', () => {
+    expect(isAiEffectsConfigured()).toBe(true);
     expect(AI_EFFECTS.map(effect => effect.id).sort()).toEqual([
       'legionista',
       'narrator',

@@ -11,10 +11,11 @@ import {
 
 jest.mock('@/config/env', () => ({
   env: {
-    waveSpeedApiKey: 'wsk_test_key',
-    enableWaveSpeedSts: true,
+    aiEffectsApiKey: 'wsk_test_key',
+    aiEffectsApiBaseUrl: 'https://api.wavespeed.ai/api/v3',
+    enableAiEffects: true,
   },
-  isWaveSpeedStsConfigured: jest.fn(() => true),
+  isAiEffectsConfigured: jest.fn(() => true),
 }));
 
 jest.mock('react-native-blob-util', () => {

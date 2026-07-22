@@ -44,7 +44,7 @@ describe('creditsApi', () => {
     );
   });
 
-  it('isCreditsApiConfigured reflects env base URL presence', () => {
+  it('isBackendApiConfigured reflects env base URL presence', () => {
     // env is loaded from @env mock / real .env in tests — just assert boolean shape
     expect(typeof isCreditsApiConfigured()).toBe('boolean');
   });

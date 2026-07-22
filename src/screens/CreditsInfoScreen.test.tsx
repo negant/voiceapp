@@ -27,7 +27,6 @@ jest.mock('@/config/env', () => ({
   env: {
     debugMode: true,
     premiumPriceUsd: 4.99,
-    appUsdPerStartedMinute: 0.05,
     premiumCredits: 100,
     premiumGratisCredits: 25,
   },

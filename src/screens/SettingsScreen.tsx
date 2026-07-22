@@ -50,7 +50,7 @@ export function SettingsScreen({
   const showDeveloperSection = env.debugMode || __DEV__;
 
   const handlePremiumToggle = (enabled: boolean) => {
-    // Provider syncs plan + balance to API when CREDITS_API_BASE_URL is set.
+    // Provider syncs plan + balance to API when BACKEND_API_BASE_URL is set.
     setAccountPlan(enabled ? 'premium' : 'free').catch(() => undefined);
   };
 

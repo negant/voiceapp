@@ -348,7 +348,9 @@
     "q8Title": "When can I use voice effects legally?",
     "q8Answer": "Use Voice App only on audio you own or have explicit permission to edit — for example your own recordings, licensed material you are allowed to transform, or voice work where everyone involved gave consent.\n\nAppropriate uses include creative projects, voice acting, parody where you have the rights, and anonymizing your own voice.\n\nDo not use effects to impersonate real people without consent, commit fraud, harass others, or violate copyright, privacy laws, or platform rules. AI voice conversion does not grant you rights to someone else’s voice or content.\n\nYou are responsible for how you publish or share exported files.",
     "q9Title": "What does the final effect depend on?",
-    "q9Answer": "The result is shaped by several factors:\n\n• Source audio — background noise, room echo, and distance from the mic. A clear, close recording usually sounds better.\n• Your voice — natural pitch and timbre; the same preset can sound different on a deep vs. high voice.\n• Chosen effect — preset or tier (Basic / Advanced / AI), plus slider tweaks (pitch, tempo, echo, reverb, bass) when available.\n• Combined effects — in “Combine effects”, order matters: the first effect processes your clip, the second is applied to that result.\n• AI effects — cloud voice conversion; quality depends on the chosen voice, your source clip, and network conditions.\n• Device / network — Basic and Advanced run on-device (CPU); AI needs a stable connection for upload and download."
+    "q9Answer": "The result is shaped by several factors:\n\n• Source audio — background noise, room echo, and distance from the mic. A clear, close recording usually sounds better.\n• Your voice — natural pitch and timbre; the same preset can sound different on a deep vs. high voice.\n• Chosen effect — preset or tier (Basic / Advanced / AI), plus slider tweaks (pitch, tempo, echo, reverb, bass) when available.\n• Combined effects — in “Combine effects”, order matters: the first effect processes your clip, the second is applied to that result.\n• AI effects — cloud voice conversion; quality depends on the chosen voice, your source clip, and network conditions.\n• Device / network — Basic and Advanced run on-device (CPU); AI needs a stable connection for upload and download.",
+    "q10Title": "What are credits charged for?",
+    "q10Answer": "Credits apply only to AI effects (cloud voice conversion) — on-device Basic and Advanced effects do not use them.\n\nFor AI conversion, credits are deducted when processing starts (before your audio is sent to the cloud), by started minutes: 1 credit = 1 started minute.\n\nWe cannot refund if you cancel, close the app, lock the screen, or lose internet after processing has started — the cloud service may already have billed the job. Keep a stable connection and leave the app open until the AI conversion finishes."
   },
   "languages": {
     "pl": "Polish",
@@ -385,6 +387,8 @@
     "billingBody": "1 credit = 1 started minute of AI. Every started minute is charged separately (1–60 s = 1 credit, 61–120 s = 2 credits, and so on).",
     "insufficientTitle": "Not enough credits",
     "insufficientMessage": "This AI conversion needs {{cost}} credits, but you only have {{balance}}.",
+    "spendFailedTitle": "Could not use credits",
+    "spendFailedMessage": "We could not charge credits for this AI conversion. Check your connection and try again.",
     "accountPlanTitle": "Your plan",
     "planNameFree": "Free",
     "planNamePremium": "Premium",

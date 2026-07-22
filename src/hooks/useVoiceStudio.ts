@@ -27,6 +27,7 @@ import { useNetworkConnectivity } from '@/hooks/useNetworkConnectivity';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useProcessedRecordingsCount } from '@/providers/ProcessedRecordingsCountProvider';
 import { useCredits } from '@/providers/CreditsProvider';
+import { chargeAiCreditsBeforeProcessing } from '@/utils/aiCreditCharge';
 import {
   calculateAiSecondsAffordableFromCredits,
   calculateCreditsForAiDurationSec,
@@ -1705,6 +1706,22 @@ export function useVoiceStudio() {
     processingAbortRef.current = new AbortController();
 
     try {
+      // Charge before WaveSpeed — API bills on job submit; end-of-run spend
+      // would miss kills/crashes after the cloud job already started.
+      try {
+        await chargeAiCreditsBeforeProcessing({
+          usesAi,
+          creditCost: aiCreditCost,
+          spendCredits,
+        });
+      } catch {
+        showErrorAlert(
+          t('credits.spendFailedTitle'),
+          t('credits.spendFailedMessage'),
+        );
+        return;
+      }
+
       const processed = await processAudio(input, {
         signal: processingAbortRef.current.signal,
         onProgress: ({ stage, progress }) => {
@@ -1739,10 +1756,6 @@ export function useVoiceStudio() {
       });
       await removeStoredOutputUris(removedOutputUris);
       await refreshProcessedHistory();
-
-      if (usesAi && aiCreditCost > 0) {
-        await spendCredits(aiCreditCost, 'spend_ai');
-      }
 
       if (env.enableAudioPreview) {
         await stopAudioPlayback().catch(() => undefined);

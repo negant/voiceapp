@@ -69,7 +69,7 @@ PORT=8787
 HOST=127.0.0.1
 NODE_ENV=production
 
-API_TOKEN=<silny-token-taki-sam-jak-CREDITS_API_TOKEN-w-app>
+API_TOKEN=<silny-token-taki-sam-jak-BACKEND_API_TOKEN-w-app>
 
 POSTGRES_USER=voiceapp
 POSTGRES_PASSWORD=<silne-haslo>
@@ -135,8 +135,8 @@ curl -H "Authorization: Bearer TWOJ_TOKEN" https://api.ukrywane.pl/v1/setup
 W `.env` (już ustawione):
 
 ```env
-CREDITS_API_BASE_URL=https://api.ukrywane.pl
-CREDITS_API_TOKEN=<ten sam co API_TOKEN>
+BACKEND_API_BASE_URL=https://api.ukrywane.pl
+BACKEND_API_TOKEN=<ten sam co API_TOKEN>
 ```
 
 Metro: `npm start -- --reset-cache`
