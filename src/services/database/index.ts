@@ -21,6 +21,15 @@ export {
   setThemeMode,
 } from './settingsRepository';
 export {
+  reloadAppAfterReset,
+  resetLocalAppData,
+} from './resetAppData';
+export {
+  clearPendingWelcomeCreditsPrompt,
+  getPendingWelcomeCreditsPrompt,
+  setPendingWelcomeCreditsPrompt,
+} from './welcomeCreditsPromptRepository';
+export {
   buildVoicePresetInsert,
   createVoicePreset,
   deleteVoicePreset,

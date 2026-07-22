@@ -31,6 +31,11 @@ import {
   setCreditsBalance as persistCreditsBalance,
 } from '@/services/database/creditsRepository';
 import {
+  clearPendingWelcomeCreditsPrompt,
+  getPendingWelcomeCreditsPrompt,
+  setPendingWelcomeCreditsPrompt,
+} from '@/services/database/welcomeCreditsPromptRepository';
+import {
   isCreditsApiConfigured,
   setPlanWithApi,
   spendCreditsWithApi,
@@ -38,6 +43,7 @@ import {
 } from '@/services/credits/creditsApi';
 import type { CreditsDeviceSnapshot } from '@/services/credits/creditsApi.types';
 import { fetchCreditsBootstrap } from '@/services/credits/creditsBootstrap';
+import { resolveWelcomeCreditsPromptAmount } from '@/services/credits/resolveWelcomeCreditsPrompt';
 import { createDeviceId, ensureDeviceId } from '@/services/device';
 import type { AccountPlanId } from '@/types/account';
 
@@ -53,6 +59,12 @@ type CreditsContextValue = {
   isPremium: boolean;
   isHydrated: boolean;
   deviceId: string | null;
+  /**
+   * Free-pool welcome grant to announce once after install.
+   * Null when there is nothing to show.
+   */
+  welcomeCreditsGrant: number | null;
+  dismissWelcomeCreditsGrant: () => Promise<void>;
   refreshBalance: () => Promise<number>;
   setBalance: (balance: number) => Promise<void>;
   /** Prefer this for AI usage — syncs spend to API when configured. */
@@ -71,12 +83,20 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
   const [accountPlan, setAccountPlanState] = useState<AccountPlanId>('free');
   const [isHydrated, setIsHydrated] = useState(false);
   const [deviceId, setDeviceId] = useState<string | null>(null);
+  const [welcomeCreditsGrant, setWelcomeCreditsGrant] = useState<number | null>(
+    null,
+  );
   const apiStartSyncAttempted = useRef(false);
   const balanceRef = useRef(0);
   const planRef = useRef<AccountPlanId>('free');
 
   balanceRef.current = balance;
   planRef.current = accountPlan;
+
+  const dismissWelcomeCreditsGrant = useCallback(async () => {
+    await clearPendingWelcomeCreditsPrompt();
+    setWelcomeCreditsGrant(null);
+  }, []);
 
   const applyDeviceSnapshot = useCallback(
     async (device: CreditsDeviceSnapshot) => {
@@ -133,11 +153,23 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       });
 
       if (bootstrap.status !== 'local_fallback') {
+        const promptAmount = resolveWelcomeCreditsPromptAmount(
+          bootstrap.status,
+          bootstrap.grantedCredits,
+        );
+        if (promptAmount != null) {
+          // Persist until the user taps OK (survives kill / relaunch).
+          await setPendingWelcomeCreditsPrompt(promptAmount);
+        }
+
         await persistCreditsBalance(bootstrap.balance);
         await persistAccountPlan(bootstrap.accountPlan);
         setBalanceState(bootstrap.balance);
         setAccountPlanState(bootstrap.accountPlan);
         setCreditsPerAi10SecState(bootstrap.creditsPerAi10Sec);
+
+        const pendingPrompt = await getPendingWelcomeCreditsPrompt();
+        setWelcomeCreditsGrant(pendingPrompt);
 
         // Sync applies free expiry + monthly premium renew after register
         const synced = await syncCreditsWithApi({
@@ -157,19 +189,24 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         appVersion,
       });
       if (synced) {
+        const pendingPrompt = await getPendingWelcomeCreditsPrompt();
+        setWelcomeCreditsGrant(pendingPrompt);
         return applyDeviceSnapshot(synced);
       }
     }
 
-    const [nextBalance, economy] = await Promise.all([
+    const [seedResult, economy, pendingPrompt] = await Promise.all([
       ensureInitialCreditsBalance(),
       ensureInitialCreditsEconomy(),
+      getPendingWelcomeCreditsPrompt(),
       refreshAccount(),
     ]);
-    setBalanceState(nextBalance);
+    setBalanceState(seedResult.balance);
     setCreditsPerAi10SecState(economy.creditsPerAi10Sec);
+    setWelcomeCreditsGrant(pendingPrompt);
+    // No local welcome grant — free credits only when API returns `granted`.
     setIsHydrated(true);
-    return nextBalance;
+    return seedResult.balance;
   }, [applyDeviceSnapshot, isReady, refreshAccount]);
 
   const setBalance = useCallback(
@@ -297,6 +334,8 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       isPremium,
       isHydrated,
       deviceId,
+      welcomeCreditsGrant,
+      dismissWelcomeCreditsGrant,
       refreshBalance,
       setBalance,
       spendCredits,
@@ -311,6 +350,8 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       isPremium,
       isHydrated,
       deviceId,
+      welcomeCreditsGrant,
+      dismissWelcomeCreditsGrant,
       refreshBalance,
       setBalance,
       spendCredits,

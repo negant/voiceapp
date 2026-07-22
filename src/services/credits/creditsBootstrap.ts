@@ -34,14 +34,14 @@ export function mapCreditsBootstrapResponse(
 }
 
 /**
- * Offline / pre-API fallback — seeds welcome credits locally (development and v0).
- * Replace with API result once BACKEND_API_BASE_URL is configured.
+ * Offline / no-API fallback — no free welcome credits.
+ * Free grants are authoritative on the backend install pool only.
  */
 export function resolveLocalBootstrapFallback(): CreditsBootstrapResult {
   return {
     status: 'local_fallback',
-    grantedCredits: env.startingCredits,
-    balance: env.startingCredits,
+    grantedCredits: 0,
+    balance: 0,
     creditsPerAi10Sec: DEFAULT_CREDITS_PER_AI_10_SEC,
     accountPlan: 'free',
     pool: {
@@ -88,7 +88,7 @@ function resolveDeviceId(params: FetchCreditsBootstrapParams): string {
 
 /**
  * Request welcome credits from backend.
- * Without BACKEND_API_BASE_URL → local_fallback.
+ * Without BACKEND_API_BASE_URL (or on network failure) → local_fallback with 0 free credits.
  */
 export async function fetchCreditsBootstrap(
   params: FetchCreditsBootstrapParams,

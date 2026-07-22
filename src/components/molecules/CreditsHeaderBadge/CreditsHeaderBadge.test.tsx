@@ -82,7 +82,7 @@ describe('CreditsHeaderBadge', () => {
     expect(text.props.children).toBe('10');
   });
 
-  it('renders Buy Premium when free and balance is empty', () => {
+  it('renders 0 when balance is empty instead of buy CTA', () => {
     mockUseCredits.mockReturnValue({
       balance: 0,
       isPremium: false,
@@ -98,11 +98,11 @@ describe('CreditsHeaderBadge', () => {
     });
 
     const text = tree!.root.findByType('Text' as never);
-    expect(text.props.children).toBe('credits.buyPremium');
+    expect(text.props.children).toBe('0');
 
     const badge = tree!.root.findByProps({
-      accessibilityLabel: 'accessibility.buyPremium',
-      accessibilityHint: 'accessibility.buyPremium',
+      accessibilityLabel: 'accessibility.openCreditsInfo',
+      accessibilityHint: 'accessibility.creditsBalance:0',
     });
     expect(badge).toBeTruthy();
   });

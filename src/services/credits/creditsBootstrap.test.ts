@@ -43,11 +43,12 @@ describe('creditsBootstrap', () => {
     expect(result.pool?.remainingSlots).toBe(29);
   });
 
-  it('local fallback seeds welcome credits', () => {
+  it('local fallback does not grant free credits without API', () => {
     const result = resolveLocalBootstrapFallback();
 
     expect(result.status).toBe('local_fallback');
-    expect(result.balance).toBe(env.startingCredits);
+    expect(result.balance).toBe(0);
+    expect(result.grantedCredits).toBe(0);
     expect(result.pool?.remainingSlots).toBe(FREE_INSTALLS_WITH_TEST_CREDITS);
   });
 

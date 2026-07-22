@@ -7,7 +7,15 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 
 ## [Unreleased]
 
+### Added
+- **Ustawienia (dev):** przycisk „Usuń kredyty” pod „Włącz premium” — zeruje saldo na potrzeby testów (przez `spendCredits` / API gdy skonfigurowane).
+- **Ustawienia (dev):** przycisk „Wyczyść dane aplikacji” — kasuje settings/presety/historię/pliki audio + reload (symulacja nowej instalacji / nowego `device_id`).
+- **Welcome credits dialog:** po instalacji, gdy pula free przyzna kredyty (`granted`), komunikat powitalny; pending zapisany w SQLite do kliknięcia OK (przetrwa restart).
+
 ### Changed
+- **Free credits tylko z API:** bez `BACKEND_API_BASE_URL` / offline → saldo startowe **0** (brak lokalnego grantu welcome); dialog powitalny tylko przy `bootstrapStatus=granted`.
+- **Badge kredytów w nagłówku:** przy saldzie 0 pokazuje **0** (nie CTA „Kup Premium”) — Premium to subskrypcja miesięczna z resetem pakietu.
+- **Copy Premium:** subskrypcja **30 dni** — kredyty resetują się co miesiąc; **niewykorzystane przepadają** (plan features + billing).
 - **Env naming (vendor-agnostic):** `WAVESPEED_API_KEY` / `ENABLE_WAVESPEED_STS` → `AI_EFFECTS_API_KEY` / `ENABLE_AI_EFFECTS`; `CREDITS_API_BASE_URL` / `CREDITS_API_TOKEN` → `BACKEND_API_BASE_URL` / `BACKEND_API_TOKEN` (provider/backend mogą się zmienić bez rename w app).
 - **Usunięto `APP_USD_PER_STARTED_MINUTE`:** nieużywane w runtime — cena to `PREMIUM_PRICE_USD` + pakiet kredytów.
 - **`AI_EFFECTS_API_BASE_URL`:** adres API efektów AI w `.env` (domyślnie WaveSpeed `https://api.wavespeed.ai/api/v3`) — da się podmienić bez zmiany kodu.

@@ -52,6 +52,11 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [ ] Podpięcie `GET /v1/setup` w `fetchAppUpdateStatus`
 
 ## Zrobione (niedawno)
+- [x] **Free credits:** grant tylko z API (offline/bez backendu = 0)
+- [x] **Welcome credits:** dialog po instalacji przy granicie z puli free
+- [x] **Ustawienia (dev):** „Wyczyść dane aplikacji” (jak świeża instalacja + reload)
+- [x] **Badge kredytów:** przy 0 pokazuje `0` (nie „Kup Premium”); copy Premium: reset co 30 dni, niewykorzystane przepadają
+- [x] **Ustawienia (dev):** „Usuń kredyty” pod „Włącz premium” (testy salda)
 - [x] **Kredyty AI na starcie konwersji** — spend przed WaveSpeed
 - [x] **Release Android WaveSpeed** — referencje MP3: Gradle `copyWaveSpeedReferenceAssets` + `resolveBundledAssetFile` (`bundle-assets://` + mapowanie lowercase URI)
 - [x] DNS prod API: `api.ukrywane.pl`; `.env` → `https://api.ukrywane.pl`

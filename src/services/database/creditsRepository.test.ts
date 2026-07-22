@@ -1,5 +1,6 @@
 import { DEFAULT_STARTING_CREDITS } from '@/config/credits';
 import {
+  CREDITS_SEED_VERSION_API_ONLY,
   CREDITS_SEED_VERSION_FREE_WELCOME,
   ensureInitialCreditsBalance,
   getCreditsBalance,
@@ -30,7 +31,7 @@ describe('parseCreditsBalance', () => {
 });
 
 describe('resolveWelcomeCredits', () => {
-  it('returns the free-plan default welcome grant', () => {
+  it('returns the free-pool grant size expected from the backend', () => {
     expect(resolveWelcomeCredits()).toBe(DEFAULT_STARTING_CREDITS);
     expect(resolveWelcomeCredits()).toBe(10);
   });
@@ -41,23 +42,20 @@ describe('creditsRepository', () => {
     jest.clearAllMocks();
   });
 
-  it('seeds welcome credits when balance is missing', async () => {
+  it('seeds zero balance when missing — no local free grant', async () => {
     (getSetting as jest.Mock).mockResolvedValue(null);
 
-    const balance = await ensureInitialCreditsBalance();
+    const result = await ensureInitialCreditsBalance();
 
-    expect(balance).toBe(10);
-    expect(setSetting).toHaveBeenCalledWith(
-      SETTING_KEYS.CREDITS_BALANCE,
-      '10',
-    );
+    expect(result).toEqual({ balance: 0, newlyGrantedCredits: 0 });
+    expect(setSetting).toHaveBeenCalledWith(SETTING_KEYS.CREDITS_BALANCE, '0');
     expect(setSetting).toHaveBeenCalledWith(
       SETTING_KEYS.CREDITS_SEED_VERSION,
-      CREDITS_SEED_VERSION_FREE_WELCOME,
+      CREDITS_SEED_VERSION_API_ONLY,
     );
   });
 
-  it('resets legacy full welcome balance (250) to current grant', async () => {
+  it('keeps existing balance when migrating seed version', async () => {
     (getSetting as jest.Mock).mockImplementation(async (key: string) => {
       if (key === SETTING_KEYS.CREDITS_SEED_VERSION) {
         return 'free-welcome-250';
@@ -68,13 +66,16 @@ describe('creditsRepository', () => {
       return null;
     });
 
-    const balance = await ensureInitialCreditsBalance();
+    const result = await ensureInitialCreditsBalance();
 
-    expect(balance).toBe(10);
-    expect(setSetting).toHaveBeenCalledWith(SETTING_KEYS.CREDITS_BALANCE, '10');
+    expect(result).toEqual({ balance: 250, newlyGrantedCredits: 0 });
+    expect(setSetting).toHaveBeenCalledWith(
+      SETTING_KEYS.CREDITS_SEED_VERSION,
+      CREDITS_SEED_VERSION_API_ONLY,
+    );
   });
 
-  it('upgrades zero balance to welcome credits once', async () => {
+  it('does not upgrade a spent zero balance to free credits', async () => {
     (getSetting as jest.Mock).mockImplementation(async (key: string) => {
       if (key === SETTING_KEYS.CREDITS_SEED_VERSION) {
         return null;
@@ -85,15 +86,15 @@ describe('creditsRepository', () => {
       return null;
     });
 
-    const balance = await ensureInitialCreditsBalance();
+    const result = await ensureInitialCreditsBalance();
 
-    expect(balance).toBe(10);
+    expect(result).toEqual({ balance: 0, newlyGrantedCredits: 0 });
   });
 
   it('keeps spent zero balance after current seed is marked', async () => {
     (getSetting as jest.Mock).mockImplementation(async (key: string) => {
       if (key === SETTING_KEYS.CREDITS_SEED_VERSION) {
-        return CREDITS_SEED_VERSION_FREE_WELCOME;
+        return CREDITS_SEED_VERSION_API_ONLY;
       }
       if (key === SETTING_KEYS.CREDITS_BALANCE) {
         return '0';
@@ -101,9 +102,9 @@ describe('creditsRepository', () => {
       return null;
     });
 
-    const balance = await ensureInitialCreditsBalance();
+    const result = await ensureInitialCreditsBalance();
 
-    expect(balance).toBe(0);
+    expect(result).toEqual({ balance: 0, newlyGrantedCredits: 0 });
     expect(setSetting).not.toHaveBeenCalled();
   });
 
@@ -118,18 +119,18 @@ describe('creditsRepository', () => {
       return null;
     });
 
-    const balance = await ensureInitialCreditsBalance();
+    const result = await ensureInitialCreditsBalance();
 
-    expect(balance).toBe(7);
+    expect(result).toEqual({ balance: 7, newlyGrantedCredits: 0 });
     expect(setSetting).not.toHaveBeenCalled();
   });
 
-  it('falls back to welcome credits when read value is invalid', async () => {
+  it('returns 0 when read value is invalid', async () => {
     (getSetting as jest.Mock).mockResolvedValue('not-a-number');
 
     const balance = await getCreditsBalance();
 
-    expect(balance).toBe(10);
+    expect(balance).toBe(0);
   });
 
   it('persists updated balance', async () => {

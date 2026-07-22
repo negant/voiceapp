@@ -13,6 +13,11 @@ export const SETTING_KEYS = {
   ACCOUNT_PLAN: 'account_plan',
   /** Stable device id for credits API (no PII). */
   DEVICE_ID: 'device_id',
+  /**
+   * Pending free-welcome dialog amount (stringified int).
+   * Cleared only after the user dismisses the prompt.
+   */
+  WELCOME_CREDITS_PROMPT: 'welcome_credits_prompt',
 } as const;
 
 export type SettingKey = (typeof SETTING_KEYS)[keyof typeof SETTING_KEYS];

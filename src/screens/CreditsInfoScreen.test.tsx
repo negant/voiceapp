@@ -105,6 +105,11 @@ describe('CreditsInfoScreen', () => {
     expect(texts.some(value => value.includes('credits.planFeatureCreditsPack'))).toBe(
       true,
     );
+    expect(
+      texts.some(value =>
+        value.includes('credits.planFeatureCreditsRenewMonthly'),
+      ),
+    ).toBe(true);
     expect(texts.some(value => value.includes('credits.buyPremium'))).toBe(true);
     expect(texts).toContain('credits.billingTitle');
     expect(texts).toContain('credits.billingBody');

@@ -1,12 +1,19 @@
+import { useState } from 'react';
 import { Switch, Text, View } from 'react-native';
 
 import { AppVersionInfo, Screen } from '@/components';
+import { Button } from '@/components/atoms/Button';
+import { ConfirmDialog } from '@/components/molecules/ConfirmDialog';
 import { SettingsRow } from '@/components/molecules/SettingsRow';
+import { env } from '@/config/env';
 import { useScreenTitle } from '@/hooks/useScreenTitle';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { RootStackScreenProps } from '@/navigation/types';
 import { useCredits } from '@/providers/CreditsProvider';
-import { env } from '@/config/env';
+import {
+  reloadAppAfterReset,
+  resetLocalAppData,
+} from '@/services/database/resetAppData';
 
 type DeveloperSwitchRowProps = {
   title: string;
@@ -44,7 +51,10 @@ export function SettingsScreen({
   navigation,
 }: RootStackScreenProps<'Settings'>) {
   const { t } = useTranslation();
-  const { isPremium, setAccountPlan } = useCredits();
+  const { balance, isPremium, setAccountPlan, setBalance, spendCredits } =
+    useCredits();
+  const [resetConfirmVisible, setResetConfirmVisible] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
   useScreenTitle('nav.settings');
 
   const showDeveloperSection = env.debugMode || __DEV__;
@@ -54,8 +64,29 @@ export function SettingsScreen({
     setAccountPlan(enabled ? 'premium' : 'free').catch(() => undefined);
   };
 
+  const handleClearCredits = () => {
+    // Prefer spend so the backend ledger stays authoritative when API is configured.
+    if (balance > 0) {
+      spendCredits(balance, 'debug_clear').catch(() => undefined);
+      return;
+    }
+    setBalance(0).catch(() => undefined);
+  };
+
+  const handleConfirmResetAppData = async () => {
+    setIsResetting(true);
+    try {
+      await resetLocalAppData();
+      setResetConfirmVisible(false);
+      reloadAppAfterReset();
+    } catch {
+      setIsResetting(false);
+      setResetConfirmVisible(false);
+    }
+  };
+
   return (
-    <Screen>
+    <Screen scrollable>
       <View className="mt-4 overflow-hidden rounded-2xl border border-border bg-surface dark:border-border-dark dark:bg-surface-dark">
         <Text className="px-4 pb-2 pt-4 text-sm font-semibold uppercase tracking-wide text-foreground-muted dark:text-foreground-muted-dark">
           {t('settings.languageSection')}
@@ -76,13 +107,44 @@ export function SettingsScreen({
           <DeveloperSwitchRow
             title={t('settings.enablePremiumTitle')}
             value={isPremium}
-            isLast
             onValueChange={handlePremiumToggle}
           />
+          <View className="gap-3 border-t border-border px-4 py-4 dark:border-border-dark">
+            <Button
+              title={t('settings.clearCreditsTitle')}
+              variant="secondary"
+              accessibilityLabel={t('settings.clearCreditsTitle')}
+              accessibilityHint={t('settings.clearCreditsSubtitle')}
+              onPress={handleClearCredits}
+            />
+            <Button
+              title={t('settings.clearAppDataTitle')}
+              variant="secondary"
+              accessibilityLabel={t('settings.clearAppDataTitle')}
+              accessibilityHint={t('settings.clearAppDataSubtitle')}
+              onPress={() => setResetConfirmVisible(true)}
+            />
+          </View>
         </View>
       ) : null}
 
       <AppVersionInfo className="mt-4" />
+
+      <ConfirmDialog
+        visible={resetConfirmVisible}
+        title={t('settings.clearAppDataConfirmTitle')}
+        message={t('settings.clearAppDataConfirmMessage')}
+        confirmLabel={t('settings.clearAppDataConfirmAction')}
+        isLoading={isResetting}
+        onCancel={() => {
+          if (!isResetting) {
+            setResetConfirmVisible(false);
+          }
+        }}
+        onConfirm={() => {
+          handleConfirmResetAppData().catch(() => undefined);
+        }}
+      />
     </Screen>
   );
 }

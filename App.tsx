@@ -3,6 +3,7 @@ import './global.css';
 import { useState } from 'react';
 import { StatusBar } from 'react-native';
 
+import { WelcomeCreditsPrompt } from '@/components/molecules/WelcomeCreditsPrompt';
 import { LaunchScreen } from '@/components/organisms/LaunchScreen';
 import { useDatabase } from '@/hooks/useDatabase';
 import { useTheme } from '@/hooks/useTheme';
@@ -45,6 +46,7 @@ function AppContent() {
     <>
       <AppStatusBar isDark={isDark} />
       <AppNavigator />
+      <WelcomeCreditsPrompt />
     </>
   );
 }

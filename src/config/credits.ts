@@ -23,7 +23,8 @@ export const DEFAULT_CREDITS_PER_STARTED_MINUTE = 1;
 export const AI_STARTED_MINUTE_SEC = 60;
 
 /**
- * Free-plan welcome credits on first install (env `STARTING_CREDITS`).
+ * Free-pool welcome grant size when the **backend** approves an install
+ * (env `STARTING_CREDITS` / server `STARTING_FREE_CREDITS`). Not granted offline.
  * 10 credits ≈ $0.20 API cost at $0.02 / started minute if fully used.
  */
 export const DEFAULT_STARTING_CREDITS = 10;

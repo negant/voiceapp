@@ -2,12 +2,22 @@ import { DEFAULT_STARTING_CREDITS } from '@/config/credits';
 import { SETTING_KEYS } from '@/services/database/constants';
 import { getSetting, setSetting } from '@/services/database/settingsRepository';
 
-/** Free-plan welcome grant (10 credits). Bumped when changing welcome size. */
+/**
+ * Marks that local SQLite was initialized without a free-pool grant.
+ * Welcome credits come only from the credits API (`bootstrapStatus=granted`).
+ */
+export const CREDITS_SEED_VERSION_API_ONLY = 'api-welcome-only';
+
+/** @deprecated Legacy seed marker — treated as already initialized. */
 export const CREDITS_SEED_VERSION_FREE_WELCOME = 'free-welcome-10';
 
-/** Previous welcome sizes — reset to current grant when still untouched. */
-const LEGACY_FULL_WELCOME_BALANCES = new Set([250, 1000]);
+export type EnsureInitialCreditsBalanceResult = {
+  balance: number;
+  /** Always 0 locally — free grants are API-authoritative only. */
+  newlyGrantedCredits: number;
+};
 
+/** Expected free-pool grant size when the backend approves an install. */
 export function resolveWelcomeCredits(): number {
   return DEFAULT_STARTING_CREDITS;
 }
@@ -30,45 +40,39 @@ export function parseCreditsBalance(
 
 export async function getCreditsBalance(): Promise<number> {
   const raw = await getSetting(SETTING_KEYS.CREDITS_BALANCE);
-  return parseCreditsBalance(raw) ?? resolveWelcomeCredits();
+  return parseCreditsBalance(raw) ?? 0;
 }
 
-export async function ensureInitialCreditsBalance(): Promise<number> {
+/**
+ * Ensures a persisted balance exists. Does **not** grant free welcome credits —
+ * that happens only via backend register when the install pool has slots.
+ */
+export async function ensureInitialCreditsBalance(): Promise<EnsureInitialCreditsBalanceResult> {
   const [seedVersion, raw] = await Promise.all([
     getSetting(SETTING_KEYS.CREDITS_SEED_VERSION),
     getSetting(SETTING_KEYS.CREDITS_BALANCE),
   ]);
   const parsed = parseCreditsBalance(raw);
-  const welcomeGrant = resolveWelcomeCredits();
+  const isInitialized =
+    seedVersion === CREDITS_SEED_VERSION_API_ONLY ||
+    seedVersion === CREDITS_SEED_VERSION_FREE_WELCOME;
 
-  if (seedVersion !== CREDITS_SEED_VERSION_FREE_WELCOME) {
-    const shouldApplyWelcome =
-      parsed === null ||
-      parsed === 0 ||
-      LEGACY_FULL_WELCOME_BALANCES.has(parsed);
-
-    if (shouldApplyWelcome) {
-      await setSetting(SETTING_KEYS.CREDITS_BALANCE, String(welcomeGrant));
-      await setSetting(
-        SETTING_KEYS.CREDITS_SEED_VERSION,
-        CREDITS_SEED_VERSION_FREE_WELCOME,
-      );
-      return welcomeGrant;
-    }
-
+  if (!isInitialized) {
+    const balance = parsed ?? 0;
+    await setSetting(SETTING_KEYS.CREDITS_BALANCE, String(balance));
     await setSetting(
       SETTING_KEYS.CREDITS_SEED_VERSION,
-      CREDITS_SEED_VERSION_FREE_WELCOME,
+      CREDITS_SEED_VERSION_API_ONLY,
     );
-    return parsed;
+    return { balance, newlyGrantedCredits: 0 };
   }
 
   if (parsed !== null) {
-    return parsed;
+    return { balance: parsed, newlyGrantedCredits: 0 };
   }
 
-  await setSetting(SETTING_KEYS.CREDITS_BALANCE, String(welcomeGrant));
-  return welcomeGrant;
+  await setSetting(SETTING_KEYS.CREDITS_BALANCE, '0');
+  return { balance: 0, newlyGrantedCredits: 0 };
 }
 
 export async function setCreditsBalance(balance: number): Promise<void> {

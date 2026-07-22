@@ -22,3 +22,4 @@ export { StudioSection } from './StudioSection';
 export { SuccessDialog } from './SuccessDialog';
 export { ThemeToggle } from './ThemeToggle';
 export { VoicePresetCard } from './VoicePresetCard';
+export { WelcomeCreditsPrompt } from './WelcomeCreditsPrompt';

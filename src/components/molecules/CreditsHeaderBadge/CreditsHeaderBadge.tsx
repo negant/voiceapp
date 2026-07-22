@@ -18,31 +18,21 @@ export function CreditsHeaderBadge({ className }: CreditsHeaderBadgeProps) {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { t, locale } = useTranslation();
   const { isDark } = useTheme();
-  const { balance, isHydrated, isPremium } = useCredits();
+  const { balance, isHydrated } = useCredits();
 
   if (!isHydrated) {
     return null;
   }
 
   const iconColor = isDark ? '#FCD34D' : '#D97706';
-  // Free plan starts with welcome credits — show balance; Buy Premium when empty.
-  const showBalance = isPremium || balance > 0;
-  const label = showBalance
-    ? formatCreditsBalance(balance, locale)
-    : t('credits.buyPremium');
-  const accessibilityHint = showBalance
-    ? t('accessibility.creditsBalance', { count: balance })
-    : t('accessibility.buyPremium');
+  // Always show numeric balance (including 0) — Premium renews monthly; empty ≠ buy CTA.
+  const label = formatCreditsBalance(balance, locale);
 
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={
-        showBalance
-          ? t('accessibility.openCreditsInfo')
-          : t('accessibility.buyPremium')
-      }
-      accessibilityHint={accessibilityHint}
+      accessibilityLabel={t('accessibility.openCreditsInfo')}
+      accessibilityHint={t('accessibility.creditsBalance', { count: balance })}
       onPress={() => navigation.navigate('CreditsInfo')}
       className={cn(
         'flex-row items-center gap-1 rounded-full border border-amber-500/35 bg-surface px-2 py-1 shadow-sm active:opacity-70 dark:border-amber-400/40 dark:bg-surface-dark',

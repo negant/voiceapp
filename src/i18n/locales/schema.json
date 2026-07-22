@@ -48,6 +48,13 @@
     "updateUnknown": "settings.updateUnknown",
     "developerSection": "settings.developerSection",
     "enablePremiumTitle": "settings.enablePremiumTitle",
+    "clearCreditsTitle": "settings.clearCreditsTitle",
+    "clearCreditsSubtitle": "settings.clearCreditsSubtitle",
+    "clearAppDataTitle": "settings.clearAppDataTitle",
+    "clearAppDataSubtitle": "settings.clearAppDataSubtitle",
+    "clearAppDataConfirmTitle": "settings.clearAppDataConfirmTitle",
+    "clearAppDataConfirmMessage": "settings.clearAppDataConfirmMessage",
+    "clearAppDataConfirmAction": "settings.clearAppDataConfirmAction",
     "deviceIdLabel": "settings.deviceIdLabel",
     "deviceIdPending": "settings.deviceIdPending",
     "deviceIdHint": "settings.deviceIdHint"
@@ -375,6 +382,9 @@
   "credits": {
     "label": "credits.label",
     "buyPremium": "credits.buyPremium",
+    "welcomeGrantTitle": "credits.welcomeGrantTitle",
+    "welcomeGrantMessage": "credits.welcomeGrantMessage",
+    "welcomeGrantAction": "credits.welcomeGrantAction",
     "balanceTitle": "credits.balanceTitle",
     "balanceValue": "credits.balanceValue",
     "balanceMinutes": "credits.balanceMinutes",
