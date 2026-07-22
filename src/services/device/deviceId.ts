@@ -1,5 +1,10 @@
+import * as Keychain from 'react-native-keychain';
+
 import { SETTING_KEYS } from '@/services/database/constants';
 import { getSetting, setSetting } from '@/services/database/settingsRepository';
+
+const KEYCHAIN_SERVICE = 'pl.ukrywane.voiceapp.device_id';
+const KEYCHAIN_USERNAME = 'device_id';
 
 /** RFC-4122-ish UUID v4 for device identity (no PII). */
 export function createDeviceId(): string {
@@ -31,23 +36,64 @@ export function isValidDeviceId(value: string | null | undefined): boolean {
   );
 }
 
+async function readKeychainDeviceId(): Promise<string | null> {
+  try {
+    const credentials = await Keychain.getGenericPassword({
+      service: KEYCHAIN_SERVICE,
+    });
+    if (!credentials || !isValidDeviceId(credentials.password)) {
+      return null;
+    }
+    return credentials.password.trim();
+  } catch {
+    return null;
+  }
+}
+
+async function writeKeychainDeviceId(deviceId: string): Promise<void> {
+  try {
+    await Keychain.setGenericPassword(KEYCHAIN_USERNAME, deviceId, {
+      service: KEYCHAIN_SERVICE,
+      accessible: Keychain.ACCESSIBLE.AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY,
+    });
+  } catch {
+    // SQLite remains the fallback if Keystore/Keychain is unavailable.
+  }
+}
+
 /**
  * Stable device id for credits API (no user account).
- * Stored in SQLite. For reinstall resistance, migrate to Keychain/Keystore later
- * — see credits-backend.md.
+ * Prefers Android Keystore / iOS Keychain so the id survives reinstall when possible;
+ * mirrors into SQLite for offline reads and migration from older installs.
  */
 export async function ensureDeviceId(): Promise<string> {
+  const fromKeychain = await readKeychainDeviceId();
+  if (fromKeychain) {
+    const sqlite = await getSetting(SETTING_KEYS.DEVICE_ID);
+    if (sqlite !== fromKeychain) {
+      await setSetting(SETTING_KEYS.DEVICE_ID, fromKeychain);
+    }
+    return fromKeychain;
+  }
+
   const existing = await getSetting(SETTING_KEYS.DEVICE_ID);
   if (isValidDeviceId(existing)) {
-    return existing!.trim();
+    const id = existing!.trim();
+    await writeKeychainDeviceId(id);
+    return id;
   }
 
   const next = createDeviceId();
   await setSetting(SETTING_KEYS.DEVICE_ID, next);
+  await writeKeychainDeviceId(next);
   return next;
 }
 
 export async function getDeviceId(): Promise<string | null> {
+  const fromKeychain = await readKeychainDeviceId();
+  if (fromKeychain) {
+    return fromKeychain;
+  }
   const existing = await getSetting(SETTING_KEYS.DEVICE_ID);
   return isValidDeviceId(existing) ? existing!.trim() : null;
 }

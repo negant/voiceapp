@@ -1,5 +1,21 @@
 /* eslint-env jest */
 jest.mock('react-native-reanimated');
+jest.mock('react-native-keychain', () => ({
+  ACCESSIBLE: { AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY: 'AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY' },
+  getGenericPassword: jest.fn(() => Promise.resolve(false)),
+  setGenericPassword: jest.fn(() => Promise.resolve(true)),
+  resetGenericPassword: jest.fn(() => Promise.resolve(true)),
+}));
+jest.mock('react-native-iap', () => ({
+  initConnection: jest.fn(() => Promise.resolve(true)),
+  endConnection: jest.fn(() => Promise.resolve(true)),
+  fetchProducts: jest.fn(() => Promise.resolve([])),
+  requestPurchase: jest.fn(() => Promise.resolve()),
+  getAvailablePurchases: jest.fn(() => Promise.resolve([])),
+  finishTransaction: jest.fn(() => Promise.resolve()),
+  purchaseUpdatedListener: jest.fn(() => ({ remove: jest.fn() })),
+  purchaseErrorListener: jest.fn(() => ({ remove: jest.fn() })),
+}));
 jest.mock('@react-native-community/netinfo', () => ({
   __esModule: true,
   default: {

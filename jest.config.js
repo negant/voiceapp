@@ -14,7 +14,7 @@ module.exports = {
       '<rootDir>/node_modules/@soundtouchjs/interpolation-strategy-linear/.dist/index.js',
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-navigation|nativewind|react-native-css-interop|react-native-svg|lucide-react-native|@soundtouchjs)/)',
+    'node_modules/(?!(react-native|@react-native|@react-navigation|nativewind|react-native-css-interop|react-native-svg|lucide-react-native|@soundtouchjs|react-native-iap|react-native-keychain|react-native-nitro-modules)/)',
   ],
   collectCoverageFrom: [
     'src/**/*.{ts,tsx}',

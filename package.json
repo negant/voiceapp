@@ -1,6 +1,6 @@
 {
   "name": "VoiceApp",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "android": "react-native run-android --port 8088",
@@ -12,12 +12,16 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "generate:icons": "node scripts/generate-app-icons.mjs",
+    "generate:store-assets": "node scripts/generate-store-assets.mjs",
+    "android:keystore": "node scripts/generate-release-keystore.mjs",
+    "android:bundle:release": "node scripts/check-release-keystore.mjs && cd android && ./gradlew bundleRelease",
     "i18n:schema": "node scripts/sync-i18n-schema.mjs",
     "postinstall": "patch-package",
     "api:install": "npm install --prefix server",
     "api:docker": "npm run docker:up --prefix server",
     "api:dev": "npm run dev --prefix server",
-    "api:test": "npm test --prefix server"
+    "api:test": "npm test --prefix server",
+    "api:health": "curl -fsS \"${BACKEND_API_BASE_URL:-https://api.ukrywane.pl}/health\""
   },
   "dependencies": {
     "@react-native-community/netinfo": "^12.0.1",
@@ -36,6 +40,9 @@
     "react-native-blob-util": "^0.24.10",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "^2.32.0",
+    "react-native-iap": "^15.5.4",
+    "react-native-keychain": "^10.0.0",
+    "react-native-nitro-modules": "^0.36.1",
     "react-native-reanimated": "^4.5.1",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.25.2",

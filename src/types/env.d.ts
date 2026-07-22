@@ -22,4 +22,5 @@ declare module '@env' {
   /** App backend (devices / credits / setup) — not tied to a vendor name. */
   export const BACKEND_API_BASE_URL: string;
   export const BACKEND_API_TOKEN: string;
+  export const PRIVACY_POLICY_URL: string;
 }

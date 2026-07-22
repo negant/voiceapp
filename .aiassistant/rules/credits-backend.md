@@ -23,7 +23,7 @@ Rozliczanie: `ceil(durationSec / 60)` × stawka.
 ## Anty-abuse (bez kont użytkownika)
 - Brak PII — tylko **`device_id`** (UUID).
 - Grant free **raz na `device_id`**; reinstall z tym samym ID → `already_registered`, bez nowych free.
-- Aby ID przetrwało reinstall: docelowo Keychain (iOS) / Keystore (Android). Dziś: SQLite (`SETTING_KEYS.DEVICE_ID`) — wystarczy do sync i supportu; pełna odporność na reinstall = secure storage.
+- Aby ID przetrwało reinstall: **Keychain (iOS) / Keystore (Android)** przez `react-native-keychain` + mirror w SQLite.
 - Device ID widoczny w **Ustawienia → O aplikacji** (do zgłoszeń).
 
 ## Tabele Postgres
@@ -47,9 +47,12 @@ Rozliczanie: `ceil(durationSec / 60)` × stawka.
 | Moment | Endpoint |
 |--------|----------|
 | Start aplikacji | `POST /v1/devices/register` + `POST /v1/credits/sync` |
-| Włączenie / wyłączenie Premium (IAP / switch) | `POST /v1/credits/plan` |
+| Włączenie Premium (Play Billing + verify) | `POST /v1/credits/plan` + `googlePlayPurchase` |
+| Wyłączenie Premium (dev / support) | `POST /v1/credits/plan` `{ plan: "free" }` |
 | Zużycie AI | `POST /v1/credits/spend` **na starcie** konwersji (przed WaveSpeed) |
 | Brak API / offline | lokalne SQLite (fallback) |
+
+W produkcji (`GOOGLE_PLAY_REQUIRE_PURCHASE_VERIFY=true`) grant Premium **wymaga** zweryfikowanego `purchaseToken` (Google Play Developer API / service account).
 
 Saldo z odpowiedzi API nadpisuje lokalny cache.
 

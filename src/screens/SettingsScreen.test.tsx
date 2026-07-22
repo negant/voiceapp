@@ -40,6 +40,7 @@ jest.mock('@/providers/CreditsProvider', () => ({
 jest.mock('@/config/env', () => ({
   env: {
     debugMode: true,
+    privacyPolicyUrl: 'https://ukrywane.pl/privacy',
   },
 }));
 

@@ -38,7 +38,7 @@ describe('AppVersionInfo', () => {
 
     expect(values).toContain('settings.aboutSection');
     expect(values).toContain('settings.versionLabel');
-    expect(values).toContain('0.0.1');
+    expect(values).toContain('1.0.0');
     expect(values).toContain('settings.updateUpToDate');
     expect(values).toContain('settings.deviceIdLabel');
     expect(values).toContain('11111111-2222-4333-8444-555555555555');

@@ -1,5 +1,6 @@
 import { DevSettings } from 'react-native';
 import ReactNativeBlobUtil from 'react-native-blob-util';
+import * as Keychain from 'react-native-keychain';
 
 import {
   AUDIO_IMPORTS_DIR,
@@ -10,6 +11,7 @@ import { getSQLiteManager } from '@/services/database/sqliteManager';
 
 const EXPORT_DIR = `${ReactNativeBlobUtil.fs.dirs.DocumentDir}/VoiceApp`;
 const STS_CACHE_DIR = `${ReactNativeBlobUtil.fs.dirs.CacheDir}/voice-app-sts`;
+const DEVICE_ID_KEYCHAIN_SERVICE = 'pl.ukrywane.voiceapp.device_id';
 
 /**
  * Clears user tables and local audio folders so the next bootstrap looks like
@@ -27,6 +29,12 @@ export async function resetLocalAppData(): Promise<void> {
     if (!result.success) {
       throw new Error(result.error ?? `Failed to run: ${statement}`);
     }
+  }
+
+  try {
+    await Keychain.resetGenericPassword({ service: DEVICE_ID_KEYCHAIN_SERVICE });
+  } catch {
+    // Ignore — Keychain may be unavailable in some test environments.
   }
 
   await clearDirectory(AUDIO_IMPORTS_DIR);

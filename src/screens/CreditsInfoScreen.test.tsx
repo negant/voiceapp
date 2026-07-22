@@ -46,6 +46,7 @@ jest.mock('@/providers/CreditsProvider', () => ({
     refreshBalance: jest.fn().mockResolvedValue(10),
     setBalance: jest.fn(),
     setAccountPlan: jest.fn(),
+    purchasePremium: jest.fn().mockResolvedValue(true),
   }),
 }));
 

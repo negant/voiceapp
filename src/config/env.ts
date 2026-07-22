@@ -20,9 +20,11 @@ import {
   AI_EFFECTS_API_BASE_URL,
   BACKEND_API_BASE_URL,
   BACKEND_API_TOKEN,
+  PRIVACY_POLICY_URL,
 } from '@env';
 
 import { resolveAiEffectsApiBaseUrl } from '@/config/aiEffects';
+import { DEFAULT_PRIVACY_POLICY_URL } from '@/config/billing';
 import {
   DEFAULT_CREDITS_PER_STARTED_MINUTE,
   DEFAULT_PREMIUM_CREDITS,
@@ -146,6 +148,9 @@ export const env = {
   backendApiBaseUrl: parseOptionalSecret(BACKEND_API_BASE_URL),
   /** Bearer token for backend API (never log). */
   backendApiToken: parseOptionalSecret(BACKEND_API_TOKEN),
+  /** Public privacy policy URL (Play Console + in-app link). */
+  privacyPolicyUrl:
+    parseOptionalSecret(PRIVACY_POLICY_URL) ?? DEFAULT_PRIVACY_POLICY_URL,
 } as const;
 
 export function isAiEffectsConfigured(): boolean {

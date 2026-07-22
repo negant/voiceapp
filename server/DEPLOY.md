@@ -155,3 +155,28 @@ mkdir -p /root/backups
 docker compose exec -T postgres \
   pg_dump -U voiceapp voiceapp > /root/backups/voiceapp-$(date +%F).sql
 ```
+
+## 10. Google Play purchase verification
+
+On the VPS, place a Play Console **service account** JSON (Android Publisher API enabled) and set in `server/.env`:
+
+```bash
+NODE_ENV=production
+HOST=127.0.0.1
+GOOGLE_PLAY_PACKAGE_NAME=pl.ukrywane.voiceapp
+GOOGLE_PLAY_PREMIUM_PRODUCT_ID=voiceapp_premium_monthly
+GOOGLE_PLAY_REQUIRE_PURCHASE_VERIFY=true
+GOOGLE_PLAY_SERVICE_ACCOUNT_PATH=/opt/voice-app/secrets/play-service-account.json
+chmod 600 /opt/voice-app/secrets/play-service-account.json
+```
+
+Without credentials + `REQUIRE=true`, Premium plan grants return `402` with `play_credentials_missing` / verify errors.
+
+## 11. Healthcheck
+
+```bash
+curl -fsS https://api.ukrywane.pl/health
+# → {"ok":true,"service":"voiceapp-api"}
+```
+
+From the app repo: `npm run api:health` (uses `BACKEND_API_BASE_URL` or the prod default).

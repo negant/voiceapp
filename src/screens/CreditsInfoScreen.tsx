@@ -1,6 +1,6 @@
 import { Coins, Crown } from 'lucide-react-native';
 import { Text, View } from 'react-native';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useFocusEffect } from '@react-navigation/native';
 
 import { Button } from '@/components/atoms/Button';
@@ -52,7 +52,7 @@ export function CreditsInfoScreen(_props: RootStackScreenProps<'CreditsInfo'>) {
     balance,
     creditsPerStartedMinute,
     isPremium,
-    setAccountPlan,
+    purchasePremium,
     refreshBalance,
   } = useCredits();
   useScreenTitle('nav.yourAccount');
@@ -62,6 +62,9 @@ export function CreditsInfoScreen(_props: RootStackScreenProps<'CreditsInfo'>) {
       refreshBalance().catch(() => undefined);
     }, [refreshBalance]),
   );
+
+  const [isPurchasing, setIsPurchasing] = useState(false);
+  const [purchaseError, setPurchaseError] = useState<string | null>(null);
 
   const premiumPriceUsd = env.premiumPriceUsd;
   const premiumCredits = env.premiumCredits;
@@ -162,8 +165,18 @@ export function CreditsInfoScreen(_props: RootStackScreenProps<'CreditsInfo'>) {
   );
 
   const handleBuyPremium = async () => {
-    // Provider applies Premium pack via API (or local fallback) — do not add credits twice.
-    await setAccountPlan('premium');
+    setPurchaseError(null);
+    setIsPurchasing(true);
+    try {
+      const ok = await purchasePremium();
+      if (!ok) {
+        setPurchaseError(t('credits.purchaseFailed'));
+      }
+    } catch {
+      setPurchaseError(t('credits.purchaseFailed'));
+    } finally {
+      setIsPurchasing(false);
+    }
   };
 
   return (
@@ -219,12 +232,23 @@ export function CreditsInfoScreen(_props: RootStackScreenProps<'CreditsInfo'>) {
             </Text>
             <PlanFeatureList features={premiumPlanFeatures} />
             <Button
-              title={t('credits.buyPremium')}
+              title={
+                isPurchasing
+                  ? t('credits.purchasingPremium')
+                  : t('credits.buyPremium')
+              }
               onPress={() => {
-                handleBuyPremium().catch(() => undefined);
+                if (!isPurchasing) {
+                  handleBuyPremium().catch(() => undefined);
+                }
               }}
               className="mt-4 min-h-12"
             />
+            {purchaseError ? (
+              <Text className="mt-2 text-sm text-red-600 dark:text-red-400">
+                {purchaseError}
+              </Text>
+            ) : null}
           </View>
         ) : null}
       </View>

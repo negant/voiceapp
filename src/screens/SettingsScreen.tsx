@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Switch, Text, View } from 'react-native';
+import { Linking, Switch, Text, View } from 'react-native';
 
 import { AppVersionInfo, Screen } from '@/components';
 import { Button } from '@/components/atoms/Button';
@@ -127,6 +127,21 @@ export function SettingsScreen({
           </View>
         </View>
       ) : null}
+
+      <View className="mt-4 overflow-hidden rounded-2xl border border-border bg-surface dark:border-border-dark dark:bg-surface-dark">
+        <Text className="px-4 pb-2 pt-4 text-sm font-semibold uppercase tracking-wide text-foreground-muted dark:text-foreground-muted-dark">
+          {t('settings.legalSection')}
+        </Text>
+        <SettingsRow
+          title={t('settings.privacyPolicyTitle')}
+          subtitle={t('settings.privacyPolicySubtitle')}
+          showChevron
+          className="border-b-0"
+          onPress={() => {
+            Linking.openURL(env.privacyPolicyUrl).catch(() => undefined);
+          }}
+        />
+      </View>
 
       <AppVersionInfo className="mt-4" />
 
