@@ -91,6 +91,9 @@ Publiczny health/status providera AI (bez klucza API). **Nie mylić** z naszym b
 - Po nieudanej konwersji cloud: `voiceStudio.convertFailedAiServiceMessage` — problem z usługą AI, spróbuj później (PL/EN).
 - Równolegle: odśwież status (`refreshStatusAfterAiFailure`).
 
+### Ostrzeżenie przed Convert (żółty / czerwony)
+- Gdy status AI to `degraded` lub `outage` i użytkownik naciska Convert przy efekcie AI: `ConfirmDialog` (`aiStatusConvertWarning*`) — **raz na sesję** (jak limit długości); mogą wystąpić problemy (trwają prace), kredyty mogą zostać odjęte; **OK** kontynuuje (`acknowledgedAiStatusRisk`), Anuluj zamyka (kolejne Convert w tej sesji bez ponownego modala).
+
 ### SDK WaveSpeed
 - Oficjalne JS SDK **nie** ma metody health — używamy wyłącznie publicznego `summary.json` (nie `wavespeed.run` / Client).
 

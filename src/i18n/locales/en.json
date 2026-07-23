@@ -217,6 +217,8 @@
     "convertFailedTitle": "Conversion failed",
     "convertFailedMessage": "Could not convert the file. Try again.",
     "convertFailedAiServiceMessage": "There seems to be a problem with the AI service. Please try again later.",
+    "aiStatusConvertWarningTitle": "AI service warning",
+    "aiStatusConvertWarningMessage": "Work is in progress on the AI service. Problems may occur, and credits may be deducted. Continue anyway?",
     "processingTitle": "Converting audio",
     "processingMessage": "Basic and Advanced run on your device. AI conversion needs the internet — keep the app open until it finishes.",
     "processingStagePreparing": "Preparing…",

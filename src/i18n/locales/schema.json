@@ -217,6 +217,8 @@
     "convertFailedTitle": "voiceStudio.convertFailedTitle",
     "convertFailedMessage": "voiceStudio.convertFailedMessage",
     "convertFailedAiServiceMessage": "voiceStudio.convertFailedAiServiceMessage",
+    "aiStatusConvertWarningTitle": "voiceStudio.aiStatusConvertWarningTitle",
+    "aiStatusConvertWarningMessage": "voiceStudio.aiStatusConvertWarningMessage",
     "processingTitle": "voiceStudio.processingTitle",
     "processingMessage": "voiceStudio.processingMessage",
     "processingStagePreparing": "voiceStudio.processingStagePreparing",
