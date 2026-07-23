@@ -3,6 +3,7 @@ import { Linking, Switch, Text, View } from 'react-native';
 
 import { AppVersionInfo, Screen } from '@/components';
 import { Button } from '@/components/atoms/Button';
+import { AiServiceStatusCard } from '@/components/molecules/AiServiceStatusCard';
 import { ConfirmDialog } from '@/components/molecules/ConfirmDialog';
 import { SettingsRow } from '@/components/molecules/SettingsRow';
 import { env } from '@/config/env';
@@ -10,6 +11,7 @@ import { useScreenTitle } from '@/hooks/useScreenTitle';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { RootStackScreenProps } from '@/navigation/types';
 import { useCredits } from '@/providers/CreditsProvider';
+import { useAiServiceStatus } from '@/providers/AiServiceStatusProvider';
 import {
   reloadAppAfterReset,
   resetLocalAppData,
@@ -53,6 +55,7 @@ export function SettingsScreen({
   const { t } = useTranslation();
   const { balance, isPremium, setAccountPlan, setBalance, spendCredits } =
     useCredits();
+  const { applyDebugStatus, refreshStatus } = useAiServiceStatus();
   const [resetConfirmVisible, setResetConfirmVisible] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   useScreenTitle('nav.settings');
@@ -87,6 +90,8 @@ export function SettingsScreen({
 
   return (
     <Screen scrollable>
+      <AiServiceStatusCard className="mt-4" />
+
       <View className="mt-4 overflow-hidden rounded-2xl border border-border bg-surface dark:border-border-dark dark:bg-surface-dark">
         <Text className="px-4 pb-2 pt-4 text-sm font-semibold uppercase tracking-wide text-foreground-muted dark:text-foreground-muted-dark">
           {t('settings.languageSection')}
@@ -123,6 +128,41 @@ export function SettingsScreen({
               accessibilityLabel={t('settings.clearAppDataTitle')}
               accessibilityHint={t('settings.clearAppDataSubtitle')}
               onPress={() => setResetConfirmVisible(true)}
+            />
+            <Text className="pt-1 text-xs font-semibold uppercase tracking-wide text-foreground-muted dark:text-foreground-muted-dark">
+              {t('settings.debugAiStatusSection')}
+            </Text>
+            <Button
+              title={t('settings.debugAiStatusOperational')}
+              variant="secondary"
+              accessibilityLabel={t('settings.debugAiStatusOperational')}
+              onPress={() => {
+                applyDebugStatus('ok').catch(() => undefined);
+              }}
+            />
+            <Button
+              title={t('settings.debugAiStatusMaintenance')}
+              variant="secondary"
+              accessibilityLabel={t('settings.debugAiStatusMaintenance')}
+              onPress={() => {
+                applyDebugStatus('degraded').catch(() => undefined);
+              }}
+            />
+            <Button
+              title={t('settings.debugAiStatusIssues')}
+              variant="secondary"
+              accessibilityLabel={t('settings.debugAiStatusIssues')}
+              onPress={() => {
+                applyDebugStatus('outage').catch(() => undefined);
+              }}
+            />
+            <Button
+              title={t('settings.debugAiStatusRefreshLive')}
+              variant="secondary"
+              accessibilityLabel={t('settings.debugAiStatusRefreshLive')}
+              onPress={() => {
+                refreshStatus().catch(() => undefined);
+              }}
             />
           </View>
         </View>

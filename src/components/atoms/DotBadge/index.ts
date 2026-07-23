@@ -1,1 +1,2 @@
-export { DotBadge } from '@/components/atoms/DotBadge/DotBadge';
+export { DotBadge } from './DotBadge';
+export type { DotBadgeProps, DotBadgeTone } from './DotBadge.types';

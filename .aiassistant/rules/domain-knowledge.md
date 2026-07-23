@@ -24,7 +24,7 @@ Jeśli w trakcie pracy napotkasz wiedzę domenową, której tu nie ma, **dopisz 
 ## Przetwarzanie głosu
 - **Tiery efektów (Voice Studio):** `Basic` → `Advanced` → **`AI`**. AI = **WaveSpeed Chatterbox** Speech-to-Speech (`narratorka`, `narrator`, `legionista`) gdy `AI_EFFECTS_API_KEY`; UI: „zaawansowane AI” + wymóg internetu (bez brandingu/API). Bez sieci karty AI wyłączone (NetInfo) + **AppAlert** (`showOfflineAlert`). Po powrocie sieci — `showOnlineAlert`. Wynik = **MP3** z API.
 - **AppAlert:** globalny system stylowanych alertów (`AppAlertProvider` / `useAppAlert`) — `showAlert` / `showErrorAlert` / `showWarningAlert` / offline-online; kolejka; warianty; jawne kolory tekstu (NativeWind w Modal bywa niewidoczny).
-- **WaveSpeed Chatterbox STS:** upload źródła (`POST /media/upload/binary`) → `POST /chatterbox/speech-to-speech` z `audio` + `reference_audio` → poll wyniku → pobranie MP3; referencje w `assets/references/` (`narratorFemale.mp3`, `narratorMale.mp3`, `legionary.mp3`); wymaga `AI_EFFECTS_API_KEY` + `ENABLE_AI_EFFECTS` + `AI_EFFECTS_API_BASE_URL` (domyślnie `https://api.wavespeed.ai/api/v3`). **Release Android:** Metro pakuje `require()` MP3 do `res/raw` jako **lowercase** `assets_references_*` (np. `narratorfemale`); te same pliki trafiają do APK `assets/` przez Gradle `assets.srcDir` — JS mapuje lowercase URI → camelCase (`narratorFemale.mp3`) i czyta `bundle-assets://`. Debug ładuje referencje przez Metro HTTP. Cennik ok. **$0.02 / rozpoczęta minuta** źródła. ElevenLabs usunięte z produktu (za drogie).
+- **WaveSpeed Chatterbox STS:** upload źródła (`POST /media/upload/binary`) → `POST /chatterbox/speech-to-speech` z `audio` + `reference_audio` → poll wyniku → pobranie MP3; referencje w `assets/references/` (`narratorFemale.mp3`, `narratorMale.mp3`, `legionary.mp3`); wymaga `AI_EFFECTS_API_KEY` + `ENABLE_AI_EFFECTS` + `AI_EFFECTS_API_BASE_URL` (domyślnie `https://api.wavespeed.ai/api/v3`). Szczegóły statusu usługi: sekcja **Status usługi AI** poniżej. **Release Android:** Metro pakuje `require()` MP3 do `res/raw` jako **lowercase** `assets_references_*` (np. `narratorfemale`); te same pliki trafiają do APK `assets/` przez Gradle `assets.srcDir` — JS mapuje lowercase URI → camelCase (`narratorFemale.mp3`) i czyta `bundle-assets://`. Debug ładuje referencje przez Metro HTTP. Cennik ok. **$0.02 / rozpoczęta minuta** źródła. ElevenLabs usunięte z produktu (za drogie).
 - Pipeline basic: decode → **mono downmix** → **resample 22.05 kHz** → **dry presets: JS pitch/tempo/bass** (female/light, male/deep) / **robot + oldRadio + helium: offline render** → encode WAV z lokalnego `Float32Array` (sync) → zapis binarny.
 - Pipeline advanced: decode → mono → resample 22.05 kHz → łańcuch filtrów (`highpass` → `noise_reduce` → **`pitch_shift` (SoundTouch)** → **`formant_shift` (STFT envelope)** → **`tempo_shift` (WSOLA)** → EQ / saturacja → `gain`) → encode WAV. Efekty: **Commander**, **Hall**, **Warrior**, **Female Voice**, **Male Voice**, **Android**, **Chipmunk** — wyłącznie wspólny runner JS (`applyAdvancedEffect`), nie OfflineAudioContext.
 - **`formant_shift`:** przesunięcie obwiedni widmowej w STFT (Hann 2048, hop 512) — rozciąga magnitude wzdłuż osi częstotliwości bez zmiany długości; `factor > 1` jaśniejszy / wyższe formanty, `< 1` ciemniejszy. Używany w Advanced Female (×1.12), Male (×0.87) i **Android** (×1.1 — syntetyczny TTS).
@@ -52,6 +52,47 @@ Jeśli w trakcie pracy napotkasz wiedzę domenową, której tu nie ma, **dopisz 
 - **Nagrywanie:** auto-stop po 10 min (`useEffect` + timer); finalize odrzuca tylko gdy duration > limit (nie trimuje w `finalizeRecordedAudio` — trim dopiero w `prepareSourceAudio`).
 - **Łączenie efektów:** funkcja **Premium** (`isPremium`); zabronione **2× AI** w jednym łańcuchu (`hasMultipleAiInChain`).
 - **Przygotowanie źródła:** `prepareSourceAudio()` po imporcie/nagraniu robi tylko **trim** długości — **bez wstępnego odszumiania** (psuło jakość). Odszumianie opcjonalnie przy konwersji Basic/Advanced (`sourceDenoise.ts`, `ENABLE_SOURCE_DENOISE` / `SOURCE_DENOISE_STRENGTH`).
+
+## Status usługi AI (WaveSpeed) — reguła produktu
+
+Publiczny health/status providera AI (bez klucza API). **Nie mylić** z naszym backendem kredytów (`BACKEND_API_*`).
+
+### Endpoint i env
+- Env: **`AI_EFFECTS_API_STATUS_URL`** (w `.env` / `.env.example`).
+- Domyślnie: `https://api.wavespeed.ai/public/v3/summary.json` (Instatus-compatible).
+- Status page (ludzie): https://status.wavespeed.ai
+- Kod: `src/services/aiServiceStatus/`, provider `AiServiceStatusProvider`, config `resolveAiEffectsApiStatusUrl` w `src/config/aiEffects.ts`.
+
+### Kiedy odpytywać (ważne — bez częstego pollingu)
+1. **Przy starcie aplikacji** — jednorazowo po gotowości DB (`AiServiceStatusProvider`).
+2. **Po błędzie konwersji AI** — `refreshStatusAfterAiFailure()` z `useVoiceStudio` (quiet refresh, bez migania „Checking…”).
+3. **Nie** odpytywać okresowo / na timerze / przy każdym wejściu w Ustawienia.
+
+### Mapowanie → UI (semafor)
+| Warunek | Severity | Kolor | Badge EN | Badge PL |
+|---------|----------|-------|----------|----------|
+| `page.status=UP` + puste `activeIncidents` + puste `activeMaintenances` | `ok` | zielony | **Operational** | **Działające** |
+| `UNDERMAINTENANCE` lub niepusta `activeMaintenances` | `degraded` | żółty | Maintenance | Konserwacja |
+| `HASISSUES` / `DOWN` lub niepusta `activeIncidents` | `outage` | czerwony | Issues | Problemy |
+| Błąd sieci / nieparsowalna odpowiedź | `unknown` | szary | Unknown | Nieznany |
+
+### Persystencja
+- Żółty / czerwony → zapis w SQLite (`settings.ai_service_status_degraded` / `SETTING_KEYS.AI_SERVICE_STATUS_DEGRADED`).
+- Przy powrocie do `ok` → wyczyść cache.
+- Cache pozwala pokazać ostatni znany problem przed / gdy świeży fetch jeszcze nie wrócił.
+
+### UI
+- **Top nav:** `DotBadge` na ikonie Settings w `HeaderActions` (styl jak „Twoje pliki”) — zielony / żółty / czerwony wg statusu.
+- **Ustawienia:** `AiServiceStatusCard` **nad** sekcją języka — `AiServiceStatusBadge` + komunikat (OK / konserwacja / awaria / niedostępny).
+- **Voice Studio:** w `ConversionSummary` („Co się stanie”), tylko dla `cloud` / `mixed` — badge po prawej od „Efekt: …”.
+- Atom badge: `AiServiceStatusBadge`; kropka: `DotBadge` (tone green/yellow/red).
+
+### Komunikat przy błędzie AI
+- Po nieudanej konwersji cloud: `voiceStudio.convertFailedAiServiceMessage` — problem z usługą AI, spróbuj później (PL/EN).
+- Równolegle: odśwież status (`refreshStatusAfterAiFailure`).
+
+### SDK WaveSpeed
+- Oficjalne JS SDK **nie** ma metody health — używamy wyłącznie publicznego `summary.json` (nie `wavespeed.run` / Client).
 
 ## Uprawnienia platformowe
 

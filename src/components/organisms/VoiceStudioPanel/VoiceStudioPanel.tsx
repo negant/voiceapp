@@ -127,7 +127,6 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
     aiMaxDurationSec,
     effectiveAiMaxDurationSec,
     recordingMaxDurationSec,
-    affordableAiSeconds,
     usesAiProcessing,
     aiUsageEstimate,
     balance,
@@ -373,11 +372,7 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
             <ConversionSummary
               effectName={conversionSummary.effectName}
               mode={conversionSummary.mode}
-              aiMaxDurationSec={aiMaxDurationSec}
-              affordableAiSeconds={affordableAiSeconds}
-              billableSeconds={aiUsageEstimate?.billableSeconds}
               creditCost={aiUsageEstimate?.creditCost}
-              isPremium={isPremium}
             />
           ) : null}
           {showConvert ? (

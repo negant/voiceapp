@@ -13,8 +13,8 @@ Struktura: `src/components/{atoms|molecules|organisms|templates}/ComponentName/`
 
 | Warstwa | Opis | Przykłady w projekcie |
 |---------|------|------------------------|
-| **atoms** | Najmniejsze, pojedyncze elementy UI bez logiki biznesowej | `Button`, `Logo`, `Slider` |
-| **molecules** | Kilka atomów + prosta interakcja lub stan lokalny | `ThemeToggle`, `SettingsRow`, `EffectSlider`, `VoicePresetCard`, `VoiceEffectGrid`, `StudioSection`, `PresetEditorModal`, `ProcessedHistoryList`, `AppAlert`, `SuccessDialog`, `ConfirmDialog`, `CollapsibleSection`, `AppVersionInfo`, `HeaderActions`, `HeaderBackButton`, `ScreenHeaderTitle` |
+| **atoms** | Najmniejsze, pojedyncze elementy UI bez logiki biznesowej | `Button`, `Logo`, `Slider`, `AiServiceStatusBadge` |
+| **molecules** | Kilka atomów + prosta interakcja lub stan lokalny | `ThemeToggle`, `SettingsRow`, `EffectSlider`, `VoicePresetCard`, `VoiceEffectGrid`, `StudioSection`, `PresetEditorModal`, `ProcessedHistoryList`, `AppAlert`, `SuccessDialog`, `ConfirmDialog`, `CollapsibleSection`, `AppVersionInfo`, `AiServiceStatusCard`, `HeaderActions`, `HeaderBackButton`, `ScreenHeaderTitle` |
 | **organisms** | Większe sekcje UI, wiele molekuł/atomów | `Screen`, `LaunchScreen`, `VoiceStudioPanel` |
 | **templates** | Układ strony bez treści domenowej (opcjonalnie) | `MainLayout` |
 
@@ -68,6 +68,7 @@ import { Button } from '@/components/atoms/Button';
 - Pełnoekranowy launcher: `LaunchScreen` (organism) — `AnimatedLogo` + jednorazowy fade-out całego ekranu; logika czasu w `src/config/launch.ts`.
 - **Launcher tło komiksowe:** `ComicLauncherBackground` (molecule) — 5 paneli pod skosem z awatarami presetów (`female`, `male`, `robot`, `kratos`, `demon`); układ w `launchComicPanels.ts`; logo i nazwa aplikacji na wierzchu z miękką plamą czytelności.
 - **AppAlert** (molecule) + **AppAlertProvider** — stylowane alerty (info/success/warning/error); `useAppAlert().showAlert` / `showOfflineAlert` / `showOnlineAlert`; kolejka; auto „Back online” po powrocie sieci.
+- **Status AI:** `AiServiceStatusBadge` w Ustawieniach; `DotBadge` (zielony/żółty/czerwony) na ikonie Settings w `HeaderActions` (jak kropka przy „Twoje pliki”). Reguły odpytywania: `domain-knowledge.md` → **Status usługi AI**.
 - W testach Jest: mock `__mocks__/react-native-reanimated.js` (rejestrowany w `jest.setup.js`).
 
 ## Logo — współdzielona geometria

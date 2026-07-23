@@ -1,3 +1,4 @@
+export { AiServiceStatusBadge } from './AiServiceStatusBadge';
 export { Button } from './Button';
 export { EffectAccessBadge, EffectAccessBadgeOverlay } from './EffectAccessBadge';
 export { Logo } from './Logo';

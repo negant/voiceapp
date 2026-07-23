@@ -1,6 +1,6 @@
 # Postęp prac — Voice App
 
-Ostatnia aktualizacja: **2026-07-22**
+Ostatnia aktualizacja: **2026-07-23**
 
 ## Status ogólny
 Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
@@ -16,7 +16,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] **NativeWind v4** — stylowanie Tailwind (`className`)
 - [x] Tryb jasny/ciemny z przełącznikiem w nawigacji
 - [x] **SQLite** — lokalna baza, persystencja motywu
-- [x] **Atomic Design** — `src/components/{atoms,molecules,organisms}/`
+- [x] **Atomic Design** — `src/components/{atoms|molecules|organisms}/`
 - [x] Dokumentacja komponentów (`components.md`) + aktualizacja reguł AI
 - [x] Logo aplikacji (SVG, fala dźwiękowa) — komponent `Logo` + `assets/logo.svg`
 - [x] Ikony aplikacji iOS + Android wygenerowane z logo (`npm run generate:icons`)
@@ -45,6 +45,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] **Pula testowa 30k instalacji** — dokumentacja API (`credits-backend.md`), stałe, stub bootstrap, copy PL/EN
 - [x] **Fix AI po trimie** — `prepareAiSourceForSts` (trim w pamięci → base64 do STS); osobna ścieżka `processAiTierAudio`
 - [x] **Kredyty AI na starcie** — `chargeAiCreditsBeforeProcessing` przed WaveSpeed (nie po sukcesie)
+- [x] **Status AI (WaveSpeed)** — public summary przy starcie; box w Ustawieniach; badge w ConversionSummary; cache yellow/red w SQLite
 
 ## W toku
 - [ ] Host privacy policy at https://ukrywane.pl/privacy (pliki w `docs/store/`)
@@ -53,6 +54,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [ ] Internal testing AAB + smoke test (`docs/store/SMOKE_TEST.md`)
 
 ## Zrobione (niedawno)
+- [x] **Status AI WaveSpeed** — `AiServiceStatusProvider` + Ustawienia + badge przy konwersji cloud
 - [x] **Google Play prep:** `pl.ukrywane.voiceapp`, keystore scripts, AAB, store assets/docs
 - [x] **Play Billing + server verify** (googleapis); Buy Premium → IAP
 - [x] **device_id w Keychain/Keystore**; `GET /v1/setup` w update status
@@ -75,3 +77,4 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - Awatary PNG byłych efektów AI (romantyczna, pirat, ogr, …) zostawione w `assets/presets/` na później.
 - Przetwarzanie DSP: `react-native-audio-api`; wynik WAV.
 - Kredyty AI odejmowane **na starcie** konwersji (przed WaveSpeed); brak refundu przy cancel/fail po spend.
+- Status WaveSpeed: publiczny endpoint bez klucza (`AI_EFFECTS_API_STATUS_URL`); odpytywanie przy starcie + po błędzie AI; żółty/czerwony cache’owany lokalnie.

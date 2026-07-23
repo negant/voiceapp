@@ -1,7 +1,9 @@
 import {
   DEFAULT_AI_EFFECTS_API_BASE_URL,
+  DEFAULT_AI_EFFECTS_API_STATUS_URL,
   normalizeAiEffectsApiBaseUrl,
   resolveAiEffectsApiBaseUrl,
+  resolveAiEffectsApiStatusUrl,
 } from './aiEffects';
 
 describe('aiEffects config', () => {
@@ -18,5 +20,16 @@ describe('aiEffects config', () => {
     expect(normalizeAiEffectsApiBaseUrl('https://a.example/v3///')).toBe(
       'https://a.example/v3',
     );
+  });
+
+  it('resolves status URL from env or default', () => {
+    expect(resolveAiEffectsApiStatusUrl(null)).toBe(
+      DEFAULT_AI_EFFECTS_API_STATUS_URL,
+    );
+    expect(
+      resolveAiEffectsApiStatusUrl(
+        'https://api.wavespeed.ai/public/v3/summary.json/',
+      ),
+    ).toBe('https://api.wavespeed.ai/public/v3/summary.json');
   });
 });

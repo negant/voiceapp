@@ -8,6 +8,7 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 ## [Unreleased]
 
 ### Added
+- **AI service status:** przy starcie aplikacji pobierany jest publiczny status WaveSpeed (`AI_EFFECTS_API_STATUS_URL` / `summary.json`); box w Ustawieniach (nad językiem) z kolorem zielony/żółty/czerwony oraz komunikatem; żółty/czerwony zapisywany w SQLite; przy efektach AI w „Co się stanie” badge statusu po prawej od nazwy efektu.
 - **Google Play release prep:** package `pl.ukrywane.voiceapp`, release keystore scripts, AAB `npm run android:bundle:release`, store docs (`docs/store/`), privacy policy HTML/MD, Data safety sheet, listing copy, feature graphic + 512 icon.
 - **Play Billing Premium:** `react-native-iap` purchase flow → `POST /v1/credits/plan` with `googlePlayPurchase`; server verifies via Google Play Developer API (`googleapis`) when `GOOGLE_PLAY_REQUIRE_PURCHASE_VERIFY=true`.
 - **Durable device_id:** Android Keystore / iOS Keychain via `react-native-keychain` (SQLite mirror + migration).
@@ -18,6 +19,10 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 - **Welcome credits dialog:** po instalacji, gdy pula free przyzna kredyty (`granted`), komunikat powitalny; pending zapisany w SQLite do kliknięcia OK (przetrwa restart).
 
 ### Changed
+- **Limit długości pliku:** dialog przed importem/nagraniem pokazywany **raz na uruchomienie** aplikacji (nie przy każdym tapnięciu).
+- **ConversionSummary:** usunięty opis „Konwersja AI w chmurze… / do Xs”; szacowany koszt: `1 kredyt ≈ 1 rozpoczęta minuta`.
+- **AI status:** `DotBadge` przy ikonie Settings w top nav (zielony/żółty/czerwony); w Ustawieniach label `AiServiceStatusBadge` jak wcześniej; Developer — przyciski symulacji statusów.
+- **AI service status:** URL z env `AI_EFFECTS_API_STATUS_URL`; odpytywanie tylko przy starcie oraz po błędzie konwersji AI (bez częstego pollingu); komunikat błędu AI: spróbuj później; badge OK: **Operational** / **Działające**.
 - **App version:** `1.0.0` (Android `versionName` / `versionCode` 1 aligned).
 - **Credits “Buy Premium”:** opens Play Billing instead of free `setAccountPlan('premium')` (dev switch remains for `__DEV__` / `DEBUG_MODE`).
 - **Free credits tylko z API:** bez `BACKEND_API_BASE_URL` / offline → saldo startowe **0** (brak lokalnego grantu welcome); dialog powitalny tylko przy `bootstrapStatus=granted`.

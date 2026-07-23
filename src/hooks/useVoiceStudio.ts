@@ -26,6 +26,7 @@ import { useAppAlert } from '@/hooks/useAppAlert';
 import { useNetworkConnectivity } from '@/hooks/useNetworkConnectivity';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useProcessedRecordingsCount } from '@/providers/ProcessedRecordingsCountProvider';
+import { useAiServiceStatus } from '@/providers/AiServiceStatusProvider';
 import { useCredits } from '@/providers/CreditsProvider';
 import { chargeAiCreditsBeforeProcessing } from '@/utils/aiCreditCharge';
 import {
@@ -129,6 +130,11 @@ async function removeStoredOutputUris(uris: string[]): Promise<void> {
   }
 }
 
+/**
+ * Plan duration-limit dialog (import/record) — once per app process, not every tap.
+ */
+let sourceDurationLimitNoticeShownThisLaunch = false;
+
 type PlaybackStatus = 'idle' | 'playing' | 'paused';
 
 type PlaybackModalState = {
@@ -143,6 +149,7 @@ export function useVoiceStudio() {
   const { isReady } = useDatabase();
   const { isOnline } = useNetworkConnectivity();
   const { showOfflineAlert, showErrorAlert, showWarningAlert } = useAppAlert();
+  const { refreshStatusAfterAiFailure } = useAiServiceStatus();
   const { refreshCount: refreshRecordingsCount } = useProcessedRecordingsCount();
   const {
     accountPlan,
@@ -1206,8 +1213,12 @@ export function useVoiceStudio() {
     if (isLoadingFileRef.current || isInteractionLocked) {
       return;
     }
+    if (sourceDurationLimitNoticeShownThisLaunch) {
+      loadFile().catch(() => undefined);
+      return;
+    }
     setSourceDurationLimitNotice('import');
-  }, [isInteractionLocked]);
+  }, [isInteractionLocked, loadFile]);
 
   const openRecordingModal = useCallback(async () => {
     if (isInteractionLocked || isLoadingFileRef.current || isFinalizingRecording) {
@@ -1244,23 +1255,34 @@ export function useVoiceStudio() {
       return;
     }
 
+    if (sourceDurationLimitNoticeShownThisLaunch) {
+      openRecordingModal().catch(() => undefined);
+      return;
+    }
+
     setSourceDurationLimitNotice('record');
   }, [
     effectiveAiMaxDurationSec,
     isFinalizingRecording,
     isInteractionLocked,
+    openRecordingModal,
     showWarningAlert,
     t,
     usesAiProcessing,
   ]);
 
-  const cancelSourceDurationLimitNotice = useCallback(() => {
+  const dismissSourceDurationLimitNotice = useCallback(() => {
+    sourceDurationLimitNoticeShownThisLaunch = true;
     setSourceDurationLimitNotice(null);
   }, []);
 
+  const cancelSourceDurationLimitNotice = useCallback(() => {
+    dismissSourceDurationLimitNotice();
+  }, [dismissSourceDurationLimitNotice]);
+
   const confirmSourceDurationLimitNotice = useCallback(() => {
     const next = sourceDurationLimitNotice;
-    setSourceDurationLimitNotice(null);
+    dismissSourceDurationLimitNotice();
     if (next === 'import') {
       loadFile().catch(() => undefined);
       return;
@@ -1268,7 +1290,12 @@ export function useVoiceStudio() {
     if (next === 'record') {
       openRecordingModal().catch(() => undefined);
     }
-  }, [loadFile, openRecordingModal, sourceDurationLimitNotice]);
+  }, [
+    dismissSourceDurationLimitNotice,
+    loadFile,
+    openRecordingModal,
+    sourceDurationLimitNotice,
+  ]);
 
   const startRecording = useCallback(async () => {
     const session = recordingSessionRef.current;
@@ -1739,6 +1766,16 @@ export function useVoiceStudio() {
           return;
         }
 
+        if (usesAi) {
+          // Re-check provider status only after a real AI failure (not on a timer).
+          refreshStatusAfterAiFailure().catch(() => undefined);
+          showErrorAlert(
+            t('voiceStudio.convertFailedTitle'),
+            t('voiceStudio.convertFailedAiServiceMessage'),
+          );
+          return;
+        }
+
         showErrorAlert(
           t('voiceStudio.convertFailedTitle'),
           env.debugMode
@@ -1785,6 +1822,7 @@ export function useVoiceStudio() {
     isOnline,
     loadPlaybackWaveform,
     refreshProcessedHistory,
+    refreshStatusAfterAiFailure,
     selection,
     spendCredits,
     showAiOfflineAlert,

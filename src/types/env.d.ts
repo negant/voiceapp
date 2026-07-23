@@ -11,6 +11,8 @@ declare module '@env' {
   /** Cloud AI provider key — vendor-agnostic name (provider may change). */
   export const AI_EFFECTS_API_KEY: string;
   export const AI_EFFECTS_API_BASE_URL: string;
+  /** Public AI provider status page URL (summary.json). */
+  export const AI_EFFECTS_API_STATUS_URL: string;
   export const ENABLE_AI_EFFECTS: string;
   export const CREDITS_PER_STARTED_MINUTE: string;
   export const STARTING_CREDITS: string;

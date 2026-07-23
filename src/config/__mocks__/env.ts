@@ -10,6 +10,7 @@ export const env = {
   appDisplayName: 'Voice App',
   aiEffectsApiKey: 'wsk_test_key',
   aiEffectsApiBaseUrl: 'https://api.wavespeed.ai/api/v3',
+  aiEffectsApiStatusUrl: 'https://api.wavespeed.ai/public/v3/summary.json',
   enableAiEffects: true,
   creditsPerStartedMinute: 1,
   startingCredits: 10,
