@@ -168,8 +168,10 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
     cancelRecording,
     presetSuccessNotice,
     exportSuccessNotice,
+    aiConvertCreditsNotice,
     dismissPresetSuccessNotice,
     dismissExportSuccessNotice,
+    dismissAiConvertCreditsNotice,
     presetUpdatePending,
     cancelPresetUpdate,
     confirmPresetUpdate,
@@ -491,6 +493,16 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
               })
         }
         onClose={dismissExportSuccessNotice}
+      />
+
+      <SuccessDialog
+        visible={aiConvertCreditsNotice !== null}
+        title={t('voiceStudio.aiConvertCreditsTitle')}
+        message={t('voiceStudio.aiConvertCreditsMessage', {
+          cost: aiConvertCreditsNotice?.cost ?? 0,
+          balance: aiConvertCreditsNotice?.balance ?? 0,
+        })}
+        onClose={dismissAiConvertCreditsNotice}
       />
 
       <ConfirmDialog

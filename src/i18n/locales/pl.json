@@ -219,6 +219,8 @@
     "convertFailedAiServiceMessage": "Wygląda na to, że jest problem z usługą AI. Spróbuj ponownie później.",
     "aiStatusConvertWarningTitle": "Ostrzeżenie usługi AI",
     "aiStatusConvertWarningMessage": "Trwają prace nad usługą AI. Mogą wystąpić problemy, a kredyty mogą zostać odjęte. Kontynuować mimo to?",
+    "aiConvertCreditsTitle": "Zaktualizowano kredyty",
+    "aiConvertCreditsMessage": "Odjęto {{cost}} kredytów. Pozostałe saldo: {{balance}}.",
     "processingTitle": "Konwersja audio",
     "processingMessage": "Basic i Advanced działają na urządzeniu. Konwersja AI wymaga internetu — nie zamykaj aplikacji do końca przetwarzania.",
     "processingStagePreparing": "Przygotowanie…",

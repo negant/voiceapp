@@ -219,6 +219,8 @@
     "convertFailedAiServiceMessage": "There seems to be a problem with the AI service. Please try again later.",
     "aiStatusConvertWarningTitle": "AI service warning",
     "aiStatusConvertWarningMessage": "Work is in progress on the AI service. Problems may occur, and credits may be deducted. Continue anyway?",
+    "aiConvertCreditsTitle": "Credits updated",
+    "aiConvertCreditsMessage": "{{cost}} credits deducted. Remaining balance: {{balance}}.",
     "processingTitle": "Converting audio",
     "processingMessage": "Basic and Advanced run on your device. AI conversion needs the internet — keep the app open until it finishes.",
     "processingStagePreparing": "Preparing…",

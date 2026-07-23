@@ -12,6 +12,7 @@ import {
 import { applyAdvancedEffect } from './advancedEffects';
 import { applyAiEffect } from './aiEffects';
 import { discardAiTempFile } from './aiEffects/waveSpeed/applyWaveSpeedAiEffect';
+import { assertAiOutputAudioFileReady } from './assertAiOutputAudioFileReady';
 import { exportProcessedAudio } from './audioExport';
 import { playAudioFile } from './audioPlayback';
 import { ProcessingAbortedError } from './processingErrors';
@@ -181,6 +182,9 @@ async function processAiTierAudio(
       await discardAiTempFile(aiResult.path);
       throw error;
     }
+
+    // WaveSpeed result must be completed + outputs (already polled); verify local file too.
+    await assertAiOutputAudioFileReady(outputPath);
 
     options?.onProgress?.({ stage: 'saving', progress: 1 });
     logger.debug(LOG_SCOPE, 'completed', {

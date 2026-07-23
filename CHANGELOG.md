@@ -22,6 +22,7 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 - **Limit długości pliku:** dialog przed importem/nagraniem pokazywany **raz na uruchomienie** aplikacji (nie przy każdym tapnięciu).
 - **ConversionSummary:** usunięty opis „Konwersja AI w chmurze… / do Xs”; szacowany koszt: `1 kredyt ≈ 1 rozpoczęta minuta`.
 - **AI status:** `DotBadge` przy ikonie Settings w top nav (zielony/żółty/czerwony); w Ustawieniach label `AiServiceStatusBadge` jak wcześniej; Developer — przyciski symulacji statusów; przy Convert + żółty/czerwony — modal ostrzeżenia **raz na sesję** (kredyty mogą zostać odjęte).
+- **Po konwersji AI:** weryfikacja pliku wynikowego + `refreshBalance` + dialog z informacją o odjętych kredytach / saldzie.
 - **AI service status:** URL z env `AI_EFFECTS_API_STATUS_URL`; odpytywanie tylko przy starcie oraz po błędzie konwersji AI (bez częstego pollingu); komunikat błędu AI: spróbuj później; badge OK: **Operational** / **Działające**.
 - **App version:** `1.0.0` (Android `versionName` / `versionCode` 1 aligned).
 - **Credits “Buy Premium”:** opens Play Billing instead of free `setAccountPlan('premium')` (dev switch remains for `__DEV__` / `DEBUG_MODE`).

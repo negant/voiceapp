@@ -89,7 +89,11 @@ Publiczny health/status providera AI (bez klucza API). **Nie mylić** z naszym b
 
 ### Komunikat przy błędzie AI
 - Po nieudanej konwersji cloud: `voiceStudio.convertFailedAiServiceMessage` — problem z usługą AI, spróbuj później (PL/EN).
-- Równolegle: odśwież status (`refreshStatusAfterAiFailure`).
+- Równolegle: odśwież status (`refreshStatusAfterAiFailure`) oraz `refreshBalance()` (kredyty pobrane z góry zostają — wg [WaveSpeed Refund Policy](https://wavespeed.ai/docs/refund-policy) ich strona może zwrócić własne kredyty providera przy błędzie systemu; nasze kredyty app nie refundujemy po spend).
+
+### Po udanej konwersji AI
+- WaveSpeed: poll `GET …/predictions/{id}/result` aż `completed` + niepuste `outputs` ([get-result](https://wavespeed.ai/docs/get-result)); lokalnie `assertAiOutputAudioFileReady` (plik istnieje, size ≥ min).
+- Potem `refreshBalance()` (sync z backendem) + `SuccessDialog` (`aiConvertCredits*`) — ile odjęto / saldo.
 
 ### Ostrzeżenie przed Convert (żółty / czerwony)
 - Gdy status AI to `degraded` lub `outage` i użytkownik naciska Convert przy efekcie AI: `ConfirmDialog` (`aiStatusConvertWarning*`) — **raz na sesję** (jak limit długości); mogą wystąpić problemy (trwają prace), kredyty mogą zostać odjęte; **OK** kontynuuje (`acknowledgedAiStatusRisk`), Anuluj zamyka (kolejne Convert w tej sesji bez ponownego modala).

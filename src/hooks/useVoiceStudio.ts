@@ -163,6 +163,7 @@ export function useVoiceStudio() {
     balance,
     creditsPerStartedMinute,
     spendCredits,
+    refreshBalance,
   } = useCredits();
   const aiMaxDurationSec = useMemo(
     () => resolveAiMaxDurationSec(accountPlan),
@@ -199,6 +200,10 @@ export function useVoiceStudio() {
   const [sharingHistoryId, setSharingHistoryId] = useState<string | null>(null);
   const [exportSuccessNotice, setExportSuccessNotice] = useState<{
     fileName: string;
+  } | null>(null);
+  const [aiConvertCreditsNotice, setAiConvertCreditsNotice] = useState<{
+    cost: number;
+    balance: number;
   } | null>(null);
   const [presetUpdatePending, setPresetUpdatePending] = useState(false);
   const [presetEditorSaveError, setPresetEditorSaveError] = useState<
@@ -1757,8 +1762,9 @@ export function useVoiceStudio() {
     try {
       // Charge before WaveSpeed — API bills on job submit; end-of-run spend
       // would miss kills/crashes after the cloud job already started.
+      let aiCreditsCharged = false;
       try {
-        await chargeAiCreditsBeforeProcessing({
+        aiCreditsCharged = await chargeAiCreditsBeforeProcessing({
           usesAi,
           creditCost: aiCreditCost,
           spendCredits,
@@ -1791,6 +1797,10 @@ export function useVoiceStudio() {
         if (usesAi) {
           // Re-check provider status only after a real AI failure (not on a timer).
           refreshStatusAfterAiFailure().catch(() => undefined);
+          if (aiCreditsCharged) {
+            // Keep header balance in sync after a failed cloud job (credits already spent).
+            await refreshBalance().catch(() => undefined);
+          }
           showErrorAlert(
             t('voiceStudio.convertFailedTitle'),
             t('voiceStudio.convertFailedAiServiceMessage'),
@@ -1815,6 +1825,17 @@ export function useVoiceStudio() {
       });
       await removeStoredOutputUris(removedOutputUris);
       await refreshProcessedHistory();
+
+      if (usesAi && aiCreditsCharged) {
+        // Output already validated in processAiTierAudio; sync credits from API.
+        const nextBalance = await refreshBalance().catch(
+          () => Math.max(0, balance - aiCreditCost),
+        );
+        setAiConvertCreditsNotice({
+          cost: aiCreditCost,
+          balance: nextBalance,
+        });
+      }
 
       if (env.enableAudioPreview) {
         await stopAudioPlayback().catch(() => undefined);
@@ -1847,6 +1868,7 @@ export function useVoiceStudio() {
     refreshStatusAfterAiFailure,
     selection,
     spendCredits,
+    refreshBalance,
     showAiOfflineAlert,
     showErrorAlert,
     showWarningAlert,
@@ -1946,6 +1968,10 @@ export function useVoiceStudio() {
 
   const dismissExportSuccessNotice = useCallback(() => {
     setExportSuccessNotice(null);
+  }, []);
+
+  const dismissAiConvertCreditsNotice = useCallback(() => {
+    setAiConvertCreditsNotice(null);
   }, []);
 
   const requestDeleteProcessedHistory = useCallback(
@@ -2134,6 +2160,7 @@ export function useVoiceStudio() {
     isFinalizingRecording,
     presetSuccessNotice,
     exportSuccessNotice,
+    aiConvertCreditsNotice,
     presetEditorSaveError,
     presetUpdatePending,
     processedHistoryDeletePending,
@@ -2220,6 +2247,7 @@ export function useVoiceStudio() {
     isCustomSelected,
     dismissPresetSuccessNotice,
     dismissExportSuccessNotice,
+    dismissAiConvertCreditsNotice,
     clearPresetEditorSaveError,
     openCreatePresetEditor,
     openCombineEffectsModal,
