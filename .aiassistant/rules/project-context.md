@@ -7,7 +7,11 @@ apply: always
 ## Co to za projekt
 - **Voice App** — aplikacja mobilna React Native (iOS + Android) do przetwarzania głosu w plikach dźwiękowych.
 - Użytkownik wybiera / wrzuca plik audio (np. MP3); Basic/Advanced przetwarzają **lokalnie na urządzeniu**. Tier AI (WaveSpeed Chatterbox STS) wysyła audio do chmury gdy klucz jest skonfigurowany.
-- Wersja w repo: `0.0.1` (boilerplate / faza początkowa).
+- Wersja w repo: `1.0.0` (przygotowanie Google Play).
+- Android `applicationId`: **`pl.ukrywane.voiceapp`**.
+- Device ID: Keychain/Keystore + SQLite (`src/services/device/deviceId.ts`).
+- Store docs: `docs/store/` (privacy, Data safety, listing, smoke test).
+- Status aktualizacji: `fetchAppUpdateStatus()` → `GET /v1/setup`.
 
 ## Cel produktu (roboczy)
 - Import pliku audio z pamięci urządzenia lub udostępnionego źródła.
@@ -15,7 +19,7 @@ apply: always
 - **@soundtouchjs/core** — pitch shift WSOLA dla Advanced Effects (zamiast wycofanego `react-native-ffmpeg`).
 - Podgląd i eksport przetworzonego pliku.
 - Brak domyślnej zależności od backendu dla Basic/Advanced — prywatność jako założenie. AI (WaveSpeed) jest opcjonalne i wymaga klucza API.
-- **Kredyty AI:** plany **free** (10 kredytów, ważne **3 mies. od instalacji**) i **premium** (**`PREMIUM_PRICE_USD`** / pakiet **`PREMIUM_CREDITS` + `PREMIUM_GRATIS_CREDITS`**, **odnawiane co miesiąc**; free credits przy Premium **bezterminowe**; koszt API providera **~$0.02**/min); **1 kredyt = 1 rozpoczęta minuta**; bez doładowań. Backend: monorepo **`server/`** (Postgres Docker + Fastify), `BACKEND_API_BASE_URL` / `BACKEND_API_TOKEN`.
+- **Kredyty AI:** plany **free** (10 kredytów, ważne **3 mies. od instalacji**) i **premium** (**`PREMIUM_PRICE_USD`** / pakiet **`PREMIUM_CREDITS` + `PREMIUM_GRATIS_CREDITS`**, **odnawiane co miesiąc**; free credits przy Premium **bezterminowe**; koszt API providera **~$0.02**/min); **1 kredyt = 1 rozpoczęta minuta**; bez doładowań. Premium na Androidzie przez **Google Play Billing** (`voiceapp_premium_monthly`) + weryfikacja na API. Backend: monorepo **`server/`** (Postgres Docker + Fastify), `BACKEND_API_BASE_URL` / `BACKEND_API_TOKEN`.
 
 ## Stack techniczny
 - React Native `0.86`, React `19`, TypeScript.
@@ -65,9 +69,9 @@ Szczegóły komponentów: `.aiassistant/rules/components.md`.
 - Po fade-out wywoływany jest `AppNavigator`.
 
 ## Wersja i aktualizacje
-- Wersja aplikacji: `src/config/app.ts` (`appVersion` z `package.json`).
-- Status aktualizacji: `src/services/updates/` — stub `fetchAppUpdateStatus()` (gotowy pod App Store / Play Store / API).
-- UI: sekcja „O aplikacji” na ekranie Ustawienia (`AppVersionInfo`).
+- Wersja aplikacji: `src/config/app.ts` (`appVersion` z `package.json` — `1.0.0`).
+- Status aktualizacji: `src/services/updates/` — `fetchAppUpdateStatus()` woła `GET /v1/setup` (available / required / current).
+- UI: sekcja „O aplikacji” na ekranie Ustawienia (`AppVersionInfo`) + link do privacy policy.
 
 ## Środowisko developerskie
 - Node.js >= 22.11

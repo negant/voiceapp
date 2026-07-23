@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Voice App — Privacy Policy</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #1a1a1a;
+        --muted: #555;
+        --bg: #f7f5f2;
+        --card: #fff;
+        --accent: #b45309;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #f3f3f3;
+          --muted: #aaa;
+          --bg: #121212;
+          --card: #1c1c1c;
+          --accent: #fbbf24;
+        }
+      }
+      body {
+        margin: 0;
+        font-family: Georgia, 'Times New Roman', serif;
+        background: var(--bg);
+        color: var(--fg);
+        line-height: 1.55;
+      }
+      main {
+        max-width: 42rem;
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 4rem;
+      }
+      h1 {
+        font-size: 2rem;
+        letter-spacing: -0.02em;
+        margin: 0 0 0.25rem;
+      }
+      .meta {
+        color: var(--muted);
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+      }
+      h2 {
+        font-size: 1.25rem;
+        margin-top: 2rem;
+        color: var(--accent);
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92rem;
+        background: var(--card);
+      }
+      th,
+      td {
+        border: 1px solid color-mix(in srgb, var(--muted) 35%, transparent);
+        padding: 0.5rem 0.6rem;
+        text-align: left;
+        vertical-align: top;
+      }
+      a {
+        color: var(--accent);
+      }
+      .lang {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        font-family: system-ui, sans-serif;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="lang">
+        <a href="#en">English</a>
+        <a href="#pl">Polski</a>
+      </div>
+
+      <section id="en">
+        <h1>Privacy Policy — Voice App</h1>
+        <p class="meta">
+          Last updated: 2026-07-22 · Contact:
+          <a href="mailto:support@ukrywane.pl">support@ukrywane.pl</a>
+        </p>
+        <p>
+          Voice App processes audio on your device for Basic and Advanced
+          effects. Optional AI voice effects send audio to a cloud provider. We
+          do not require a user account. We use a random device identifier for
+          credits and abuse prevention.
+        </p>
+        <h2>Data we process</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Purpose</th>
+              <th>Where</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Imported / recorded / exported audio</td>
+              <td>Local effects and export</td>
+              <td>On device</td>
+            </tr>
+            <tr>
+              <td>Audio for AI effects</td>
+              <td>Cloud voice conversion</td>
+              <td>AI provider (transient)</td>
+            </tr>
+            <tr>
+              <td>Device ID (UUID)</td>
+              <td>Credits, support</td>
+              <td>Secure storage + our API</td>
+            </tr>
+            <tr>
+              <td>Plan / credit ledger</td>
+              <td>Free vs Premium</td>
+              <td>Our API (api.ukrywane.pl)</td>
+            </tr>
+            <tr>
+              <td>Google Play purchase tokens</td>
+              <td>Verify Premium</td>
+              <td>Our API</td>
+            </tr>
+          </tbody>
+        </table>
+        <h2>Permissions</h2>
+        <p>
+          Microphone (record), media/audio read (import), Internet (API, AI,
+          updates).
+        </p>
+        <h2>Third parties</h2>
+        <p>
+          Our API (api.ukrywane.pl), AI effects provider (WaveSpeed when
+          configured), Google Play Billing for Premium.
+        </p>
+        <h2>Contact</h2>
+        <p><a href="mailto:support@ukrywane.pl">support@ukrywane.pl</a></p>
+      </section>
+
+      <section id="pl">
+        <h1>Polityka prywatności — Voice App</h1>
+        <p class="meta">
+          Ostatnia aktualizacja: 2026-07-22 · Kontakt:
+          <a href="mailto:support@ukrywane.pl">support@ukrywane.pl</a>
+        </p>
+        <p>
+          Voice App przetwarza audio lokalnie (Basic / Advanced). Opcjonalne
+          efekty AI wysyłają audio do dostawcy w chmurze. Nie wymagamy konta.
+          Używamy losowego Device ID do kredytów i ochrony przed nadużyciami.
+        </p>
+        <h2>Dane</h2>
+        <p>
+          Audio lokalne na urządzeniu; audio AI u dostawcy; Device ID i saldo
+          kredytów w API; tokeny zakupów Google Play do weryfikacji Premium. Nie
+          zbieramy imienia, e-maila ani lokalizacji.
+        </p>
+        <h2>Kontakt</h2>
+        <p><a href="mailto:support@ukrywane.pl">support@ukrywane.pl</a></p>
+      </section>
+    </main>
+  </body>
+</html>

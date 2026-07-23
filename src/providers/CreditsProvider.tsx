@@ -36,6 +36,11 @@ import {
   setPendingWelcomeCreditsPrompt,
 } from '@/services/database/welcomeCreditsPromptRepository';
 import {
+  finishPremiumPurchase,
+  purchasePremiumSubscription,
+  restorePremiumPurchase,
+} from '@/services/billing';
+import {
   isCreditsApiConfigured,
   setPlanWithApi,
   spendCreditsWithApi,
@@ -71,6 +76,11 @@ type CreditsContextValue = {
   spendCredits: (amount: number, reason?: string) => Promise<number>;
   refreshAccount: () => Promise<AccountPlanId>;
   setAccountPlan: (plan: AccountPlanId) => Promise<void>;
+  /**
+   * Production Premium purchase via Play Billing / StoreKit, then server verify.
+   * Returns false when cancelled or failed.
+   */
+  purchasePremium: () => Promise<boolean>;
   setCreditsPerAi10Sec: (rate: number) => Promise<void>;
 };
 
@@ -264,6 +274,17 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
         return;
       }
 
+      // Production must grant Premium via purchasePremium (Play Billing verify).
+      // Dev/debug may still toggle plan for testing.
+      if (
+        plan === 'premium' &&
+        !env.debugMode &&
+        !__DEV__ &&
+        env.appEnv === 'production'
+      ) {
+        return;
+      }
+
       const id = deviceId ?? (await ensureDeviceId());
       setDeviceId(id);
 
@@ -304,6 +325,62 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
     [applyDeviceSnapshot, deviceId, ensureRegisteredOnApi, isReady],
   );
 
+  const purchasePremium = useCallback(async () => {
+    if (!isReady) {
+      return false;
+    }
+
+    const id = deviceId ?? (await ensureDeviceId());
+    setDeviceId(id);
+
+    const purchaseResult = await purchasePremiumSubscription();
+    let purchase = purchaseResult.ok ? purchaseResult.purchase : null;
+
+    if (!purchase) {
+      if (purchaseResult.ok === false && purchaseResult.cancelled) {
+        return false;
+      }
+      // Restore an existing Play subscription if the fresh purchase sheet failed.
+      purchase = await restorePremiumPurchase();
+      if (!purchase) {
+        return false;
+      }
+    }
+
+    if (isCreditsApiConfigured()) {
+      await ensureRegisteredOnApi(id);
+      const device = await setPlanWithApi({
+        deviceId: id,
+        plan: 'premium',
+        clientRequestId: createDeviceId(),
+        googlePlayPurchase: purchase,
+      });
+      if (!device) {
+        return false;
+      }
+      await applyDeviceSnapshot(device);
+      await finishPremiumPurchase(purchase.purchaseToken);
+      return true;
+    }
+
+    // Offline / no API: still finish store transaction; apply local pack
+    await finishPremiumPurchase(purchase.purchaseToken);
+    const previous = planRef.current;
+    await persistAccountPlan('premium');
+    setAccountPlanState('premium');
+    if (previous !== 'premium') {
+      const pack = resolvePremiumIncludedStartedMinutes(
+        env.premiumCredits,
+        env.premiumGratisCredits,
+      );
+      const next = balanceRef.current + pack;
+      await persistCreditsBalance(next);
+      setBalanceState(next);
+    }
+    setIsHydrated(true);
+    return true;
+  }, [applyDeviceSnapshot, deviceId, ensureRegisteredOnApi, isReady]);
+
   const setCreditsPerAi10Sec = useCallback(
     async (rate: number) => {
       if (!isReady) {
@@ -341,6 +418,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       spendCredits,
       refreshAccount,
       setAccountPlan,
+      purchasePremium,
       setCreditsPerAi10Sec,
     }),
     [
@@ -357,6 +435,7 @@ export function CreditsProvider({ children }: { children: ReactNode }) {
       spendCredits,
       refreshAccount,
       setAccountPlan,
+      purchasePremium,
       setCreditsPerAi10Sec,
     ],
   );

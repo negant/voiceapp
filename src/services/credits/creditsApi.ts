@@ -77,6 +77,36 @@ async function postJson<T>(
   }
 }
 
+async function getJson<T>(
+  auth: CreditsApiAuth,
+  path: string,
+): Promise<T | null> {
+  const url = `${auth.apiBaseUrl}${path}`;
+  try {
+    logCreditsApi('info', 'request', { path, method: 'GET' });
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: authHeaders(auth),
+    });
+    if (!response.ok) {
+      logCreditsApi('warn', 'non-ok response', {
+        path,
+        status: response.status,
+        url,
+      });
+      return null;
+    }
+    return (await response.json()) as T;
+  } catch (error) {
+    logCreditsApi('warn', 'network/fetch failed', {
+      path,
+      url,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
+}
+
 type SyncResponse = {
   device: CreditsDeviceSnapshot;
   balance: number;
@@ -119,6 +149,12 @@ export async function setPlanWithApi(params: {
   deviceId: string;
   plan: AccountPlanId;
   clientRequestId?: string;
+  googlePlayPurchase?: {
+    purchaseToken: string;
+    productId: string;
+    packageName: string;
+    orderId?: string;
+  };
   auth?: Partial<CreditsApiAuth>;
 }): Promise<CreditsDeviceSnapshot | null> {
   const auth = resolveAuth(params.auth);
@@ -130,8 +166,37 @@ export async function setPlanWithApi(params: {
     deviceId: params.deviceId,
     plan: params.plan,
     clientRequestId: params.clientRequestId,
+    googlePlayPurchase: params.googlePlayPurchase,
   });
   return payload?.device ?? null;
+}
+
+export type SetupApiSnapshot = {
+  setup: {
+    minAppVersion: string;
+    latestAppVersion: string;
+    forceUpdate: boolean;
+    messageEn: string;
+    messagePl: string;
+    storeUrlIos: string;
+    storeUrlAndroid: string;
+    freeCreditsInstallCap: number;
+  };
+  stats?: {
+    installCount: number;
+    freeCreditsGrants: number;
+  };
+};
+
+/** Remote setup (versions, force update, store URLs). */
+export async function fetchSetupWithApi(params?: {
+  auth?: Partial<CreditsApiAuth>;
+}): Promise<SetupApiSnapshot | null> {
+  const auth = resolveAuth(params?.auth);
+  if (!auth) {
+    return null;
+  }
+  return getJson<SetupApiSnapshot>(auth, '/v1/setup');
 }
 
 /** Spend AI credits on the backend (free pool first). */

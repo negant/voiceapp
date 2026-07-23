@@ -423,6 +423,7 @@ export async function setDevicePlan(params: {
   deviceId: string;
   plan: AccountPlan;
   clientRequestId?: string;
+  purchaseMeta?: Record<string, unknown>;
 }): Promise<
   | { ok: true; device: DeviceSnapshot }
   | { ok: false; error: string }
@@ -443,6 +444,24 @@ export async function setDevicePlan(params: {
     if (row.plan === params.plan) {
       await client.query('COMMIT');
       return { ok: true, device: mapDeviceRow(row) };
+    }
+
+    const purchaseToken =
+      typeof params.purchaseMeta?.purchaseToken === 'string'
+        ? params.purchaseMeta.purchaseToken
+        : null;
+    if (params.plan === 'premium' && purchaseToken) {
+      const reused = await client.query<{ device_id: string }>(
+        `SELECT device_id FROM voiceapp_device_plan_events
+         WHERE event_type = 'plan_enabled'
+           AND meta->>'purchaseToken' = $1
+         LIMIT 1`,
+        [purchaseToken],
+      );
+      if (reused.rows[0] && reused.rows[0].device_id !== params.deviceId) {
+        await client.query('ROLLBACK');
+        return { ok: false, error: 'purchase_token_reused' };
+      }
     }
 
     const now = new Date();
@@ -475,7 +494,11 @@ export async function setDevicePlan(params: {
         eventType: 'plan_enabled',
         plan: 'premium',
         previousPlan: row.plan,
-        meta: { pack, freeCreditsKeptPermanently: next.free_credits },
+        meta: {
+          pack,
+          freeCreditsKeptPermanently: next.free_credits,
+          ...(params.purchaseMeta ?? {}),
+        },
       });
       await insertLedger(client, {
         deviceId: params.deviceId,

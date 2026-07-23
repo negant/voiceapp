@@ -1,4 +1,4 @@
-package com.voiceapp
+package pl.ukrywane.voiceapp
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate

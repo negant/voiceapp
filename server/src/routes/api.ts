@@ -16,6 +16,7 @@ import {
 import { mapDeviceRow } from '../types.js';
 import { getSetupSnapshot } from '../services/setupService.js';
 import { getStatsSnapshot } from '../services/statsService.js';
+import { verifyGooglePlaySubscription } from '../services/googlePlayVerify.js';
 
 const platformSchema = z.enum(['ios', 'android']);
 const planSchema = z.enum(['free', 'premium']);
@@ -33,10 +34,18 @@ const spendBodySchema = z.object({
   reason: z.string().max(64).optional(),
 });
 
+const googlePlayPurchaseSchema = z.object({
+  purchaseToken: z.string().min(8).max(4096),
+  productId: z.string().min(1).max(256),
+  packageName: z.string().min(1).max(256).optional(),
+  orderId: z.string().max(256).optional(),
+});
+
 const planBodySchema = z.object({
   deviceId: z.string().min(8).max(128),
   plan: planSchema,
   clientRequestId: z.string().min(8).max(128).optional(),
+  googlePlayPurchase: googlePlayPurchaseSchema.optional(),
 });
 
 const syncBodySchema = z.object({
@@ -299,7 +308,43 @@ export async function registerRoutes(app: FastifyInstance): Promise<void> {
     if (!parsed.success) {
       return reply.code(400).send({ error: 'invalid_body', details: parsed.error.flatten() });
     }
-    const result = await setDevicePlan(parsed.data);
+
+    let purchaseMeta: Record<string, unknown> | undefined;
+    if (parsed.data.plan === 'premium') {
+      if (config.googlePlayRequirePurchaseVerify && !parsed.data.googlePlayPurchase) {
+        return reply.code(400).send({ error: 'purchase_required' });
+      }
+      if (parsed.data.googlePlayPurchase) {
+        const verified = await verifyGooglePlaySubscription(
+          parsed.data.googlePlayPurchase,
+        );
+        if (!verified.ok) {
+          appendDevLogLine({
+            msg: 'credits_plan',
+            deviceId: parsed.data.deviceId,
+            ok: false,
+            plan: 'premium',
+            error: verified.error,
+          });
+          return reply.code(402).send({ error: verified.error });
+        }
+        purchaseMeta = {
+          source: 'google_play',
+          purchaseToken: verified.purchaseToken,
+          productId: verified.productId,
+          packageName: verified.packageName,
+          orderId: verified.orderId ?? null,
+          expiryTimeMillis: verified.expiryTimeMillis ?? null,
+        };
+      }
+    }
+
+    const result = await setDevicePlan({
+      deviceId: parsed.data.deviceId,
+      plan: parsed.data.plan,
+      clientRequestId: parsed.data.clientRequestId,
+      purchaseMeta,
+    });
     if (!result.ok) {
       appendDevLogLine({
         msg: 'credits_plan',
@@ -308,7 +353,8 @@ export async function registerRoutes(app: FastifyInstance): Promise<void> {
         plan: parsed.data.plan,
         error: result.error,
       });
-      return reply.code(404).send({ error: result.error });
+      const status = result.error === 'device_not_found' ? 404 : 400;
+      return reply.code(status).send({ error: result.error });
     }
     appendDevLogLine({
       msg: 'credits_plan',

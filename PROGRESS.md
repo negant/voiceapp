@@ -47,11 +47,15 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] **Kredyty AI na starcie** — `chargeAiCreditsBeforeProcessing` przed WaveSpeed (nie po sukcesie)
 
 ## W toku
-- [ ] **Deploy API na VPS** — Debian, `api.ukrywane.pl` → `91.228.196.27`; Caddy HTTPS, systemd, Postgres Docker
-- [ ] Keychain/Keystore dla trwałego `device_id` (anty-reinstall)
-- [ ] Podpięcie `GET /v1/setup` w `fetchAppUpdateStatus`
+- [ ] Host privacy policy at https://ukrywane.pl/privacy (pliki w `docs/store/`)
+- [ ] Play Console: app + subscription `voiceapp_premium_monthly` + Data safety
+- [ ] Service account JSON na VPS (`GOOGLE_PLAY_SERVICE_ACCOUNT_PATH`) + `REQUIRE_PURCHASE_VERIFY=true`
+- [ ] Internal testing AAB + smoke test (`docs/store/SMOKE_TEST.md`)
 
 ## Zrobione (niedawno)
+- [x] **Google Play prep:** `pl.ukrywane.voiceapp`, keystore scripts, AAB, store assets/docs
+- [x] **Play Billing + server verify** (googleapis); Buy Premium → IAP
+- [x] **device_id w Keychain/Keystore**; `GET /v1/setup` w update status
 - [x] **Free credits:** grant tylko z API (offline/bez backendu = 0)
 - [x] **Welcome credits:** dialog po instalacji przy granicie z puli free
 - [x] **Ustawienia (dev):** „Wyczyść dane aplikacji” (jak świeża instalacja + reload)
@@ -67,6 +71,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 ## Uwagi
 - AI wymaga `AI_EFFECTS_API_KEY` + `ENABLE_AI_EFFECTS` — audio opuszcza urządzenie.
 - Backend: `BACKEND_API_BASE_URL` + `BACKEND_API_TOKEN`.
+- Release: `APP_ENV=production`, `DEBUG_MODE=false`, `npm run android:keystore`, `npm run android:bundle:release`.
 - Awatary PNG byłych efektów AI (romantyczna, pirat, ogr, …) zostawione w `assets/presets/` na później.
 - Przetwarzanie DSP: `react-native-audio-api`; wynik WAV.
 - Kredyty AI odejmowane **na starcie** konwersji (przed WaveSpeed); brak refundu przy cancel/fail po spend.

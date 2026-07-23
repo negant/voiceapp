@@ -20,6 +20,7 @@ export const env = {
   maxAudioDurationPremiumSec: 600,
   backendApiBaseUrl: null as string | null,
   backendApiToken: null as string | null,
+  privacyPolicyUrl: 'https://ukrywane.pl/privacy',
 };
 
 export function isAiEffectsConfigured(): boolean {

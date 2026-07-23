@@ -54,10 +54,20 @@ function intEnv(name: string, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+function boolEnv(name: string, fallback: boolean): boolean {
+  const raw = process.env[name];
+  if (raw === undefined || raw === '') {
+    return fallback;
+  }
+  return raw.toLowerCase() === 'true' || raw === '1';
+}
+
+const nodeEnv = process.env.NODE_ENV ?? 'development';
+
 export const config = {
   port: intEnv('PORT', 8787),
   host: process.env.HOST ?? '0.0.0.0',
-  nodeEnv: process.env.NODE_ENV ?? 'development',
+  nodeEnv,
   apiToken: required('API_TOKEN', 'dev-voiceapp-api-token-change-me'),
   databaseUrl: required(
     'DATABASE_URL',
@@ -69,6 +79,16 @@ export const config = {
   premiumGratisCredits: intEnv('PREMIUM_GRATIS_CREDITS', 25),
   freeInstallsWithTestCredits: intEnv('FREE_INSTALLS_WITH_TEST_CREDITS', 30),
   creditsPerStartedMinute: intEnv('CREDITS_PER_STARTED_MINUTE', 1),
+  googlePlayPackageName:
+    process.env.GOOGLE_PLAY_PACKAGE_NAME?.trim() || 'pl.ukrywane.voiceapp',
+  googlePlayPremiumProductId:
+    process.env.GOOGLE_PLAY_PREMIUM_PRODUCT_ID?.trim() ||
+    'voiceapp_premium_monthly',
+  /** Production default: require Play purchase token verification for Premium. */
+  googlePlayRequirePurchaseVerify: boolEnv(
+    'GOOGLE_PLAY_REQUIRE_PURCHASE_VERIFY',
+    nodeEnv === 'production',
+  ),
 } as const;
 
 export type AppConfig = typeof config;
