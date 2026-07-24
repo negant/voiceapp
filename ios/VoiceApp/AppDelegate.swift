@@ -3,6 +3,9 @@ import React
 import React_RCTAppDelegate
 import ReactAppDependencyProvider
 
+/// Keep in sync with package.json (`--port 8088`) and ios/.xcode.env (`RCT_METRO_PORT`).
+private let metroPackagerHostPort = "localhost:8088"
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
   var window: UIWindow?
@@ -14,6 +17,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+#if DEBUG
+    // Prebuilt React.framework defaults packager checks to :8081. Point shared
+    // settings at :8088 so status/HMR/reload hit the same Metro as the JS bundle.
+    RCTBundleURLProvider.sharedSettings().jsLocation = metroPackagerHostPort
+#endif
+
     let delegate = ReactNativeDelegate()
     let factory = RCTReactNativeFactory(delegate: delegate)
     delegate.dependencyProvider = RCTAppDependencyProvider()
@@ -40,7 +49,13 @@ class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 
   override func bundleURL() -> URL? {
 #if DEBUG
-    RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index")
+    return RCTBundleURLProvider.jsBundleURL(
+      forBundleRoot: "index",
+      packagerHost: metroPackagerHostPort,
+      enableDev: true,
+      enableMinification: false,
+      inlineSourceMap: false
+    )
 #else
     Bundle.main.url(forResource: "main", withExtension: "jsbundle")
 #endif

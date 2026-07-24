@@ -55,6 +55,8 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 
 ## Zrobione (niedawno)
 - [x] **iOS:** `pod install` po usunięciu `react-native-share` (stale `RNShare` psuł build)
+- [x] **iOS:** bundle `pl.ukrywane.voiceapp`, `npm run ios` → symulator, Metro `:8088`
+- [x] **iOS:** AppDelegate DEBUG → `localhost:8088` (fix „No script URL”)
 - [x] **Status AI WaveSpeed** — `AiServiceStatusProvider` + Ustawienia + badge przy konwersji cloud
 - [x] **Google Play prep:** `pl.ukrywane.voiceapp`, keystore scripts, AAB, store assets/docs
 - [x] **Play Billing + server verify** (googleapis); Buy Premium → IAP

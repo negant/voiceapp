@@ -56,7 +56,8 @@ npm run ios
 Konkretny symulator:
 
 ```sh
-npx react-native run-ios --simulator="iPhone 16"
+npx react-native run-ios --simulator="iPhone 17" --port 8088
+# lub: npm run ios
 ```
 
 Otwórz projekt w Xcode (jeśli potrzebujesz debugowania natywnego):

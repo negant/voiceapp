@@ -8,7 +8,8 @@ apply: always
 - **Voice App** — aplikacja mobilna React Native (iOS + Android) do przetwarzania głosu w plikach dźwiękowych.
 - Użytkownik wybiera / wrzuca plik audio (np. MP3); Basic/Advanced przetwarzają **lokalnie na urządzeniu**. Tier AI (WaveSpeed Chatterbox STS) wysyła audio do chmury gdy klucz jest skonfigurowany.
 - Wersja w repo: `1.0.0` (przygotowanie Google Play).
-- Android `applicationId`: **`pl.ukrywane.voiceapp`**.
+- Android `applicationId` / iOS bundle id: **`pl.ukrywane.voiceapp`**.
+- iOS dev: Metro na porcie **8088** (`npm start` / `npm run ios` → symulator).
 - Device ID: Keychain/Keystore + SQLite (`src/services/device/deviceId.ts`).
 - Store docs: `docs/store/` (privacy, Data safety, listing, smoke test).
 - Status aktualizacji: `fetchAppUpdateStatus()` → `GET /v1/setup`.

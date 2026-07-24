@@ -9,6 +9,8 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 
 ### Fixed
 - **iOS build:** po usunięciu `react-native-share` odświeżono CocoaPods (`pod install`) — usunięty stale target `RNShare`, który powodował `Build input file cannot be found` (log CLI myląco wskazywał na sqlite).
+- **iOS launch:** bundle id `pl.ukrywane.voiceapp` (jak Android); `npm run ios` wymusza symulator `iPhone 17` (nie fizyczny telefon); `RCT_METRO_PORT=8088` w `.xcode.env`.
+- **iOS Metro:** AppDelegate w DEBUG ustawia `jsLocation` + bundle URL na `localhost:8088` (prebuilt RN domyślnie szuka `:8081` → „No script URL” / packager status check na 8081).
 
 ### Added
 - **AI service status:** przy starcie aplikacji pobierany jest publiczny status WaveSpeed (`AI_EFFECTS_API_STATUS_URL` / `summary.json`); box w Ustawieniach (nad językiem) z kolorem zielony/żółty/czerwony oraz komunikatem; żółty/czerwony zapisywany w SQLite; przy efektach AI w „Co się stanie” badge statusu po prawej od nazwy efektu.

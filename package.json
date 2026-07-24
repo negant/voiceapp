@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android --port 8088",
-    "ios": "react-native run-ios --port 8088",
+    "ios": "react-native run-ios --port 8088 --simulator \"iPhone 17\"",
     "lint": "eslint .",
     "start": "react-native start --port 8088",
     "start:reset": "react-native start --reset-cache --port 8088",
