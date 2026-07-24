@@ -1,6 +1,6 @@
 # Postęp prac — Voice App
 
-Ostatnia aktualizacja: **2026-07-23**
+Ostatnia aktualizacja: **2026-07-24**
 
 ## Status ogólny
 Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
@@ -54,6 +54,7 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [ ] Internal testing AAB + smoke test (`docs/store/SMOKE_TEST.md`)
 
 ## Zrobione (niedawno)
+- [x] **iOS:** `pod install` po usunięciu `react-native-share` (stale `RNShare` psuł build)
 - [x] **Status AI WaveSpeed** — `AiServiceStatusProvider` + Ustawienia + badge przy konwersji cloud
 - [x] **Google Play prep:** `pl.ukrywane.voiceapp`, keystore scripts, AAB, store assets/docs
 - [x] **Play Billing + server verify** (googleapis); Buy Premium → IAP

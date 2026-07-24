@@ -7,6 +7,9 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 
 ## [Unreleased]
 
+### Fixed
+- **iOS build:** po usunięciu `react-native-share` odświeżono CocoaPods (`pod install`) — usunięty stale target `RNShare`, który powodował `Build input file cannot be found` (log CLI myląco wskazywał na sqlite).
+
 ### Added
 - **AI service status:** przy starcie aplikacji pobierany jest publiczny status WaveSpeed (`AI_EFFECTS_API_STATUS_URL` / `summary.json`); box w Ustawieniach (nad językiem) z kolorem zielony/żółty/czerwony oraz komunikatem; żółty/czerwony zapisywany w SQLite; przy efektach AI w „Co się stanie” badge statusu po prawej od nazwy efektu.
 - **Google Play release prep:** package `pl.ukrywane.voiceapp`, release keystore scripts, AAB `npm run android:bundle:release`, store docs (`docs/store/`), privacy policy HTML/MD, Data safety sheet, listing copy, feature graphic + 512 icon.
