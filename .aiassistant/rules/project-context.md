@@ -53,7 +53,7 @@ src/
 │   ├── audio/
 │   │   ├── basicEffects/     # presety DSP (presets/{id}/, wetRegistry)
 │   │   ├── advancedEffects/  # efekty offline (effects/{id}/, registry)
-│   │   └── aiEffects/        # WaveSpeed Chatterbox STS (narratorka, narrator, legionista); NetInfo gate
+│   │   └── aiEffects/        # WaveSpeed Chatterbox STS (narratorka, narrator, legionista, demonMale, frenchFemale, matureMale, femaleSensual); NetInfo gate
 │   ├── aiServiceStatus/      # public WaveSpeed status (summary.json) → green/yellow/red
 │   ├── credits/              # bootstrap instalacji → API (`server/`)
 │   └── device/               # device_id (SQLite; Keychain później)

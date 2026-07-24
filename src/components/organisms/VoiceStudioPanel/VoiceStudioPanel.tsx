@@ -1,6 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useCallback, useMemo } from 'react';
+import { FileAudio, Sparkles } from 'lucide-react-native';
+import { useCallback, useMemo, useRef } from 'react';
 import { Platform, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -17,6 +18,7 @@ import { SourcePreparationModal } from '@/components/molecules/SourcePreparation
 import { SuccessDialog } from '@/components/molecules/SuccessDialog';
 import type { VoiceStudioPanelProps } from '@/components/organisms/VoiceStudioPanel/VoiceStudioPanel.types';
 import { VoiceStudioScrollContent } from '@/components/organisms/VoiceStudioPanel/VoiceStudioScrollContent';
+import type { VoiceStudioScrollContentHandle } from '@/components/organisms/VoiceStudioPanel/VoiceStudioScrollContent.types';
 import { useVoiceStudio } from '@/hooks/useVoiceStudio';
 import { useTheme } from '@/hooks/useTheme';
 import { useTranslation } from '@/hooks/useTranslation';
@@ -24,6 +26,7 @@ import type { RootStackParamList } from '@/navigation/types';
 import type { ProcessedHistoryEntry } from '@/types/voiceStudio';
 import { formatAiDurationSeconds } from '@/utils/creditsEconomy';
 import { formatDurationLimitLabel } from '@/utils/formatDurationLimit';
+import { resolveStickyCtaMode } from '@/utils/voiceStudioStickyCta';
 import {
   isCombinedPreset,
   isPitchOnlyPreset,
@@ -42,6 +45,7 @@ const CONVERSION_SUMMARY_BLOCK_HEIGHT = 88;
 function stickyFooterHeight(
   showEditEffect: boolean,
   showConvert: boolean,
+  showGuidanceCta: boolean,
   showPitchAdjust: boolean,
   showSavePitch: boolean,
   showConversionSummary: boolean,
@@ -73,8 +77,13 @@ function stickyFooterHeight(
     height += CONVERSION_SUMMARY_BLOCK_HEIGHT;
   }
 
-  if (showConvert) {
-    if (showPitchAdjust || showSavePitch || showEditEffect || showConversionSummary) {
+  if (showConvert || showGuidanceCta) {
+    if (
+      showPitchAdjust ||
+      showSavePitch ||
+      showEditEffect ||
+      showConversionSummary
+    ) {
       height += STICKY_ACTION_GAP;
     }
     height += STICKY_ACTION_HEIGHT;
@@ -90,6 +99,7 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const insets = useSafeAreaInsets();
   const studio = useVoiceStudio();
+  const scrollContentRef = useRef<VoiceStudioScrollContentHandle>(null);
   const {
     refreshProcessedHistory,
     requestLoadFile,
@@ -224,7 +234,15 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
     selectedCustomPreset !== null &&
     !isPitchOnlyPreset(selectedCustomPreset) &&
     !isCombinedPreset(selectedCustomPreset);
-  const showConvert = canConvertAudio;
+  const stickyCtaMode = resolveStickyCtaMode({
+    hasSource: audioFile !== null,
+    hasEffect: selection.kind !== 'none',
+    canConvert: canConvertAudio,
+  });
+  const showNeedSource = stickyCtaMode === 'needSource';
+  const showNeedEffect = stickyCtaMode === 'needEffect';
+  const showConvert = stickyCtaMode === 'convert';
+  const showGuidanceCta = showNeedSource || showNeedEffect;
   const showConversionSummary = showConvert && conversionSummary !== null;
   const showPitchAdjust =
     showConvert &&
@@ -232,10 +250,11 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
       selection.kind === 'advanced' ||
       (selection.kind === 'custom' && !!selectedCustomPreset?.source));
   const showSavePitch = showPitchAdjust && hasPitchTweak;
-  const showStickyFooter = showEditEffect || showConvert;
+  const showStickyFooter = showEditEffect || showGuidanceCta || showConvert;
   const footerHeight = stickyFooterHeight(
     showEditEffect,
     showConvert,
+    showGuidanceCta,
     showPitchAdjust,
     showSavePitch,
     showConversionSummary,
@@ -292,6 +311,7 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
   return (
     <View className={cn('flex-1', className)}>
       <VoiceStudioScrollContent
+        ref={scrollContentRef}
         scrollBottomPadding={scrollBottomPadding}
         iconColor={iconColor}
         deleteIconColor={deleteIconColor}
@@ -339,7 +359,8 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
       {showStickyFooter ? (
         <View
           className="border-t border-border bg-background px-6 pt-3 dark:border-border-dark dark:bg-background-dark"
-          style={{ paddingBottom: Math.max(insets.bottom, 12) }}>
+          style={{ paddingBottom: Math.max(insets.bottom, 12) }}
+        >
           {showPitchAdjust ? (
             <EffectSlider
               effectKey="pitch"
@@ -360,7 +381,7 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
               }}
               className={cn(
                 'min-h-12',
-                (showEditEffect || showConvert) && 'mb-2',
+                (showEditEffect || showGuidanceCta || showConvert) && 'mb-2',
               )}
             />
           ) : null}
@@ -370,7 +391,10 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
               variant="secondary"
               disabled={isEditorLocked}
               onPress={openEditPresetEditor}
-              className={cn('min-h-12', showConvert && 'mb-2')}
+              className={cn(
+                'min-h-12',
+                (showGuidanceCta || showConvert) && 'mb-2',
+              )}
             />
           ) : null}
           {showConversionSummary && conversionSummary ? (
@@ -387,6 +411,30 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
               disabled={isEditorLocked}
               onPress={() => {
                 convertAudio().catch(() => undefined);
+              }}
+              className="min-h-12"
+            />
+          ) : null}
+          {showNeedSource ? (
+            <Button
+              title={t('voiceStudio.addSourceFileCta')}
+              variant="primary"
+              disabled={isEditorLocked}
+              icon={<FileAudio size={22} color="#FFFFFF" />}
+              onPress={() => {
+                scrollContentRef.current?.scrollToSource();
+              }}
+              className="min-h-12"
+            />
+          ) : null}
+          {showNeedEffect ? (
+            <Button
+              title={t('voiceStudio.selectEffectCta')}
+              variant="primary"
+              disabled={isEditorLocked}
+              icon={<Sparkles size={22} color="#FFFFFF" />}
+              onPress={() => {
+                scrollContentRef.current?.scrollToEffects();
               }}
               className="min-h-12"
             />

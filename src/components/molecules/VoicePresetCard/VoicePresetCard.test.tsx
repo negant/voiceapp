@@ -39,7 +39,7 @@ describe('VoicePresetCard', () => {
     );
     const avatarSlot = views.find(node => {
       const className = node.props.className as string | undefined;
-      return className?.includes('mb-2 h-20 w-full items-center justify-center');
+      return className?.includes('mb-2 h-24 w-full items-center justify-center');
     });
     const pressable = tree!.root.findByProps({ accessibilityRole: 'button' });
 

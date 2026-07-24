@@ -7,11 +7,17 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 
 ## [Unreleased]
 
+### Added
+- **AI Effects:** Demon, French Female / Francuzka, Mature Gentleman / Dojrzały pan, Sensual / Zmysłowa (`femaleSensual.png`).
+- **Voice Studio sticky CTA:** naprzemiennie **Dodaj plik źródłowy** (z ikoną, scroll po tapnięciu), **Wybierz efekt** albo **Konwertuj**.
+
 ### Changed
-- **Android sub-screen header:** wyższy pasek (`h-14`) i przycisk wstecz po prawej stronie w `SubScreenHeader` (iOS bez zmian: kompaktowy rząd + back po lewej).
+- **Karty efektów:** awatary 96×96 (`h-24`); compact 80.
+- **Advanced Effects:** `femaleVoice` / `maleVoice` → **Lighter Voice** / **Deeper Voice** (PL: **Lżejszy głos** / **Głębszy głos**).
+- **Android sub-screen header:** wyższy pasek (`h-14`) i back po prawej w `SubScreenHeader`.
 
 ### Fixed
-- **iOS nav back:** pod-ekrany (Ustawienia itd.) używają JS `SubScreenHeader` zamiast natywnego `headerLeft`/`headerRight` — na iOS 26 Liquid Glass widać było tylko niedziałające „…”.
+- **iOS nav back:** pod-ekrany używają JS `SubScreenHeader` zamiast natywnego `headerLeft`/`headerRight` — na iOS 26 Liquid Glass widać było tylko niedziałające „…”.
 - **iOS build:** po usunięciu `react-native-share` odświeżono CocoaPods (`pod install`) — usunięty stale target `RNShare`, który powodował `Build input file cannot be found` (log CLI myląco wskazywał na sqlite).
 - **iOS launch:** bundle id `pl.ukrywane.voiceapp` (jak Android); `npm run ios` wymusza symulator `iPhone 17` (nie fizyczny telefon); `RCT_METRO_PORT=8088` w `.xcode.env`.
 - **iOS Metro:** AppDelegate w DEBUG ustawia `jsLocation` + bundle URL na `localhost:8088` (prebuilt RN domyślnie szuka `:8081` → „No script URL” / packager status check na 8081).

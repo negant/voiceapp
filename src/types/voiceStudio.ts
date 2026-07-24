@@ -31,7 +31,14 @@ export type AdvancedEffectId =
   | 'chipmunk';
 
 /** AI tier effects — WaveSpeed Chatterbox Speech-to-Speech (cloud). */
-export type AiEffectId = 'narrator' | 'narratorka' | 'legionista';
+export type AiEffectId =
+  | 'narrator'
+  | 'narratorka'
+  | 'legionista'
+  | 'demonMale'
+  | 'frenchFemale'
+  | 'matureMale'
+  | 'femaleSensual';
 
 export type AdvancedEffect = {
   id: AdvancedEffectId;

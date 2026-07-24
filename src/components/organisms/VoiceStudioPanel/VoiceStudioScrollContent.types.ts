@@ -18,6 +18,11 @@ export type AiUsageEstimate = {
   canAfford: boolean;
 };
 
+export type VoiceStudioScrollContentHandle = {
+  scrollToSource: () => void;
+  scrollToEffects: () => void;
+};
+
 export type VoiceStudioScrollContentProps = {
   scrollBottomPadding: number;
   iconColor: string;

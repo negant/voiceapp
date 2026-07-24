@@ -58,7 +58,7 @@ advancedEffects/
 3. **Typy** — rozszerz `AdvancedEffectId` w `src/types/voiceStudio.ts`.
 4. **i18n** — klucze `voiceStudio.advancedEffectItems.{id}` we wszystkich `locales/*.json` + `schema.json`.
 5. **Ikona** — `AdvancedEffectIcon` dla nowego `effectId`.
-6. **Nie duplikuj Basic** — presety sliderów (np. Female Voice) należą do Basic, nie Advanced.
+6. **Nie duplikuj Basic** — presety sliderów (np. Light / Deep) należą do Basic, nie Advanced.
 7. **Filtry łańcucha** — `highpass`, `noise_reduce`, `pitch_shift`, `formant_shift`, `tempo_shift`, `equalizer`, `lowshelf`, `resonant_echo`, `lowpass`, `soft_clip`, `waveshaper`, `gain`.
 
 ## Testy
@@ -83,7 +83,7 @@ advancedEffects/
 
 ## AI Effects (`src/services/audio/aiEffects/`)
 
-Cloud Speech-to-Speech via **WaveSpeed Chatterbox** (internal). UI catalog: **narratorka**, **narrator**, **legionista** (PNG avatars). User-facing copy: advanced AI + internet required (no vendor/API branding). Offline → AI cards disabled + **AppAlert** (`showOfflineAlert`). Output = API **MP3**.
+Cloud Speech-to-Speech via **WaveSpeed Chatterbox** (internal). UI catalog: **narratorka**, **narrator**, **legionista**, **demonMale**, **frenchFemale**, **matureMale**, **femaleSensual** (PNG avatars). User-facing copy: advanced AI + internet required (no vendor/API branding). Offline → AI cards disabled + **AppAlert** (`showOfflineAlert`). Output = API **MP3**.
 
 ```
 aiEffects/
@@ -95,7 +95,7 @@ aiEffects/
     waveSpeedConfig.ts
 ```
 
-Requires `AI_EFFECTS_API_KEY` + `ENABLE_AI_EFFECTS` + `AI_EFFECTS_API_BASE_URL` (default WaveSpeed v3). References: `assets/references/` (`narratorFemale.mp3`, `narratorMale.mp3`, `legionary.mp3`) via `waveSpeedReferences.ts`. Extra avatar PNGs under `assets/presets/` (romantyczna, pirat, ogr, …) are kept for later use.
+Requires `AI_EFFECTS_API_KEY` + `ENABLE_AI_EFFECTS` + `AI_EFFECTS_API_BASE_URL` (default WaveSpeed v3). References: `assets/references/` (`narratorFemale.mp3`, `narratorMale.mp3`, `legionary.mp3`, `demonMale.mp3`, `frenchFemale.mp3`, `matureMale.mp3`, `femaleSensual.mp3`) via `waveSpeedReferences.ts`. Extra avatar PNGs under `assets/presets/` (romantyczna, pirat, ogr, …) are kept for later use.
 
 ### AI — checklist
 

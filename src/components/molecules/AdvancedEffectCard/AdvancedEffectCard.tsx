@@ -54,7 +54,7 @@ export const AdvancedEffectCard = memo(function AdvancedEffectCardView({
               source={avatarImage}
               className={cn(
                 'rounded-full border-2 border-border dark:border-border-dark',
-                compact ? 'mb-1.5 h-16 w-16' : 'mb-2 h-20 w-20',
+                compact ? 'mb-1.5 h-20 w-20' : 'mb-2 h-24 w-24',
               )}
               resizeMode="cover"
               accessibilityIgnoresInvertColors
@@ -63,11 +63,11 @@ export const AdvancedEffectCard = memo(function AdvancedEffectCardView({
             <View
               className={cn(
                 'items-center justify-center overflow-hidden rounded-full border-2 border-border dark:border-border-dark',
-                compact ? 'mb-1.5 h-16 w-16' : 'mb-2 h-20 w-20',
+                compact ? 'mb-1.5 h-20 w-20' : 'mb-2 h-24 w-24',
               )}>
               <AdvancedEffectIcon
                 effectId={iconKey}
-                size={compact ? 64 : 80}
+                size={compact ? 80 : 96}
               />
             </View>
           )}

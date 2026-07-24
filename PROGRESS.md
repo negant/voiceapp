@@ -54,6 +54,9 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [ ] Internal testing AAB + smoke test (`docs/store/SMOKE_TEST.md`)
 
 ## Zrobione (niedawno)
+- [x] **Voice Studio sticky CTA:** CTA „dodaj plik” / „wybierz efekt” przewijają do sekcji źródła / efektów bez pulsujących ramek.
+- [x] **AI Effects:** Demon / Francuzka / Dojrzały pan / Zmysłowa
+- [x] **Karty efektów:** awatary 96×96
 - [x] **iOS:** `pod install` po usunięciu `react-native-share` (stale `RNShare` psuł build)
 - [x] **iOS:** bundle `pl.ukrywane.voiceapp`, `npm run ios` → symulator, Metro `:8088`
 - [x] **iOS:** AppDelegate DEBUG → `localhost:8088` (fix „No script URL”)

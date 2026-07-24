@@ -54,7 +54,7 @@ export const AiEffectCard = memo(function AiEffectCardView({
               source={avatarImage}
               className={cn(
                 'rounded-full border-2 border-border dark:border-border-dark',
-                compact ? 'mb-1.5 h-16 w-16' : 'mb-2 h-20 w-20',
+                compact ? 'mb-1.5 h-20 w-20' : 'mb-2 h-24 w-24',
               )}
               resizeMode="cover"
               accessibilityIgnoresInvertColors
@@ -63,9 +63,9 @@ export const AiEffectCard = memo(function AiEffectCardView({
             <View
               className={cn(
                 'items-center justify-center overflow-hidden rounded-full border-2 border-border dark:border-border-dark',
-                compact ? 'mb-1.5 h-16 w-16' : 'mb-2 h-20 w-20',
+                compact ? 'mb-1.5 h-20 w-20' : 'mb-2 h-24 w-24',
               )}>
-              <AiEffectIcon effectId={iconKey} size={compact ? 64 : 80} />
+              <AiEffectIcon effectId={iconKey} size={compact ? 80 : 96} />
             </View>
           )}
           <View

@@ -52,6 +52,21 @@ describe('translate', () => {
     expect(translate('pl', 'voiceStudio.presets.maleDescription')).toContain('Niższy');
   });
 
+  it('returns advanced lighter/deeper voice labels without gender wording', () => {
+    expect(translate('en', 'voiceStudio.advancedEffectItems.femaleVoice')).toBe(
+      'Lighter Voice',
+    );
+    expect(translate('pl', 'voiceStudio.advancedEffectItems.femaleVoice')).toBe(
+      'Lżejszy głos',
+    );
+    expect(translate('en', 'voiceStudio.advancedEffectItems.maleVoice')).toBe(
+      'Deeper Voice',
+    );
+    expect(translate('pl', 'voiceStudio.advancedEffectItems.maleVoice')).toBe(
+      'Głębszy głos',
+    );
+  });
+
   it('translates helium preset name and description', () => {
     expect(translate('en', 'voiceStudio.presets.helium')).toBe('Helium');
     expect(translate('pl', 'voiceStudio.presets.helium')).toBe('Hel');

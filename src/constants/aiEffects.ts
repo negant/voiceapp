@@ -6,6 +6,10 @@ export const CLOUD_AI_EFFECT_IDS: ReadonlySet<AiEffectId> = new Set([
   'narrator',
   'narratorka',
   'legionista',
+  'demonMale',
+  'frenchFemale',
+  'matureMale',
+  'femaleSensual',
 ]);
 
 const AI_EFFECT_CATALOG: AiEffect[] = [
@@ -32,6 +36,38 @@ const AI_EFFECT_CATALOG: AiEffect[] = [
     accentColor: '#B91C1C',
     iconKey: 'legionista',
     avatarImageKey: 'legionista',
+  },
+  {
+    id: 'demonMale',
+    labelKey: 'voiceStudio.aiEffectItems.demonMale',
+    descriptionKey: 'voiceStudio.aiEffectItems.demonMaleDescription',
+    accentColor: '#9F1239',
+    iconKey: 'demonMale',
+    avatarImageKey: 'demonMale',
+  },
+  {
+    id: 'frenchFemale',
+    labelKey: 'voiceStudio.aiEffectItems.frenchFemale',
+    descriptionKey: 'voiceStudio.aiEffectItems.frenchFemaleDescription',
+    accentColor: '#DB2777',
+    iconKey: 'frenchFemale',
+    avatarImageKey: 'frenchFemale',
+  },
+  {
+    id: 'matureMale',
+    labelKey: 'voiceStudio.aiEffectItems.matureMale',
+    descriptionKey: 'voiceStudio.aiEffectItems.matureMaleDescription',
+    accentColor: '#B45309',
+    iconKey: 'matureMale',
+    avatarImageKey: 'matureMale',
+  },
+  {
+    id: 'femaleSensual',
+    labelKey: 'voiceStudio.aiEffectItems.femaleSensual',
+    descriptionKey: 'voiceStudio.aiEffectItems.femaleSensualDescription',
+    accentColor: '#A855F7',
+    iconKey: 'femaleSensual',
+    avatarImageKey: 'femaleSensual',
   },
 ];
 

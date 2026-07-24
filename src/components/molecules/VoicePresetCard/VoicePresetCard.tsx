@@ -56,13 +56,13 @@ export const VoicePresetCard = memo(function VoicePresetCardView({
         accessibilityLabel={accessibilityLabel}
         onPress={onSelect}
         className={cn(
-          'min-h-[124px] flex-1 rounded-2xl border bg-surface px-2 py-3 active:opacity-90 dark:bg-surface-dark',
+          'min-h-[140px] flex-1 rounded-2xl border bg-surface px-2 py-3 active:opacity-90 dark:bg-surface-dark',
           selected
             ? 'border-brand dark:border-brand-dark'
             : 'border-border dark:border-border-dark',
         )}>
         <View className="flex-1 items-center">
-          <View className="mb-2 h-20 w-full items-center justify-center">
+          <View className="mb-2 h-24 w-full items-center justify-center">
             {avatarImages ? (
               <CombinedEffectAvatars
                 avatars={avatarImages}
@@ -74,13 +74,13 @@ export const VoicePresetCard = memo(function VoicePresetCardView({
             ) : avatarImage ? (
               <Image
                 source={avatarImage}
-                className="h-20 w-20 rounded-full border-2 border-border dark:border-border-dark"
+                className="h-24 w-24 rounded-full border-2 border-border dark:border-border-dark"
                 resizeMode="cover"
                 accessibilityIgnoresInvertColors
               />
             ) : (
               <View
-                className="h-20 w-20 items-center justify-center rounded-full border-2 border-border dark:border-border-dark"
+                className="h-24 w-24 items-center justify-center rounded-full border-2 border-border dark:border-border-dark"
                 style={{ backgroundColor: accentColor }}>
                 <Text className="text-2xl font-bold text-white">{avatarInitial}</Text>
               </View>

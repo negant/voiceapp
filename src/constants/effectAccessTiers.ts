@@ -38,6 +38,10 @@ export const AI_EFFECT_ACCESS: Record<AiEffectId, EffectAccessTier> = {
   narratorka: 'premium',
   narrator: 'premium',
   legionista: 'premium',
+  demonMale: 'premium',
+  frenchFemale: 'premium',
+  matureMale: 'premium',
+  femaleSensual: 'premium',
 };
 
 export function getBasicEffectAccess(

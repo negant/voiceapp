@@ -60,6 +60,38 @@ export function AiEffectIcon({ effectId, size = 72 }: AiEffectIconProps) {
           glyph="star"
         />
       );
+    case 'demonMale':
+      return (
+        <BadgeIcon
+          size={size}
+          colors={['#881337', '#9F1239', '#4C0519']}
+          glyph="star"
+        />
+      );
+    case 'frenchFemale':
+      return (
+        <BadgeIcon
+          size={size}
+          colors={['#9D174D', '#DB2777', '#500724']}
+          glyph="person"
+        />
+      );
+    case 'femaleSensual':
+      return (
+        <BadgeIcon
+          size={size}
+          colors={['#6B21A8', '#A855F7', '#3B0764']}
+          glyph="person"
+        />
+      );
+    case 'matureMale':
+      return (
+        <BadgeIcon
+          size={size}
+          colors={['#92400E', '#B45309', '#451A03']}
+          glyph="person"
+        />
+      );
     case 'narrator':
       return (
         <BadgeIcon

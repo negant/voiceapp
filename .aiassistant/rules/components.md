@@ -77,7 +77,7 @@ import { Button } from '@/components/atoms/Button';
 
 ## VoicePresetCard (presety wbudowane)
 - Molecule: miniatura (`assets/presets/{id}.png` przez `PRESET_AVATAR_IMAGES`), nazwa; opis i18n tylko w `accessibilityLabel` (`voiceStudio.presets.*Description`).
-- Miniatura awatara presetu: **80×80** (`h-20 w-20`), okrągła; wbudowane presety używają `assets/presets/{id}.png`.
+- Miniatura awatara presetu: **96×96** (`h-24 w-24`), okrągła; wbudowane presety używają `assets/presets/{id}.png`.
 - **Stała wysokość tekstu:** slot nazwy `h-8` (max 2 linie). Opisy presetów nie są renderowane na karcie (tylko w `accessibilityLabel`).
 - **VoicePresetCard** — okrągły awatar (80px) + etykieta; bez widocznego opisu pod nazwą.
 - Ponowne kliknięcie wybranego efektu **odznacza** go (`toggleBuiltinPresetSelection` / `toggleCustomPresetSelection`).
@@ -88,7 +88,7 @@ import { Button } from '@/components/atoms/Button';
 - **Kompozycja:** twarz/postać wycentrowana, **bez napisów i logo** — nadaje się do okrągłego awatara (`resizeMode="cover"`).
 - **Styl:** spójny z resztą presetów (anime / manga, np. Huntrix-inspired dla postaci ludzkich).
 - **Nazwa pliku:** `{VoicePresetId}.png` (np. `demon.png`); po dodaniu pliku zaktualizuj `VoicePresetId`, `PRESET_AVATAR_IMAGES`, `VOICE_PRESETS`, i18n i testy.
-- **AI Effects:** awatary w `assets/presets/` (np. `narratorFemale.png`), mapowanie w `AI_EFFECT_AVATAR_IMAGES`; karta `AiEffectCard` jak `AdvancedEffectCard` (okrągły PNG 80×80, fallback SVG `AiEffectIcon`).
+- **AI Effects:** awatary w `assets/presets/` (np. `narratorFemale.png`), mapowanie w `AI_EFFECT_AVATAR_IMAGES`; karta `AiEffectCard` jak `AdvancedEffectCard` (okrągły PNG 96×96, fallback SVG `AiEffectIcon`).
 
 ## Czego unikać
 

@@ -13,16 +13,24 @@ describe('aiEffects catalog', () => {
   it('exposes AI voices when cloud AI is configured', () => {
     expect(isAiEffectsConfigured()).toBe(true);
     expect(AI_EFFECTS.map(effect => effect.id).sort()).toEqual([
+      'demonMale',
+      'femaleSensual',
+      'frenchFemale',
       'legionista',
+      'matureMale',
       'narrator',
       'narratorka',
     ]);
-    expect(CLOUD_AI_EFFECT_IDS.size).toBe(3);
+    expect(CLOUD_AI_EFFECT_IDS.size).toBe(7);
   });
 
   it('resolves effects for labels and avatars', () => {
     expect(findAiEffect('narratorka')?.avatarImageKey).toBe('narratorka');
     expect(findAiEffect('narrator')?.accentColor).toBe('#0D9488');
     expect(findAiEffect('legionista')?.id).toBe('legionista');
+    expect(findAiEffect('demonMale')?.avatarImageKey).toBe('demonMale');
+    expect(findAiEffect('frenchFemale')?.accentColor).toBe('#DB2777');
+    expect(findAiEffect('matureMale')?.id).toBe('matureMale');
+    expect(findAiEffect('femaleSensual')?.avatarImageKey).toBe('femaleSensual');
   });
 });

@@ -96,5 +96,17 @@ describe('effectChain', () => {
     expect(refs.some(ref => ref.tier === 'ai' && ref.effectId === 'narrator')).toBe(
       true,
     );
+    expect(refs.some(ref => ref.tier === 'ai' && ref.effectId === 'demonMale')).toBe(
+      true,
+    );
+    expect(
+      refs.some(ref => ref.tier === 'ai' && ref.effectId === 'frenchFemale'),
+    ).toBe(true);
+    expect(refs.some(ref => ref.tier === 'ai' && ref.effectId === 'matureMale')).toBe(
+      true,
+    );
+    expect(
+      refs.some(ref => ref.tier === 'ai' && ref.effectId === 'femaleSensual'),
+    ).toBe(true);
   });
 });

@@ -7,8 +7,8 @@ const SIZE_CLASSES: Record<
   NonNullable<EffectAvatarProps['size']>,
   { container: string; initial: string }
 > = {
-  lg: { container: 'h-20 w-20', initial: 'text-2xl' },
-  md: { container: 'h-14 w-14', initial: 'text-lg' },
+  lg: { container: 'h-24 w-24', initial: 'text-2xl' },
+  md: { container: 'h-16 w-16', initial: 'text-lg' },
   sm: { container: 'h-12 w-12', initial: 'text-base' },
 };
 

@@ -18,4 +18,24 @@ export const AI_EFFECT_DEFINITIONS: Record<AiEffectId, AiEffectDefinition> = {
     engine: 'wavespeed',
     referenceAudioAsset: WAVESPEED_REFERENCE_AUDIO_ASSETS.legionista,
   },
+  demonMale: {
+    id: 'demonMale',
+    engine: 'wavespeed',
+    referenceAudioAsset: WAVESPEED_REFERENCE_AUDIO_ASSETS.demonMale,
+  },
+  frenchFemale: {
+    id: 'frenchFemale',
+    engine: 'wavespeed',
+    referenceAudioAsset: WAVESPEED_REFERENCE_AUDIO_ASSETS.frenchFemale,
+  },
+  matureMale: {
+    id: 'matureMale',
+    engine: 'wavespeed',
+    referenceAudioAsset: WAVESPEED_REFERENCE_AUDIO_ASSETS.matureMale,
+  },
+  femaleSensual: {
+    id: 'femaleSensual',
+    engine: 'wavespeed',
+    referenceAudioAsset: WAVESPEED_REFERENCE_AUDIO_ASSETS.femaleSensual,
+  },
 };
