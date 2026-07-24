@@ -1,13 +1,15 @@
 import { useLayoutEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
+import { SubScreenHeader } from '@/components/molecules/SubScreenHeader';
 import { useTranslation } from '@/hooks/useTranslation';
 import type { TranslationKey } from '@/i18n/types';
-import {
-  createSubScreenHeaderTitle,
-  SubScreenHeaderBack,
-} from '@/navigation/subScreenHeader';
 
+/**
+ * Sub-screens replace the native stack header with a JS header.
+ * Native headerLeft/headerRight back controls break on iOS 26 Liquid Glass
+ * (UI shows a non-functional "…" instead of a working chevron).
+ */
 export function useScreenTitle(titleKey: TranslationKey) {
   const navigation = useNavigation();
   const { t } = useTranslation();
@@ -15,12 +17,8 @@ export function useScreenTitle(titleKey: TranslationKey) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      headerBackVisible: false,
-      headerTitle: '',
-      headerTitleAlign: 'left',
-      headerLeftContainerStyle: { flex: 1 },
-      headerLeft: createSubScreenHeaderTitle(title),
-      headerRight: SubScreenHeaderBack,
+      title,
+      header: () => <SubScreenHeader title={title} />,
     });
   }, [navigation, title]);
 }

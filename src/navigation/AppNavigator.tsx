@@ -45,7 +45,6 @@ export function AppNavigator() {
       <Stack.Navigator
         screenOptions={{
           headerShadowVisible: false,
-          headerBackVisible: false,
         }}>
         <Stack.Screen
           name="Home"
@@ -54,6 +53,7 @@ export function AppNavigator() {
             headerTitle: HomeHeaderTitle,
             headerTitleAlign: 'left',
             headerRight: HomeHeaderActions,
+            headerBackVisible: false,
           }}
         />
         <Stack.Screen name="Guide" component={GuideScreen} />

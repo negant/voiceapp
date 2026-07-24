@@ -8,6 +8,7 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 ## [Unreleased]
 
 ### Fixed
+- **iOS nav back:** pod-ekrany (Ustawienia itd.) używają JS `SubScreenHeader` zamiast natywnego `headerLeft`/`headerRight` — na iOS 26 Liquid Glass widać było tylko niedziałające „…”.
 - **iOS build:** po usunięciu `react-native-share` odświeżono CocoaPods (`pod install`) — usunięty stale target `RNShare`, który powodował `Build input file cannot be found` (log CLI myląco wskazywał na sqlite).
 - **iOS launch:** bundle id `pl.ukrywane.voiceapp` (jak Android); `npm run ios` wymusza symulator `iPhone 17` (nie fizyczny telefon); `RCT_METRO_PORT=8088` w `.xcode.env`.
 - **iOS Metro:** AppDelegate w DEBUG ustawia `jsLocation` + bundle URL na `localhost:8088` (prebuilt RN domyślnie szuka `:8081` → „No script URL” / packager status check na 8081).

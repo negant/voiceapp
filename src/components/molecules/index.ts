@@ -18,6 +18,7 @@ export { ProcessingModal } from './ProcessingModal';
 export { SettingsInfoRow } from './SettingsInfoRow';
 export { SettingsRow } from './SettingsRow';
 export { ScreenHeaderTitle } from './ScreenHeaderTitle';
+export { SubScreenHeader } from './SubScreenHeader';
 export { SourceAudioActions } from './SourceAudioActions';
 export { StudioSection } from './StudioSection';
 export { SuccessDialog } from './SuccessDialog';
