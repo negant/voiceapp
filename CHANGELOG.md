@@ -7,6 +7,9 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 
 ## [Unreleased]
 
+### Changed
+- **Android sub-screen header:** wyższy pasek (`h-14`) i przycisk wstecz po prawej stronie w `SubScreenHeader` (iOS bez zmian: kompaktowy rząd + back po lewej).
+
 ### Fixed
 - **iOS nav back:** pod-ekrany (Ustawienia itd.) używają JS `SubScreenHeader` zamiast natywnego `headerLeft`/`headerRight` — na iOS 26 Liquid Glass widać było tylko niedziałające „…”.
 - **iOS build:** po usunięciu `react-native-share` odświeżono CocoaPods (`pod install`) — usunięty stale target `RNShare`, który powodował `Build input file cannot be found` (log CLI myląco wskazywał na sqlite).

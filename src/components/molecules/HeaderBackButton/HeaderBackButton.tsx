@@ -9,7 +9,10 @@ import { cn } from '@/lib/cn';
 
 const ICON_SIZE = 28;
 
-export function HeaderBackButton({ className }: HeaderBackButtonProps) {
+export function HeaderBackButton({
+  className,
+  side = 'left',
+}: HeaderBackButtonProps) {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const { isDark } = useTheme();
@@ -25,7 +28,8 @@ export function HeaderBackButton({ className }: HeaderBackButtonProps) {
       accessibilityLabel={t('common.back')}
       onPress={() => navigation.goBack()}
       className={cn(
-        'mr-3 h-11 w-11 items-center justify-center rounded-full active:opacity-70',
+        'h-11 w-11 items-center justify-center rounded-full active:opacity-70',
+        side === 'right' ? 'ml-1' : 'mr-3',
         className,
       )}>
       <ChevronLeft size={ICON_SIZE} color={iconColor} />
