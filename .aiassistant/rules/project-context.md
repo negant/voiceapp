@@ -13,7 +13,6 @@ apply: always
 - Device ID: Keychain/Keystore + SQLite (`src/services/device/deviceId.ts`).
 - Store docs: `docs/store/` (privacy, Data safety, listing, smoke test).
 - Status aktualizacji: `fetchAppUpdateStatus()` → `GET /v1/setup`.
-- Status AI (WaveSpeed): `AiServiceStatusProvider` → `AI_EFFECTS_API_STATUS_URL` przy starcie + po błędzie AI; UI `AiServiceStatusCard` w Ustawieniach + badge w `ConversionSummary` (Operational / Działające).
 
 ## Cel produktu (roboczy)
 - Import pliku audio z pamięci urządzenia lub udostępnionego źródła.
@@ -54,7 +53,6 @@ src/
 │   │   ├── basicEffects/     # presety DSP (presets/{id}/, wetRegistry)
 │   │   ├── advancedEffects/  # efekty offline (effects/{id}/, registry)
 │   │   └── aiEffects/        # WaveSpeed Chatterbox STS (narratorka, narrator, legionista, demonMale, frenchFemale, matureMale, femaleSensual); NetInfo gate
-│   ├── aiServiceStatus/      # public WaveSpeed status (summary.json) → green/yellow/red
 │   ├── credits/              # bootstrap instalacji → API (`server/`)
 │   └── device/               # device_id (SQLite; Keychain później)
 ├── theme/          # legacy tokeny (preferuj Tailwind)

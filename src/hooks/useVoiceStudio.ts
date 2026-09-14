@@ -26,7 +26,6 @@ import { useAppAlert } from '@/hooks/useAppAlert';
 import { useNetworkConnectivity } from '@/hooks/useNetworkConnectivity';
 import { useTranslation } from '@/hooks/useTranslation';
 import { useProcessedRecordingsCount } from '@/providers/ProcessedRecordingsCountProvider';
-import { useAiServiceStatus } from '@/providers/AiServiceStatusProvider';
 import { useCredits } from '@/providers/CreditsProvider';
 import { chargeAiCreditsBeforeProcessing } from '@/utils/aiCreditCharge';
 import {
@@ -135,11 +134,6 @@ async function removeStoredOutputUris(uris: string[]): Promise<void> {
  */
 let sourceDurationLimitNoticeShownThisLaunch = false;
 
-/**
- * Yellow/red AI status warning before Convert — once per app process.
- */
-let aiStatusConvertWarningShownThisLaunch = false;
-
 type PlaybackStatus = 'idle' | 'playing' | 'paused';
 
 type PlaybackModalState = {
@@ -154,8 +148,6 @@ export function useVoiceStudio() {
   const { isReady } = useDatabase();
   const { isOnline } = useNetworkConnectivity();
   const { showOfflineAlert, showErrorAlert, showWarningAlert } = useAppAlert();
-  const { refreshStatusAfterAiFailure, status: aiServiceStatus } =
-    useAiServiceStatus();
   const { refreshCount: refreshRecordingsCount } = useProcessedRecordingsCount();
   const {
     accountPlan,
@@ -285,8 +277,6 @@ export function useVoiceStudio() {
   const [sourceDurationLimitNotice, setSourceDurationLimitNotice] = useState<
     'import' | 'record' | null
   >(null);
-  const [aiStatusConvertWarningVisible, setAiStatusConvertWarningVisible] =
-    useState(false);
   const [playbackModal, setPlaybackModal] =
     useState<PlaybackModalState | null>(null);
   const [playbackStatus, setPlaybackStatus] =
@@ -1691,8 +1681,7 @@ export function useVoiceStudio() {
     setIsCancellingProcessing(true);
   }, [isCancellingProcessing]);
 
-  const convertAudio = useCallback(
-    async (options?: { acknowledgedAiStatusRisk?: boolean }) => {
+  const convertAudio = useCallback(async () => {
     const input = ensureFileReadyForProcessing();
     if (!input) {
       return;
@@ -1740,19 +1729,6 @@ export function useVoiceStudio() {
       return;
     }
 
-    const aiStatusSeverity = aiServiceStatus?.severity;
-    const aiServiceUnstable =
-      aiStatusSeverity === 'degraded' || aiStatusSeverity === 'outage';
-    if (
-      usesAi &&
-      aiServiceUnstable &&
-      !options?.acknowledgedAiStatusRisk &&
-      !aiStatusConvertWarningShownThisLaunch
-    ) {
-      setAiStatusConvertWarningVisible(true);
-      return;
-    }
-
     setIsProcessing(true);
     setIsCancellingProcessing(false);
     setProcessingStage('preparing');
@@ -1795,8 +1771,6 @@ export function useVoiceStudio() {
         }
 
         if (usesAi) {
-          // Re-check provider status only after a real AI failure (not on a timer).
-          refreshStatusAfterAiFailure().catch(() => undefined);
           if (aiCreditsCharged) {
             // Keep header balance in sync after a failed cloud job (credits already spent).
             await refreshBalance().catch(() => undefined);
@@ -1865,7 +1839,6 @@ export function useVoiceStudio() {
     isOnline,
     loadPlaybackWaveform,
     refreshProcessedHistory,
-    refreshStatusAfterAiFailure,
     selection,
     spendCredits,
     refreshBalance,
@@ -1874,19 +1847,7 @@ export function useVoiceStudio() {
     showWarningAlert,
     t,
     usesAiProcessing,
-    aiServiceStatus?.severity,
   ]);
-
-  const cancelAiStatusConvertWarning = useCallback(() => {
-    aiStatusConvertWarningShownThisLaunch = true;
-    setAiStatusConvertWarningVisible(false);
-  }, []);
-
-  const confirmAiStatusConvertWarning = useCallback(() => {
-    aiStatusConvertWarningShownThisLaunch = true;
-    setAiStatusConvertWarningVisible(false);
-    convertAudio({ acknowledgedAiStatusRisk: true }).catch(() => undefined);
-  }, [convertAudio]);
 
   const openProcessedHistoryPlayback = useCallback(
     async (entry: ProcessedHistoryEntry) => {
@@ -2197,7 +2158,6 @@ export function useVoiceStudio() {
     fileDeletePending,
     isDeletingFile,
     sourceDurationLimitNotice,
-    aiStatusConvertWarningVisible,
     localMaxDurationSec: planMaxDurationSec,
     aiMaxDurationSec,
     recordingMaxDurationSec,
@@ -2221,8 +2181,6 @@ export function useVoiceStudio() {
     requestOpenRecordingModal,
     cancelSourceDurationLimitNotice,
     confirmSourceDurationLimitNotice,
-    cancelAiStatusConvertWarning,
-    confirmAiStatusConvertWarning,
     startRecording,
     finishRecording,
     cancelRecording,

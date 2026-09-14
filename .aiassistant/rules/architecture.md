@@ -43,7 +43,7 @@ apply: always
 ## Cykl życia aplikacji (start)
 
 ```
-AppProviders (SafeArea → Database → Locale → Theme → AppAlert → Credits → AiServiceStatus → …)
+AppProviders (SafeArea → Database → Locale → Theme → AppAlert → Credits → …)
        │
        ▼
   AppContent
@@ -59,7 +59,6 @@ AppProviders (SafeArea → Database → Locale → Theme → AppAlert → Credit
 
 - Pusty ekran ładowania **nie** jest używany — zamiast tego launcher z animacją logo.
 - `StatusBar` ustawiany już na launcherze (motyw jasny/ciemny).
-- **`AiServiceStatusProvider`:** jednorazowy fetch `AI_EFFECTS_API_STATUS_URL` po starcie DB; ponowny fetch tylko po błędzie konwersji AI (`refreshStatusAfterAiFailure`). Szczegóły: `domain-knowledge.md` → **Status usługi AI**.
 
 ## Przepływ danych (docelowy — voice processing)
 

@@ -6,7 +6,6 @@ import {
 
 import { DatabaseProvider } from '@/providers/DatabaseProvider';
 import { AppAlertProvider } from '@/providers/AppAlertProvider';
-import { AiServiceStatusProvider } from '@/providers/AiServiceStatusProvider';
 import { CreditsProvider } from '@/providers/CreditsProvider';
 import { LocaleProvider } from '@/providers/LocaleProvider';
 import { ProcessedRecordingsCountProvider } from '@/providers/ProcessedRecordingsCountProvider';
@@ -20,11 +19,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
           <ThemeProvider>
             <AppAlertProvider>
               <CreditsProvider>
-                <AiServiceStatusProvider>
-                  <ProcessedRecordingsCountProvider>
-                    {children}
-                  </ProcessedRecordingsCountProvider>
-                </AiServiceStatusProvider>
+                <ProcessedRecordingsCountProvider>
+                  {children}
+                </ProcessedRecordingsCountProvider>
               </CreditsProvider>
             </AppAlertProvider>
           </ThemeProvider>

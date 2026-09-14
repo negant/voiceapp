@@ -2,7 +2,6 @@ export { AppHeaderTitle } from './AppHeaderTitle';
 export { AppIntroSection } from './AppIntroSection';
 export { AppAlert } from './AppAlert';
 export { AppVersionInfo } from './AppVersionInfo';
-export { AiServiceStatusCard } from './AiServiceStatusCard';
 export { ConversionSummary } from './ConversionSummary';
 export { CreditsHeaderBadge } from './CreditsHeaderBadge';
 export { ConfirmDialog } from './ConfirmDialog';

@@ -10,11 +10,15 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 ### Added
 - **AI Effects:** Demon, French Female / Francuzka, Mature Gentleman / Dojrzały pan, Sensual / Zmysłowa (`femaleSensual.png`).
 - **Voice Studio sticky CTA:** naprzemiennie **Dodaj plik źródłowy** (z ikoną, scroll po tapnięciu), **Wybierz efekt** albo **Konwertuj**.
+- **README (Android / Windows):** instrukcja `JAVA_HOME` / `ANDROID_HOME` / PATH w Git Bash; wymóg **JDK 17** (nie JBR 25 z Android Studio — CMake/`nitro-modules`).
 
 ### Changed
 - **Karty efektów:** awatary 96×96 (`h-24`); compact 80.
 - **Advanced Effects:** `femaleVoice` / `maleVoice` → **Lighter Voice** / **Deeper Voice** (PL: **Lżejszy głos** / **Głębszy głos**).
 - **Android sub-screen header:** wyższy pasek (`h-14`) i back po prawej w `SubScreenHeader`.
+
+### Removed
+- **AI service status:** usunięte odpytywanie publicznego WaveSpeed `summary.json` (`AI_EFFECTS_API_STATUS_URL`) — endpoint przestał działać. Brak boxu w Ustawieniach, badge w „Co się stanie”, kropki przy Settings i modala ostrzeżenia przed Convert. Konwersja AI i komunikat błędu (`convertFailedAiServiceMessage`) bez zmian.
 
 ### Fixed
 - **iOS nav back:** pod-ekrany używają JS `SubScreenHeader` zamiast natywnego `headerLeft`/`headerRight` — na iOS 26 Liquid Glass widać było tylko niedziałające „…”.

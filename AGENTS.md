@@ -25,7 +25,7 @@ Zasady są wiążące dla każdego agenta AI w tym projekcie.
 ## Dokumentacja utrzymywana na bieżąco
 Podczas pracy **aktualizuj** te pliki, gdy zmienia się stan projektu:
 - `CHANGELOG.md` — każda istotna zmiana (funkcja, fix, konfiguracja, breaking change).
-- `.aiassistant/rules/domain-knowledge.md` — nowa wiedza o audio, formatach, pipeline przetwarzania **oraz statusie usługi AI** (kiedy odpytywać, semafor, env).
+- `.aiassistant/rules/domain-knowledge.md` — nowa wiedza o audio, formatach, pipeline przetwarzania.
 - `.aiassistant/rules/project-context.md` — zmiany w stacku, modułach, ograniczeniach platformy.
 - `.aiassistant/rules/components.md` — nowe konwencje komponentów UI (jeśli dotyczy).
 - `PROGRESS.md` — bieżący status, co zrobione, co następne (krótko).

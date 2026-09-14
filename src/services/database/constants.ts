@@ -18,11 +18,6 @@ export const SETTING_KEYS = {
    * Cleared only after the user dismisses the prompt.
    */
   WELCOME_CREDITS_PROMPT: 'welcome_credits_prompt',
-  /**
-   * Last yellow/red WaveSpeed public status snapshot (JSON).
-   * Cleared when status returns to green / ok.
-   */
-  AI_SERVICE_STATUS_DEGRADED: 'ai_service_status_degraded',
 } as const;
 
 export type SettingKey = (typeof SETTING_KEYS)[keyof typeof SETTING_KEYS];

@@ -37,13 +37,6 @@ jest.mock('@/providers/CreditsProvider', () => ({
   }),
 }));
 
-jest.mock('@/providers/AiServiceStatusProvider', () => ({
-  useAiServiceStatus: () => ({
-    applyDebugStatus: jest.fn().mockResolvedValue(undefined),
-    refreshStatus: jest.fn().mockResolvedValue(undefined),
-  }),
-}));
-
 jest.mock('@/config/env', () => ({
   env: {
     debugMode: true,
@@ -54,10 +47,6 @@ jest.mock('@/config/env', () => ({
 jest.mock('@/components', () => ({
   Screen: ({ children }: { children: React.ReactNode }) => children,
   AppVersionInfo: () => null,
-}));
-
-jest.mock('@/components/molecules/AiServiceStatusCard', () => ({
-  AiServiceStatusCard: () => null,
 }));
 
 jest.mock('@/hooks/useTheme', () => ({
@@ -118,13 +107,9 @@ describe('SettingsScreen', () => {
     expect(texts).toContain('settings.enablePremiumTitle');
     expect(texts).toContain('settings.clearCreditsTitle');
     expect(texts).toContain('settings.clearAppDataTitle');
-    expect(texts).toContain('settings.debugAiStatusSection');
-    expect(texts).toContain('settings.debugAiStatusOperational');
-    expect(texts).toContain('settings.debugAiStatusMaintenance');
-    expect(texts).toContain('settings.debugAiStatusIssues');
     expect(texts).not.toContain('settings.addCreditsTitle');
     expect(tree!.root.findAllByType(Switch)).toHaveLength(1);
-    expect(tree!.root.findAllByType(Button)).toHaveLength(6);
+    expect(tree!.root.findAllByType(Button)).toHaveLength(2);
   });
 
   it('enabling premium delegates to setAccountPlan (API/local pack)', async () => {

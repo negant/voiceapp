@@ -69,8 +69,9 @@ open ios/VoiceApp.xcworkspace
 ### 4. Android
 
 1. Uruchom emulator w Android Studio **lub** podłącz urządzenie z włączonym USB debugging.
-2. Sprawdź połączenie: `adb devices`
-3. Uruchom aplikację:
+2. Ustaw `JAVA_HOME` / `ANDROID_HOME` (patrz niżej), jeśli `java` / `adb` nie są w PATH.
+3. Sprawdź połączenie: `adb devices`
+4. Uruchom aplikację z **katalogu głównego** projektu (nie z `android/`):
 
 ```sh
 npm run android
@@ -82,7 +83,33 @@ npm run android
 npm run android -- --mode=release
 ```
 
-Jeśli build się nie udaje, upewnij się że `ANDROID_HOME` wskazuje na SDK:
+#### Windows (Git Bash) — sesja terminala
+
+React Native wymaga **JDK 17–20** (`npx react-native doctor`). **Nie używaj** JBR z Android Studio, jeśli to Java 21+/25 — build pada na CMake (`:react-native-nitro-modules:configureCMakeDebug`) z komunikatem `restricted method in java.lang.System`.
+
+1. Zainstaluj JDK 17 (PowerShell / CMD):
+
+```bat
+winget install --id Microsoft.OpenJDK.17 -e --accept-source-agreements --accept-package-agreements
+```
+
+2. W Git Bash ustaw zmienne (dostosuj ścieżkę, jeśli wersja patch różni się):
+
+```sh
+# dokładna nazwa folderu zależy od wersji patch — sprawdź:
+#   ls "/c/Program Files/Microsoft/"
+export JAVA_HOME="/c/Program Files/Microsoft/jdk-17.0.20.101-hotspot"
+export ANDROID_HOME="$LOCALAPPDATA/Android/Sdk"
+export PATH="$JAVA_HOME/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/emulator:$PATH"
+
+java -version   # powinno pokazać 17.x
+adb devices
+npm run android
+```
+
+Dla trwałych ustawień dodaj `JAVA_HOME` (JDK 17), `ANDROID_HOME` oraz wpisy PATH w **Zmiennych środowiskowych** użytkownika Windows, potem otwórz nowy terminal.
+
+#### macOS / Linux
 
 ```sh
 export ANDROID_HOME=$HOME/Library/Android/sdk

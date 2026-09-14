@@ -29,21 +29,6 @@ jest.mock('@/providers/ProcessedRecordingsCountProvider', () => ({
   }),
 }));
 
-jest.mock('@/providers/AiServiceStatusProvider', () => ({
-  useAiServiceStatus: () => ({
-    status: {
-      severity: 'ok',
-      color: 'green',
-      pageStatus: 'UP',
-      activeIncidentsCount: 0,
-      activeMaintenancesCount: 0,
-      fetchedAt: 1,
-      source: 'network',
-    },
-    isChecking: false,
-  }),
-}));
-
 jest.mock('@/components/molecules/RecordingsHeaderButton', () => ({
   RecordingsHeaderButton: 'RecordingsHeaderButton',
 }));

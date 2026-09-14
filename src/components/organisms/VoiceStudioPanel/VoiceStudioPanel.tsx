@@ -195,9 +195,6 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
     sourceDurationLimitNotice,
     cancelSourceDurationLimitNotice,
     confirmSourceDurationLimitNotice,
-    aiStatusConvertWarningVisible,
-    cancelAiStatusConvertWarning,
-    confirmAiStatusConvertWarning,
     processedHistoryDeletePending,
     isDeletingProcessedHistory,
     cancelDeleteProcessedHistory,
@@ -610,16 +607,6 @@ export function VoiceStudioPanel({ className }: VoiceStudioPanelProps) {
         cancelLabel={t('common.cancel')}
         onCancel={cancelSourceDurationLimitNotice}
         onConfirm={confirmSourceDurationLimitNotice}
-      />
-
-      <ConfirmDialog
-        visible={aiStatusConvertWarningVisible}
-        title={t('voiceStudio.aiStatusConvertWarningTitle')}
-        message={t('voiceStudio.aiStatusConvertWarningMessage')}
-        confirmLabel={t('common.ok')}
-        cancelLabel={t('common.cancel')}
-        onCancel={cancelAiStatusConvertWarning}
-        onConfirm={confirmAiStatusConvertWarning}
       />
 
       <ConfirmDialog

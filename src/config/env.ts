@@ -18,13 +18,12 @@ import {
   SUPPORTED_AUDIO_FORMATS,
   AI_EFFECTS_API_KEY,
   AI_EFFECTS_API_BASE_URL,
-  AI_EFFECTS_API_STATUS_URL,
   BACKEND_API_BASE_URL,
   BACKEND_API_TOKEN,
   PRIVACY_POLICY_URL,
 } from '@env';
 
-import { resolveAiEffectsApiBaseUrl, resolveAiEffectsApiStatusUrl } from '@/config/aiEffects';
+import { resolveAiEffectsApiBaseUrl } from '@/config/aiEffects';
 import { DEFAULT_PRIVACY_POLICY_URL } from '@/config/billing';
 import {
   DEFAULT_CREDITS_PER_STARTED_MINUTE,
@@ -112,8 +111,6 @@ export const env = {
   aiEffectsApiKey: parseOptionalSecret(AI_EFFECTS_API_KEY),
   /** Cloud AI effects API root (override when provider host/path changes). */
   aiEffectsApiBaseUrl: resolveAiEffectsApiBaseUrl(AI_EFFECTS_API_BASE_URL),
-  /** Public AI provider status URL (checked on launch + after AI failures). */
-  aiEffectsApiStatusUrl: resolveAiEffectsApiStatusUrl(AI_EFFECTS_API_STATUS_URL),
   enableAiEffects: parseBoolean(ENABLE_AI_EFFECTS, true),
   /** Credits charged per started minute of AI (1 credit = 1 min). */
   creditsPerStartedMinute: parsePositiveInt(
