@@ -12,6 +12,7 @@ apply: always
 - iOS dev: Metro na porcie **8088** (`npm start` / `npm run ios` → symulator).
 - Device ID: Keychain/Keystore + SQLite (`src/services/device/deviceId.ts`).
 - Store docs: `docs/store/` (privacy, Data safety, listing, smoke test).
+- Marketing site: `www/` — statyczny landing Negant (negant.pl), dokumenty Voice App w `www/apps/voice-app/`.
 - Status aktualizacji: `fetchAppUpdateStatus()` → `GET /v1/setup`.
 
 ## Cel produktu (roboczy)

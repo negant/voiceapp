@@ -8,6 +8,7 @@ Wersjonowanie zgodne z [Semantic Versioning](https://semver.org/lang/pl/).
 ## [Unreleased]
 
 ### Added
+- **www (negant.pl):** static Negant studio landing — app list, artwork, Voice App pages (privacy, terms, contact) in `www/` (English). Voice App visual composites the official app logo (`assets/logo.svg`).
 - **AI Effects:** Demon, French Female / Francuzka, Mature Gentleman / Dojrzały pan, Sensual / Zmysłowa (`femaleSensual.png`).
 - **Voice Studio sticky CTA:** naprzemiennie **Dodaj plik źródłowy** (z ikoną, scroll po tapnięciu), **Wybierz efekt** albo **Konwertuj**.
 - **README (Android / Windows):** instrukcja `JAVA_HOME` / `ANDROID_HOME` / PATH w Git Bash; wymóg **JDK 17** (nie JBR 25 z Android Studio — CMake/`nitro-modules`).

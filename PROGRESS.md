@@ -48,12 +48,14 @@ Faza: **Voice Studio + Basic/Advanced DSP + AI (WaveSpeed Chatterbox STS)**
 - [x] **Usunięcie statusu AI WaveSpeed** — brak odpytywania `summary.json` (endpoint nie działa); bez boxu/badge/kropki/modala ostrzeżenia
 
 ## W toku
-- [ ] Host privacy policy at https://ukrywane.pl/privacy (pliki w `docs/store/`)
+- [ ] Host `www/` na https://negant.pl (landing + privacy/terms/contact Voice App)
+- [ ] Ustawić `PRIVACY_POLICY_URL` na `https://negant.pl/apps/voice-app/privacy.html`
 - [ ] Play Console: app + subscription `voiceapp_premium_monthly` + Data safety
 - [ ] Service account JSON na VPS (`GOOGLE_PLAY_SERVICE_ACCOUNT_PATH`) + `REQUIRE_PURCHASE_VERIFY=true`
 - [ ] Internal testing AAB + smoke test (`docs/store/SMOKE_TEST.md`)
 
 ## Zrobione (niedawno)
+- [x] **www/negant.pl:** landing + dokumenty Voice App (HTML/CSS + grafiki)
 - [x] **Voice Studio sticky CTA:** CTA „dodaj plik” / „wybierz efekt” przewijają do sekcji źródła / efektów bez pulsujących ramek.
 - [x] **AI Effects:** Demon / Francuzka / Dojrzały pan / Zmysłowa
 - [x] **Karty efektów:** awatary 96×96

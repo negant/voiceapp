@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Negant — mobile apps</title>
+    <meta
+      name="description"
+      content="Negant builds mobile apps. Explore Voice App and upcoming products — terms, privacy policy, and contact."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Syne:wght@700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="icon" href="assets/images/logo-negant.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="site-nav">
+      <div class="container">
+        <a class="brand" href="index.html" aria-label="Negant — home">
+          <img class="brand__mark" src="assets/images/logo-negant.svg" alt="Negant" />
+        </a>
+        <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu">
+          Menu
+        </button>
+        <ul class="nav-links" id="nav-menu">
+          <li><a href="#apps">Apps</a></li>
+          <li><a href="#studio">Studio</a></li>
+          <li><a href="apps/voice-app/contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero" aria-label="Negant">
+        <div class="hero__media" aria-hidden="true">
+          <img
+            src="assets/images/negant-hero.png"
+            alt=""
+            width="1920"
+            height="1080"
+          />
+          <div class="hero__veil"></div>
+        </div>
+        <div class="container hero__content">
+          <h1 class="hero__brand">Negant<span>.</span></h1>
+          <p class="hero__lead">We build mobile apps that stay on the user’s device.</p>
+          <p class="hero__sub">
+            A digital product studio — from idea to store release.
+            Browse our apps, legal documents, and support contacts here.
+          </p>
+          <div class="hero__actions">
+            <a class="btn btn--primary" href="#apps">See apps</a>
+            <a class="btn btn--ghost" href="apps/voice-app/contact.html">Get in touch</a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="apps">
+        <div class="container">
+          <header class="section__head reveal">
+            <span class="eyebrow">Apps</span>
+            <h2>Negant products</h2>
+            <p>
+              Each app has its own privacy policy, terms of use, and support channel.
+              Scroll down — more titles will appear here as they ship.
+            </p>
+          </header>
+
+          <article class="app-block reveal" id="voice-app">
+            <div class="app-block__media">
+              <img
+                src="assets/images/voice-app-visual.png?v=2"
+                alt="Voice App — phone with voice waveform and official app logo"
+                width="1024"
+                height="1024"
+              />
+            </div>
+            <div class="app-block__copy">
+              <h3>Voice App</h3>
+              <ul class="app-meta">
+                <li>iOS &amp; Android</li>
+                <li>Voice processing</li>
+                <li>On-device by default</li>
+              </ul>
+              <p>
+                Turn recordings into new voices on your phone. Basic and Advanced
+                effects run offline. Optional AI voices (credits) — audio leaves
+                the device only when you choose that mode.
+              </p>
+              <div class="app-links">
+                <a class="btn btn--ink" href="apps/voice-app/privacy.html">Privacy policy</a>
+                <a href="apps/voice-app/terms.html">Terms of use</a>
+                <a href="apps/voice-app/contact.html">Contact</a>
+              </div>
+            </div>
+          </article>
+
+          <article class="app-block app-block--reverse app-block--soon reveal" aria-label="Upcoming app">
+            <div class="app-block__media" aria-hidden="true">
+              <span class="soon-label">Coming soon</span>
+            </div>
+            <div class="app-block__copy">
+              <h3>More apps</h3>
+              <ul class="app-meta">
+                <li>In progress</li>
+                <li>negant.pl</li>
+              </ul>
+              <p>
+                We’re building the next products. This section will grow with new
+                titles — each with its own legal docs and support details.
+              </p>
+              <div class="app-links">
+                <a class="btn btn--outline" href="apps/voice-app/contact.html">Ask about partnership</a>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="band" id="studio">
+        <div class="band__bg" aria-hidden="true">
+          <img src="assets/images/sound-waves.png" alt="" width="1920" height="1080" />
+          <div class="band__veil"></div>
+        </div>
+        <div class="band__content reveal">
+          <h2>Privacy as a starting point</h2>
+          <p>
+            We prefer on-device processing. The cloud is used only when a feature
+            needs it — always with a clear notice to the user.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        <div class="footer-grid">
+          <div>
+            <a class="footer-brand" href="index.html">Negant</a>
+            <p>
+              Mobile app studio. Marketing site and legal documents for products
+              published under the Negant brand.
+            </p>
+          </div>
+          <div class="footer-col">
+            <h4>Voice App</h4>
+            <ul>
+              <li><a href="apps/voice-app/privacy.html">Privacy policy</a></li>
+              <li><a href="apps/voice-app/terms.html">Terms of use</a></li>
+              <li><a href="apps/voice-app/contact.html">Contact</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>Studio</h4>
+            <ul>
+              <li><a href="#apps">App list</a></li>
+              <li><a href="mailto:support@negant.pl">support@negant.pl</a></li>
+              <li><a href="https://negant.pl">negant.pl</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <span>© <span id="y"></span> Negant</span>
+          <span>HTML · CSS — ready to host on negant.pl</span>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById("y").textContent = String(new Date().getFullYear());
+    </script>
+    <script src="js/main.js"></script>
+  </body>
+</html>
