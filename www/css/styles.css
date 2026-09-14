@@ -1,14 +1,14 @@
 /* Negant — marketing site (negant.pl) */
 
 :root {
-  --ink: #13201c;
-  --ink-soft: #2a3a34;
-  --sage: #2f5d50;
-  --teal: #1a7a6d;
-  --teal-deep: #0f4f47;
-  --mist: #eef2f0;
-  --paper: #f5f7f6;
-  --sand: #d7ddd8;
+  --ink: #121826;
+  --ink-soft: #2a3548;
+  --sage: #3b5b8a;
+  --teal: #2b6cb0;
+  --teal-deep: #1e4f8c;
+  --mist: #eef1f7;
+  --paper: #f4f6fa;
+  --sand: #d5dae6;
   --amber: #b86b2e;
   --white: #ffffff;
   --max: 1120px;
@@ -192,8 +192,8 @@ p {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(180deg, rgb(19 32 28 / 0.35) 0%, rgb(19 32 28 / 0.72) 55%, rgb(19 32 28 / 0.92) 100%),
-    linear-gradient(90deg, rgb(19 32 28 / 0.45) 0%, transparent 55%);
+    linear-gradient(180deg, rgb(18 24 38 / 0.38) 0%, rgb(18 24 38 / 0.74) 55%, rgb(18 24 38 / 0.92) 100%),
+    linear-gradient(90deg, rgb(18 24 38 / 0.48) 0%, transparent 55%);
 }
 
 .hero__content {
@@ -374,12 +374,26 @@ p {
   width: 4.25rem;
   height: 4.25rem;
   border-radius: 1.1rem;
-  box-shadow: 0 8px 24px rgb(19 32 28 / 0.18);
+  box-shadow: 0 8px 24px rgb(18 24 38 / 0.18);
 }
 
 .app-block__copy h3 {
   font-size: clamp(1.7rem, 3vw, 2.25rem);
   margin-bottom: 0.35rem;
+}
+
+.app-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.app-title__logo {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 0.85rem;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgb(79 70 229 / 0.28);
 }
 
 .app-meta {
@@ -472,7 +486,7 @@ p {
 .band__veil {
   position: absolute;
   inset: 0;
-  background: rgb(15 79 71 / 0.78);
+  background: rgb(30 79 140 / 0.82);
 }
 
 .band__content {
